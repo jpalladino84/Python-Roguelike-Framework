@@ -173,6 +173,8 @@ def render_all():
 
 def play_game():
 
+    tdl.setTitle('Level 1')
+
     while True:  # Continue in an infinite game loop.
 
         console.clear()  # Blank the console.
