@@ -4,14 +4,15 @@
 """
 
 import tdl
-import pdb
+
 from tdl import map
 from levelmanager import LevelManager
 
 SCREEN_WIDTH = 80
 SCREEN_HEIGHT = 60
 
-color_dark_wall = (0, 0, 100)
+color_dark_blue_wall = (0, 0, 100)
+color_dark_gray_wall = (75, 75, 75)
 color_light_wall = (130, 110, 50)
 color_dark_ground = (50, 50, 150)
 color_light_ground = (200, 180, 50)
@@ -99,7 +100,7 @@ def render_all():
             wall = dungeon.map[x][y].block_sight
             if dungeon.map[x][y].explored:
                 if wall:
-                    console.drawChar(x, y, '#', fgcolor=color_dark_wall)
+                    console.drawChar(x, y, '#', fgcolor=color_dark_gray_wall)
 
     player.fov_coords = map.quickFOV(player.x, player.y, isTransparent, 'basic')
 
