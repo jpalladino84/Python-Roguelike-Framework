@@ -100,7 +100,7 @@ def render_all():
             wall = dungeon.map[x][y].block_sight
             if dungeon.map[x][y].explored:
                 if wall:
-                    console.drawChar(x, y, '#', fgcolor=color_dark_gray_wall)
+                    console.drawChar(x, y, '#', fgcolor=color_dark_blue_wall)
 
     player.fov_coords = map.quickFOV(player.x, player.y, isTransparent, 'basic')
 
