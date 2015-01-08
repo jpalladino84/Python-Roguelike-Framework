@@ -82,3 +82,6 @@ class Player(Object):
             self.fighter.attack(target, action_log)
         else:
             self.move(dx, dy, dungeon)
+
+    def heal_damage(self):
+        self.fighter.hp += 10

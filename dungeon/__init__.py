@@ -17,7 +17,8 @@ class Dungeon_Generator:
         self.min_room_size = 6
         self.max_rooms = 30
         self.max_room_monsters = 3
-        self.num_items = 1
+        self.num_items = 3
+        self.cone = None
         self.player = None
         self.map = []
         self._make_map()
@@ -178,7 +179,12 @@ class Dungeon_Generator:
 
             if not common.is_blocked(x, y, self):
                 item_component = Item()
-                item = Object(x, y, '!', 'a Cone of a Dunshire', item=item_component)
+
+                if self.cone is None:
+                    item = Object(x, y, '!', 'Cone of Dunshire', item=item_component)
+                    self.cone = item
+                else:
+                    item = Object(x, y, '!', 'health potion', item=item_component)
 
                 self.objects.append(item)
                 common.send_to_back(item, self.objects)

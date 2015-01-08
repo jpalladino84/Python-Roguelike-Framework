@@ -64,7 +64,7 @@ action_log.setMode('scroll')
 
 action_log.printStr('Welcome,\n\nYour goal is to find the\nCone of Dunshire (!).\n\n' +
                      'Use Caution as there are Trolls (T)\nand Orcs (o) lurking in ' +
-                     'this dungeon!')
+                     'this dungeon!\n\n')
 
 status_panel = tdl.Console(40, 15)
 
@@ -153,8 +153,11 @@ while True:  # Continue in an infinite game loop.
                         #pick up an item
                         for object in dungeon.objects:  # look for an item in the player's tile
                             if object.x == player.x and object.y == player.y and object.item:
-                                object.item.pickUp(dungeon.objects, action_log)
-                                dungeon.player_wins(player)
+                                is_cone = object.item.pickUp(dungeon.objects, action_log)
+                                if is_cone:
+                                    dungeon.player_wins(player)
+                                else:  # user picked up a health potion
+                                    player.heal_damage()
 
         if event.type == 'QUIT':
             # Halt the script using SystemExit
