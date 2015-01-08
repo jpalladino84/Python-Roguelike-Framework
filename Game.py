@@ -61,6 +61,10 @@ action_log = tdl.Console(40, 15)
 action_log.move(0, 1)
 action_log.setMode('scroll')
 
+action_log.printStr('Welcome,\n\nYour goal is to find the\nCone of Dunshire (!).\n\n' +
+                     'Use Caution as there are Trolls (T)\nand Orcs (o) lurking in ' +
+                     'this dungeon!')
+
 status_panel = tdl.Console(40, 15)
 
 
