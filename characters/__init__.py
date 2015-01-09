@@ -84,4 +84,4 @@ class Player(Object):
             self.move(dx, dy, dungeon)
 
     def heal_damage(self):
-        self.fighter.hp += 10
+        self.fighter.hp = min(self.fighter.hp + 10, self.fighter.max_hp)
