@@ -1,6 +1,11 @@
 ## Game Description
 This is a Roguelike (dungeon crawler) game written in Python. 
 
+## Running the game
+This is uncompiled. In order to play you will need to clone this repo and run the Game.py (the entry script) from the command line.
+
+`python Game.py`
+
 ## Notes on the game
 All graphics are made up of ASCII characters. The '@' symbol represents the hero(ine), while 'o' and 'T' represent orcs and trolls respectively. 
 
