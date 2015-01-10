@@ -20,10 +20,6 @@ There are 3 items represented using '!'. Two health potions and one 'Cone of Dun
 ## Thoughts on building this game out more
 For those that find this wish to contribute here are my thoughts on what I would like to do:
 
-- Add more levels. 
--- There is only a single level to the dungeon. Once the user finds the 'Cone of Dunshire' the game will end. 
--- add stairs that will allow the user to descend to the next level. 
-
 - Cap the player health at 30 (or what ever the maximum would be for current level. 
 -- If the player picks up a health potion it will add 10 to the current amount of hp the player has. This will allow the player to go over 30. 
 
