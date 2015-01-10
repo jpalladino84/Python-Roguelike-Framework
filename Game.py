@@ -14,8 +14,8 @@ SCREEN_HEIGHT = 60
 color_dark_blue_wall = (0, 0, 100)
 color_dark_gray_wall = (75, 75, 75)
 color_light_wall = (130, 110, 50)
-color_dark_ground = (50, 50, 150)
-color_light_ground = (200, 180, 50)
+color_dark_ground = (75, 75, 75)
+color_light_ground = (160, 144, 40)
 
 # Create a dictionary that maps keys to vectors.
 # Names of the available keys can be found in the online documentation:
@@ -119,18 +119,28 @@ def print_str(console, string, x, y):
 
 
 def new_game():
-    global level_manager, level, dungeon, player, action_log, status_panel
+    global level_manager, action_log, status_panel
 
     level_manager = LevelManager()
-    level = level_manager.createLevel()
-    dungeon = level_manager.dungeon
-    player = dungeon.player
+    next_level()
 
     action_log = tdl.Console(40, 15)
     action_log.move(0, 1)
     action_log.setMode('scroll')
 
     status_panel = tdl.Console(40, 15)
+
+
+def next_level():
+    #advance to the next level
+    global level, dungeon, player
+
+    level_manager.create_new_level()
+    level = level_manager.level
+    dungeon = level_manager.dungeon
+    player = level_manager.player
+
+    tdl.setTitle(level.name)
 
 
 def isTransparent(x, y):
@@ -157,23 +167,33 @@ def render_all():
     for y in range(dungeon.height):
         for x in range(dungeon.width):
             wall = dungeon.map[x][y].block_sight
+            ground = dungeon.map[x][y].ground
             if dungeon.map[x][y].explored:
                 if wall:
                     console.drawChar(x, y, '#', fgcolor=color_dark_gray_wall)
+                elif ground:
+                    console.drawChar(x, y, '.', fgcolor=color_dark_ground)
 
     player.fov_coords = map.quickFOV(player.x, player.y, isTransparent, 'basic')
 
     for x, y in player.fov_coords:
         if dungeon.map[x][y].blocked is not False:
             console.drawChar(x, y, '#', fgcolor=color_light_wall)
+
             dungeon.map[x][y].explored = True
+        if dungeon.map[x][y].ground is True:
+            console.drawChar(x, y, '.', fgcolor=color_light_ground)
+            dungeon.map[x][y].explored = True
+
+    #draw all objects in the list
+    for object in dungeon.objects:
+        if (object.x, object.y) in player.fov_coords:
+            console.drawChar(object.x, object.y, object.char)
 
     render_gui()
 
 
 def play_game():
-
-    tdl.setTitle('Level 1')
 
     while True:  # Continue in an infinite game loop.
 
@@ -181,15 +201,9 @@ def play_game():
 
         render_all()
 
-        #draw all objects in the list
-        for object in dungeon.objects:
-            obj = object.get(player)
-            if obj:
-                console.drawChar(obj.x, obj.y, obj.char)
-
-        if dungeon.player_state == 'dead':
+        if level_manager.player_state == 'dead':
             status_panel.drawStr(0, 4, 'You have died!')
-        elif dungeon.player_state == 'done':
+        elif level_manager.player_state == 'done':
             # pdb.set_trace()
             status_panel.move(0, 4)
             status_panel.printStr('CONGRADULATIONS!\n\nYou have found a Cone of Dunshire!')
@@ -198,7 +212,7 @@ def play_game():
 
         for event in tdl.event.get():  # Iterate over recent events.
             if event.type == 'KEYDOWN':
-                if dungeon.player_state == 'playing':
+                if level_manager.player_state == 'playing':
                     # We mix special keys with normal characters so we use keychar.
                     if event.keychar.upper() in MOVEMENT_KEYS:
                         # Get the vector and unpack it into these two variables.
@@ -207,8 +221,11 @@ def play_game():
 
                         player.move_or_attack(keyX, keyY, dungeon, action_log)
 
+                        if dungeon.stairs and (dungeon.stairs.x, dungeon.stairs.y) == (player.x, player.y):
+                            next_level()
+
                         #let monsters take their turn
-                        if dungeon.player_state == 'playing':
+                        if level_manager.player_state == 'playing':
                             for object in dungeon.objects:
                                 if object.ai:
                                     object.ai.take_turn(dungeon, action_log)
@@ -220,7 +237,7 @@ def play_game():
                                 if object.x == player.x and object.y == player.y and object.item:
                                     is_cone = object.item.pickUp(dungeon.objects, action_log)
                                     if is_cone:
-                                        dungeon.player_wins(player)
+                                        level_manager.player_wins(player)
                                     else:  # user picked up a health potion
                                         player.heal_damage()
 

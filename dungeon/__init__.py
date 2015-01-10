@@ -4,25 +4,29 @@
 import random
 import common
 from common import Tile, Rect, Object, Item
-from characters import Fighter, BasicMonster, Player
+from characters import Fighter, BasicMonster
 
 
+# Takes a level to configue dungeon settings
 class Dungeon_Generator:
 
-    def __init__(self):
+    def __init__(self, level):
         self.width = 80  # Defines the dungeon width
         self.height = 45  # Defines the dungeon height
         self.objects = []
-        self.max_room_size = 10
-        self.min_room_size = 6
-        self.max_rooms = 30
-        self.max_room_monsters = 3
-        self.num_items = 3
+        self.level_id = level.id
+        self.max_room_size = level.max_room_size
+        self.min_room_size = level.min_room_size
+        self.max_rooms = level.max_rooms
+        self.max_room_monsters = level.max_room_monsters
+        self.num_items = level.num_items
         self.cone = None
-        self.player = None
+        self.player = level.player
+        self.stairs = None
         self.map = []
         self._make_map()
-        self.player_state = 'playing'
+
+        self.objects.append(self.player)
 
     def _create_room(self, room):
 
@@ -31,18 +35,21 @@ class Dungeon_Generator:
             for y in range(room.y1 + 1, room.y2):
                 self.map[x][y].blocked = False
                 self.map[x][y].block_sight = False
+                self.map[x][y].ground = True
 
     def _create_h_tunnel(self, x1, x2, y):
         #horizontal tunnel. min() and max() are used in case x1>x2
         for x in range(min(x1, x2), max(x1, x2) + 1):
             self.map[x][y].blocked = False
             self.map[x][y].block_sight = False
+            self.map[x][y].ground = True
 
     def _create_v_tunnel(self, y1, y2, x):
         #vertical tunnel
         for y in range(min(y1, y2), max(y1, y2) + 1):
             self.map[x][y].blocked = False
             self.map[x][y].block_sight = False
+            self.map[x][y].ground = True
 
     def _make_map(self):
 
@@ -109,20 +116,11 @@ class Dungeon_Generator:
 
         self.place_item(rooms)
 
+        if self.level_id != 5:
+            self.place_stairs(rooms)
+
         #connect them with a tunnel
         self._create_h_tunnel(25, 55, 23)
-
-    def player_death(self, player):
-        #the game ended!
-        print 'You died!'
-        self.player_state = 'dead'
-
-        # for added effect, transform the player into a corpse!
-        self.player.char = '%'
-
-    def player_wins(self, player):
-        # the game ended
-        self.player_state = 'done'
 
     def monster_death(self, monster):
         #transform it into a nasty corpse! it doesn't block, can't be
@@ -136,14 +134,6 @@ class Dungeon_Generator:
         common.send_to_back(monster, self.objects)
 
     def place_objects(self, room):
-
-        if self.player is None:
-            # create player and place him in the room
-            # this is the first room, where the player starts at
-            fighter_component = Fighter(hp=30, defense=2, power=5, death_function=self.player_death)
-            self.player = Player(0, 0, '@', 'Hero', True, fighter=fighter_component)
-
-            self.objects.append(self.player)
 
         #choose random number of monsters
         num_monsters = random.randint(0, self.max_room_monsters)
@@ -180,7 +170,7 @@ class Dungeon_Generator:
             if not common.is_blocked(x, y, self):
                 item_component = Item()
 
-                if self.cone is None:
+                if self.level_id == 5:
                     item = Object(x, y, '!', 'Cone of Dunshire', item=item_component)
                     self.cone = item
                 else:
@@ -191,3 +181,15 @@ class Dungeon_Generator:
             else:
                 # if the spot was blocked find another spot to place the item
                 self.place_item(self, rooms)
+
+    def place_stairs(self, rooms):
+        room = random.choice(rooms[1::])
+
+        (x, y) = room.center()
+
+        if not common.is_blocked(x, y, self):
+            stairs = Object(x, y, '>', 'Stairs')
+
+            self.stairs = stairs
+            self.objects.append(stairs)
+            common.send_to_back(stairs, self.objects)
