@@ -7,22 +7,23 @@ from common import Tile, Rect, Object, Item
 from characters import Fighter, BasicMonster, Player
 
 
+# Takes a level to configue dungeon settings
 class Dungeon_Generator:
 
-    def __init__(self):
+    def __init__(self, level):
         self.width = 80  # Defines the dungeon width
         self.height = 45  # Defines the dungeon height
         self.objects = []
-        self.max_room_size = 10
-        self.min_room_size = 6
-        self.max_rooms = 30
-        self.max_room_monsters = 3
-        self.num_items = 3
+        self.max_room_size = level.max_room_size
+        self.min_room_size = level.min_room_size
+        self.max_rooms = level.max_rooms
+        self.max_room_monsters = level.max_room_monsters
+        self.num_items = level.num_items
         self.cone = None
         self.player = None
         self.map = []
         self._make_map()
-        self.player_state = 'playing'
+        self.player_state = level.player_state
 
     def _create_room(self, room):
 

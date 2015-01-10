@@ -122,7 +122,7 @@ def new_game():
     global level_manager, level, dungeon, player, action_log, status_panel
 
     level_manager = LevelManager()
-    level = level_manager.createLevel()
+    level = level_manager.setup_level()
     dungeon = level_manager.dungeon
     player = dungeon.player
 
