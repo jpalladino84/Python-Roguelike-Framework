@@ -52,7 +52,7 @@ LEVELS = [
 ]
 
 
-class LevelManager:
+class GameManager:
     def __init__(self):
         self.current_level = 0
         self.player_state = 'playing'
@@ -88,7 +88,7 @@ class LevelManager:
         # create player and place him in the room
         # this is the first room, where the player starts at
         fighter_component = Fighter(hp=30, defense=2, power=5, death_function=self.player_death)
-        self.player = Player(0, 0, '@', 'Hero', True, fighter=fighter_component)
+        self.player = Player(0, 0, '@', 'Hero', blocks=True, fighter=fighter_component)
 
     def player_death(self, player):
         #the game ended!
@@ -97,6 +97,7 @@ class LevelManager:
 
         # for added effect, transform the player into a corpse!
         self.player.char = '%'
+        self.player.fgcolor = (255, 50, 50)
 
     def player_wins(self, player):
         # the game ended

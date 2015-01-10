@@ -125,8 +125,8 @@ class Dungeon_Generator:
     def monster_death(self, monster):
         #transform it into a nasty corpse! it doesn't block, can't be
         #attacked and doesn't move
-        print monster.name.capitalize() + ' is dead!'
         monster.char = '%'
+        monster.fgcolor = (255, 50, 50)
         monster.blocks = False
         monster.fighter = None
         monster.ai = None
@@ -149,13 +149,15 @@ class Dungeon_Generator:
                     #create an orc
                     fighter_component = Fighter(hp=10, defense=0, power=3, death_function=self.monster_death)
                     ai_component = BasicMonster()
-                    monster = Object(x, y, 'o', 'orc', True, fighter=fighter_component, ai=ai_component)
+                    monster = Object(x, y, 'o', 'orc', fgcolor=(150, 250, 230), blocks=True,
+                                     fighter=fighter_component, ai=ai_component)
                 else:
                     #create a troll
                     fighter_component = Fighter(hp=16, defense=1, power=4, death_function=self.monster_death)
                     ai_component = BasicMonster()
 
-                    monster = Object(x, y, 'T', 'troll', True, fighter=fighter_component, ai=ai_component)
+                    monster = Object(x, y, 'T', 'troll', fgcolor=(100, 180, 150), blocks=True,
+                                     fighter=fighter_component, ai=ai_component)
 
                 self.objects.append(monster)
 

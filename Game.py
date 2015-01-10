@@ -6,7 +6,7 @@
 import tdl
 
 from tdl import map
-from levelmanager import LevelManager
+from gamemanager import GameManager
 
 SCREEN_WIDTH = 80
 SCREEN_HEIGHT = 60
@@ -58,7 +58,7 @@ tdl.setFont('terminal8x8_gs_ro.png')  # Configure the font.
 # Create the root console.
 console = tdl.init(SCREEN_WIDTH, SCREEN_HEIGHT, 'Roguelike Game')
 
-level_manager = None
+game_manager = None
 level = None
 dungeon = None
 player = None
@@ -119,9 +119,9 @@ def print_str(console, string, x, y):
 
 
 def new_game():
-    global level_manager, action_log, status_panel
+    global game_manager, action_log, status_panel
 
-    level_manager = LevelManager()
+    game_manager = GameManager()
     next_level()
 
     action_log = tdl.Console(40, 15)
@@ -135,10 +135,10 @@ def next_level():
     #advance to the next level
     global level, dungeon, player
 
-    level_manager.create_new_level()
-    level = level_manager.level
-    dungeon = level_manager.dungeon
-    player = level_manager.player
+    game_manager.create_new_level()
+    level = game_manager.level
+    dungeon = game_manager.dungeon
+    player = game_manager.player
 
     tdl.setTitle(level.name)
 
@@ -188,7 +188,7 @@ def render_all():
     #draw all objects in the list
     for object in dungeon.objects:
         if (object.x, object.y) in player.fov_coords:
-            console.drawChar(object.x, object.y, object.char)
+            console.drawChar(object.x, object.y, object.char, fgcolor=object.fgcolor, bgcolor=object.bgcolor)
 
     render_gui()
 
@@ -201,9 +201,9 @@ def play_game():
 
         render_all()
 
-        if level_manager.player_state == 'dead':
+        if game_manager.player_state == 'dead':
             status_panel.drawStr(0, 4, 'You have died!')
-        elif level_manager.player_state == 'done':
+        elif game_manager.player_state == 'done':
             # pdb.set_trace()
             status_panel.move(0, 4)
             status_panel.printStr('CONGRADULATIONS!\n\nYou have found a Cone of Dunshire!')
@@ -212,7 +212,7 @@ def play_game():
 
         for event in tdl.event.get():  # Iterate over recent events.
             if event.type == 'KEYDOWN':
-                if level_manager.player_state == 'playing':
+                if game_manager.player_state == 'playing':
                     # We mix special keys with normal characters so we use keychar.
                     if event.keychar.upper() in MOVEMENT_KEYS:
                         # Get the vector and unpack it into these two variables.
@@ -225,7 +225,7 @@ def play_game():
                             next_level()
 
                         #let monsters take their turn
-                        if level_manager.player_state == 'playing':
+                        if game_manager.player_state == 'playing':
                             for object in dungeon.objects:
                                 if object.ai:
                                     object.ai.take_turn(dungeon, action_log)
@@ -237,7 +237,7 @@ def play_game():
                                 if object.x == player.x and object.y == player.y and object.item:
                                     is_cone = object.item.pickUp(dungeon.objects, action_log)
                                     if is_cone:
-                                        level_manager.player_wins(player)
+                                        game_manager.player_wins(player)
                                     else:  # user picked up a health potion
                                         player.heal_damage()
 

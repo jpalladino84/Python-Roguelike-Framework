@@ -37,7 +37,8 @@ class Rect:
 class Object:
     #this is a generic object: the player, a monster, an item, the stairs...
     #it's always represented by a character on screen.
-    def __init__(self, x, y, char, name, blocks=False, fighter=None, ai=None, item=None):
+    def __init__(self, x, y, char, name, fgcolor=(255, 255, 255), bgcolor=(0, 0, 0),
+                 blocks=False, fighter=None, ai=None, item=None):
         self.x = x
         self.y = y
         self.char = char
@@ -46,6 +47,8 @@ class Object:
         self.fighter = fighter
         self.ai = ai
         self.item = item
+        self.fgcolor = fgcolor
+        self.bgcolor = bgcolor
 
         if self.fighter:  # let the fighter component know who owns it
             self.fighter.owner = self
