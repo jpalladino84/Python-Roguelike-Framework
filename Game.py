@@ -6,7 +6,7 @@
 import tdl
 
 from tdl import map
-from gamemanager import GameManager
+from game_manager import GameManager
 
 SCREEN_WIDTH = 80
 SCREEN_HEIGHT = 60
