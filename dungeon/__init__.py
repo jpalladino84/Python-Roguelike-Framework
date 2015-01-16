@@ -135,6 +135,17 @@ class Dungeon_Generator:
 
     def place_objects(self, room):
 
+<<<<<<< HEAD
+=======
+        if self.player is None:
+            # create player and place him in the room
+            # this is the first room, where the player starts at
+            fighter_component = Fighter(hp=30, defense=2, power=5, speed = 3, death_function=self.player_death)
+            self.player = Player(0, 0, '@', 'Hero', True, fighter=fighter_component)
+
+            self.objects.append(self.player)
+
+>>>>>>> Add primitive unit speed.
         #choose random number of monsters
         num_monsters = random.randint(0, self.max_room_monsters)
 
@@ -147,13 +158,13 @@ class Dungeon_Generator:
             if not common.is_blocked(x, y, self):
                 if random.randint(0, 100) < 80:  # 80% chance of getting an orc
                     #create an orc
-                    fighter_component = Fighter(hp=10, defense=0, power=3, death_function=self.monster_death)
+                    fighter_component = Fighter(hp=10, defense=0, power=3, speed = 2, death_function=self.monster_death)
                     ai_component = BasicMonster()
                     monster = Object(x, y, 'o', 'orc', fgcolor=(150, 250, 230), blocks=True,
                                      fighter=fighter_component, ai=ai_component)
                 else:
                     #create a troll
-                    fighter_component = Fighter(hp=16, defense=1, power=4, death_function=self.monster_death)
+                    fighter_component = Fighter(hp=16, defense=1, power=4, speed = 1, death_function=self.monster_death)
                     ai_component = BasicMonster()
 
                     monster = Object(x, y, 'T', 'troll', fgcolor=(100, 180, 150), blocks=True,

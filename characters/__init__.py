@@ -1,15 +1,20 @@
 
 from common import Object
 
+MAX_ENERGY = 3
 
 class Fighter:
     #combat-related properties and methods (monster, player, NPC).
-    def __init__(self, hp, defense, power, death_function=None):
+    def __init__(self, hp, defense, power, speed, death_function=None):
         self.max_hp = hp
         self.hp = hp
         self.defense = defense
         self.power = power
         self.death_function = death_function
+        self.speed = speed
+        #Fighters may act when they have energy = MAX_ENERGY. Fighters get speed energy back each iteration.
+        #Make 3 a const somewhere.
+        self.energy = speed;
 
     def take_damage(self, damage):
         #apply damage if possible
@@ -44,10 +49,20 @@ class BasicMonster:
     def take_turn(self, dungeon, console):
         #a basic monster takes its turn. If you can see it, it can see you
         monster = self.owner
+        fighter = monster.fighter
 
         player = dungeon.player
 
         if (monster.x, monster.y) in player.fov_coords:
+
+            fighter.energy = min(fighter.energy + fighter.speed, MAX_ENERGY)
+            #monsters must have MAX_ENERGY energy to move.
+            #Theoretically this restriction could be imposed on the player as well,
+            #if the player was meant to be slower than some monsters- i.e. a dwarf player character
+            #might have slower movement.
+            if fighter.energy < MAX_ENERGY:
+               return
+            fighter.energy = 0
             #move towards player if far away
             if monster.distance_to(player) >= 2:
                 monster.move_towards(player.x, player.y, dungeon)
