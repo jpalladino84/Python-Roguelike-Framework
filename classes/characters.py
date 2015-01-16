@@ -1,7 +1,11 @@
+"""
+Character Classes
+"""
 
-from common import Object
+from classes.base import Object
 
 MAX_ENERGY = 3
+
 
 class Fighter:
     #combat-related properties and methods (monster, player, NPC).
@@ -14,7 +18,7 @@ class Fighter:
         self.speed = speed
         #Fighters may act when they have energy = MAX_ENERGY. Fighters get speed energy back each iteration.
         #Make 3 a const somewhere.
-        self.energy = speed;
+        self.energy = speed
 
     def take_damage(self, damage):
         #apply damage if possible
@@ -61,7 +65,8 @@ class BasicMonster:
             #if the player was meant to be slower than some monsters- i.e. a dwarf player character
             #might have slower movement.
             if fighter.energy < MAX_ENERGY:
-               return
+                return
+
             fighter.energy = 0
             #move towards player if far away
             if monster.distance_to(player) >= 2:
