@@ -1,10 +1,11 @@
 """
-
+Dungeon Script: Generates the dungeon and places the characters
 """
+
 import random
-import common
-from common import Tile, Rect, Object, Item
-from characters import Fighter, BasicMonster
+import util
+from classes.base import Tile, Rect, Object, Item
+from classes.characters import Fighter, BasicMonster
 
 
 # Takes a level to configue dungeon settings
@@ -131,21 +132,10 @@ class Dungeon_Generator:
         monster.fighter = None
         monster.ai = None
         monster.name = 'remains of ' + monster.name
-        common.send_to_back(monster, self.objects)
+        util.send_to_back(monster, self.objects)
 
     def place_objects(self, room):
 
-<<<<<<< HEAD
-=======
-        if self.player is None:
-            # create player and place him in the room
-            # this is the first room, where the player starts at
-            fighter_component = Fighter(hp=30, defense=2, power=5, speed = 3, death_function=self.player_death)
-            self.player = Player(0, 0, '@', 'Hero', True, fighter=fighter_component)
-
-            self.objects.append(self.player)
-
->>>>>>> Add primitive unit speed.
         #choose random number of monsters
         num_monsters = random.randint(0, self.max_room_monsters)
 
@@ -155,7 +145,7 @@ class Dungeon_Generator:
             y = random.randint(room.y1+1, room.y2-1)
 
             #only place it if the tile is not blocked
-            if not common.is_blocked(x, y, self):
+            if not util.is_blocked(x, y, self):
                 if random.randint(0, 100) < 80:  # 80% chance of getting an orc
                     #create an orc
                     fighter_component = Fighter(hp=10, defense=0, power=3, speed = 2, death_function=self.monster_death)
@@ -180,7 +170,7 @@ class Dungeon_Generator:
             x = random.randint(room.x1+1, room.x2-1)
             y = random.randint(room.y1+1, room.y2-1)
 
-            if not common.is_blocked(x, y, self):
+            if not util.is_blocked(x, y, self):
                 item_component = Item()
 
                 if self.level_id == 5:
@@ -190,7 +180,7 @@ class Dungeon_Generator:
                     item = Object(x, y, '!', 'health potion', item=item_component)
 
                 self.objects.append(item)
-                common.send_to_back(item, self.objects)
+                util.send_to_back(item, self.objects)
             else:
                 # if the spot was blocked find another spot to place the item
                 self.place_item(self, rooms)
@@ -200,9 +190,9 @@ class Dungeon_Generator:
 
         (x, y) = room.center()
 
-        if not common.is_blocked(x, y, self):
+        if not util.is_blocked(x, y, self):
             stairs = Object(x, y, '>', 'Stairs')
 
             self.stairs = stairs
             self.objects.append(stairs)
-            common.send_to_back(stairs, self.objects)
+            util.send_to_back(stairs, self.objects)
