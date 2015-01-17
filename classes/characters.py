@@ -82,6 +82,7 @@ class Player(Object):
     def __init__(self, *args, **kwargs):
         Object.__init__(self, *args, **kwargs)
         self.fov_coords = set()
+        self.inventory = dict()
 
     def move_or_attack(self, dx, dy, dungeon, action_log):
 

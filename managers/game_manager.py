@@ -66,6 +66,7 @@ class GameManager:
         self.dungeon = None
         self.level = None
         self.player = None
+        self.show_inventory = False
 
         self.colors = {
             'dark_blue_wall': (0, 0, 100),
@@ -231,6 +232,9 @@ class GameManager:
             if (object.x, object.y) in player.fov_coords:
                 console.drawChar(object.x, object.y, object.char, fgcolor=object.fgcolor, bgcolor=object.bgcolor)
 
+            if self.show_inventory:
+                self.console_manager.render_inventory_menu(self.player.inventory)
+
     def play_game(self):
 
         while True:  # Continue in an infinite game loop.
@@ -255,8 +259,16 @@ class GameManager:
         for event in tdl.event.get():  # Iterate over recent events.
             if event.type == 'KEYDOWN':
                 if self.player_state == 'playing':
+                    if self.show_inventory:
+                        if event.keychar in self.player.inventory:
+                            self.player.heal_damage()
+                            del self.player.inventory[event.keychar]
+                        elif event.keychar.upper() == 'I':
+                            self.show_inventory = False
+                            tdl.setTitle(self.level.name)
+
                     # We mix special keys with normal characters so we use keychar.
-                    if event.keychar.upper() in self.movement_keys:
+                    elif event.keychar.upper() in self.movement_keys:
                         # Get the vector and unpack it into these two variables.
                         keyX, keyY = self.movement_keys[event.keychar.upper()]
                         # Then we add the vector to the current player position.
@@ -283,7 +295,16 @@ class GameManager:
                                     if is_cone:
                                         self.player_wins(self.player)
                                     else:  # user picked up a health potion
-                                        self.player.heal_damage()
+                                        letter_index = ord('a')
+
+                                        while chr(letter_index) in self.player.inventory:
+                                            letter_index += 1
+
+                                        self.player.inventory[chr(letter_index)] = object
+
+                        elif event.keychar.upper() == 'I':
+                            if len(self.player.inventory) > 0 and self.show_inventory is False:
+                                self.show_inventory = True
 
             if event.type == 'QUIT':
                 # Halt the script using SystemExit
