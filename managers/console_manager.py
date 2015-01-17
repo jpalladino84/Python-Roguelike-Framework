@@ -31,10 +31,6 @@ class ConsoleManager:
         options = ['Play a new game', 'Quit']
 
         main_menu = Menu('Main Menu', options, self.main_console_w, self.main_console_h)
-        self.render_console(main_menu, 0, 0)
-
-        if len(options) > main_menu.max_options_len:
-            raise ValueError('Cannot have a menu with more than 26 options.')
 
         x = 20
         y = 20
@@ -56,6 +52,32 @@ class ConsoleManager:
             main_menu.letter_index += 1
         self.render_console(main_menu, 0, 0)
         tdl.flush()
+
+    def render_inventory_menu(self, inventory_list):
+
+        width = 40
+        height = 30
+
+        inventory_menu = Menu('Inventory', inventory_list, width, height)
+        inventory_menu.drawFrame(0, 0, width, height, '#', (255, 255, 255), None)
+
+        tdl.setTitle('Inventory Menu')
+
+        if len(inventory_list) > inventory_menu.max_options_len:
+            raise ValueError('Cannot have a menu with more than 26 options.')
+
+        x = 5
+        y = 5
+
+        for letter, item in inventory_list.iteritems():
+            text = '(' + letter + ') ' + item.name
+            inventory_menu.print_str(text, x, y)
+            y += 2
+            inventory_menu.letter_index += 1
+
+        inventory_menu.print_str('Press (I) to exit the menu', 10, 28)
+
+        self.render_console(inventory_menu, 20, 10)
 
 
 class Menu(Console):
