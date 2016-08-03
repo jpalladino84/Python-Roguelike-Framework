@@ -2,13 +2,13 @@
 Character Classes
 """
 
-from classes.base import Object
+from classes.base import DungeonObject
 
 MAX_ENERGY = 3
 
 
 class Fighter:
-    #combat-related properties and methods (monster, player, NPC).
+    # combat-related properties and methods (monster, player, NPC).
     def __init__(self, hp, defense, power, speed, death_function=None):
         self.max_hp = hp
         self.hp = hp
@@ -16,28 +16,28 @@ class Fighter:
         self.power = power
         self.death_function = death_function
         self.speed = speed
-        #Fighters may act when they have energy = MAX_ENERGY. Fighters get speed energy back each iteration.
-        #Make 3 a const somewhere.
+        # Fighters may act when they have energy = MAX_ENERGY. Fighters get speed energy back each iteration.
+        # Make 3 a const somewhere.
         self.energy = speed
 
     def take_damage(self, damage):
-        #apply damage if possible
+        # apply damage if possible
         if damage > 0:
             self.hp -= damage
 
-        #check for death. if there's a death function, call it
+        # check for death. if there's a death function, call it
         if self.hp <= 0:
             function = self.death_function
             if function is not None:
                 function(self.owner)
 
     def attack(self, target, console):
-        #a simple formula for attack damage
+        # a simple formula for attack damage
         damage = self.power - target.fighter.defense
         resultStr = ''
 
         if damage > 0:
-            #make the target take some damage
+            # make the target take some damage
             resultStr = (self.owner.name.capitalize() +
                          ' attacks ' + target.name + ' for ' + str(damage) + ' hit points.\n\n')
             target.fighter.take_damage(damage)
@@ -49,9 +49,14 @@ class Fighter:
 
 
 class BasicMonster:
-    #AI for a basic monster.
+    """
+    AI for a basic monster.
+    """
     def take_turn(self, dungeon, console):
-        #a basic monster takes its turn. If you can see it, it can see you
+        """
+        A basic monster takes its turn.
+        If you can see it, it can see you
+        """
         monster = self.owner
         fighter = monster.fighter
 
@@ -60,27 +65,27 @@ class BasicMonster:
         if (monster.x, monster.y) in player.fov_coords:
 
             fighter.energy = min(fighter.energy + fighter.speed, MAX_ENERGY)
-            #monsters must have MAX_ENERGY energy to move.
-            #Theoretically this restriction could be imposed on the player as well,
-            #if the player was meant to be slower than some monsters- i.e. a dwarf player character
-            #might have slower movement.
+            # monsters must have MAX_ENERGY energy to move.
+            # Theoretically this restriction could be imposed on the player as well,
+            # if the player was meant to be slower than some monsters- i.e. a dwarf player character
+            # might have slower movement.
             if fighter.energy < MAX_ENERGY:
                 return
 
             fighter.energy = 0
-            #move towards player if far away
+            # move towards player if far away
             if monster.distance_to(player) >= 2:
                 monster.move_towards(player.x, player.y, dungeon)
 
-            #close enough, attack! (if the player is still alive.)
+            # close enough, attack! (if the player is still alive.)
             elif hasattr(player.fighter, 'hp') and player.fighter.hp > 0:
                 monster.fighter.attack(player, console)
 
 
-class Player(Object):
+class Player(DungeonObject):
 
     def __init__(self, *args, **kwargs):
-        Object.__init__(self, *args, **kwargs)
+        DungeonObject.__init__(self, *args, **kwargs)
         self.fov_coords = set()
         self.inventory = dict()
 
@@ -90,7 +95,7 @@ class Player(Object):
         x = self.x + dx
         y = self.y + dy
 
-        # try to find an attackable object there
+        # try to find an attack-able object there
         target = None
 
         for object in dungeon.objects:
