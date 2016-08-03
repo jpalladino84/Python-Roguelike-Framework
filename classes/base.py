@@ -6,21 +6,26 @@ import math
 import util
 
 
-class Tile:
-    #a tile of the map and its properties
+class DungeonTile:
+    """
+    A tile of the dungeon and its properties
+    """
     def __init__(self, blocked, block_sight=None):
         self.blocked = blocked
         self.explored = False
         self.ground = False
 
-        #by default, if a tile is blocked, it also blocks sight
+        # y default, if a tile is blocked, it also blocks sight
         if block_sight is None:
             block_sight = blocked
         self.block_sight = block_sight
 
 
-class Rect:
-    #a rectangle on the map. used to characterize a room.
+class DungeonRoom:
+    """
+    A rectangle on the dungeon.
+    Used to characterize a room.
+    """
     def __init__(self, x, y, w, h):
         self.x1 = x
         self.y1 = y
@@ -30,17 +35,20 @@ class Rect:
     def center(self):
         center_x = (self.x1 + self.x2) / 2
         center_y = (self.y1 + self.y2) / 2
-        return (center_x, center_y)
+        return center_x, center_y
 
     def intersect(self, other):
-        #returns true if this rectangle intersects with another one
+        # returns true if this rectangle intersects with another one
         return (self.x1 <= other.x2 and self.x2 >= other.x1 and
                 self.y1 <= other.y2 and self.y2 >= other.y1)
 
 
-class Object:
-    #this is a generic object: the player, a monster, an item, the stairs...
-    #it's always represented by a character on screen.
+class DungeonObject:
+    """
+    A generic object: the player, a monster, an item, the stairs...
+    It is always represented by a ASCII character on screen.
+    """
+
     def __init__(self, x, y, char, name, fgcolor=(255, 255, 255), bgcolor=(0, 0, 0),
                  blocks=False, fighter=None, ai=None, item=None):
         self.x = x
@@ -64,7 +72,7 @@ class Object:
             self.item.owner = self
 
     def move(self, dx, dy, dungeon):
-        #move by the given amount, if the destination is not blocked
+        # move by the given amount, if the destination is not blocked
         if not util.is_blocked(self.x + dx, self.y + dy, dungeon):
             self.x += dx
             self.y += dy
@@ -77,25 +85,28 @@ class Object:
         del self
 
     def move_towards(self, target_x, target_y, dungeon):
-        #vector from this object to the target, and distance
+        # vector from this object to the target, and distance
         dx = target_x - self.x
         dy = target_y - self.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
 
-        #normalize it to length 1 (preserving direction), then round it and
-        #convert to integer so the movement is restricted to the map grid
+        # normalize it to length 1 (preserving direction), then round it and
+        # convert to integer so the movement is restricted to the map grid
         dx = int(round(dx / distance))
         dy = int(round(dy / distance))
         self.move(dx, dy, dungeon)
 
     def distance_to(self, other):
-        #return the distance to another object
+        # return the distance to another object
         dx = other.x - self.x
         dy = other.y - self.y
         return math.sqrt(dx ** 2 + dy ** 2)
 
 
 class Item:
+    def __init__(self):
+        self.inventory_list = None
+
     def pickUp(self, objects, console):
         objects.remove(self.owner)
         console.printStr('You picked up ' + self.owner.name + '!')
