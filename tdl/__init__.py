@@ -177,7 +177,7 @@ class TDLError(Exception):
 
 class _MetaConsole(object):
     """
-    Contains methods shared by both the L{Console} and L{Window} classes.
+    Contains methods shared by both the L{Console} and L{Window} character.
     """
     __slots__ = ('width', 'height', 'console', '_cursor', '_fgcolor',
                  '_bgcolor', '_bgblend', '_colorLock', '__weakref__', '__dict__')

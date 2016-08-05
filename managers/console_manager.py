@@ -5,27 +5,31 @@ Console Manager: handles the creation and rendering of all consoles.
 import tdl
 from tdl import Console
 
+CONSOLES = {}
+
 
 class ConsoleManager:
 
     def __init__(self):
         self.main_console_w = 80
         self.main_console_h = 60
-        self.consoles = dict()
 
         tdl.setFont('terminal8x8_gs_ro.png')  # Configure the font.
 
         # Create the root console.
         self.main_console = tdl.init(self.main_console_w, self.main_console_h, 'Roguelike Game')
 
+        CONSOLES['action_log'] = self.create_new_console(40, 15)
+        CONSOLES['status'] = self.create_new_console(40, 15)
+
     def render_console(self, console, pos_x, pos_y):
         self.main_console.blit(console, pos_x, pos_y)
 
-    def create_new_console(self, name, width, height, mode='scroll'):
+    @staticmethod
+    def create_new_console(width, height, mode='scroll'):
         console = tdl.Console(width, height)
         console.setMode(mode)
-
-        self.consoles[name] = console
+        return console
 
     def render_main_menu(self):
         options = ['Play a new game', 'Quit']

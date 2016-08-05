@@ -1,6 +1,16 @@
 """
 Utility functions
 """
+from peewee import SqliteDatabase
+
+from dungeon.models import DungeonLevel, DungeonObject, Dungeon
+from settings import DATABASE_NAME
+
+
+def create_tables():
+    database = SqliteDatabase(DATABASE_NAME)
+    database.connect()
+    database.create_table([Dungeon, DungeonLevel, DungeonObject])
 
 
 def send_to_back(obj, objects):
@@ -9,16 +19,3 @@ def send_to_back(obj, objects):
 
     objects.remove(obj)
     objects.insert(0, obj)
-
-
-def is_blocked(x, y, dungeon):
-    #first test the map tile
-    if dungeon.map[x][y].blocked:
-        return True
-
-    #now check for any blocking objects
-    for object in dungeon.objects:
-        if object.blocks and object.x == x and object.y == y:
-            return True
-
-    return False
