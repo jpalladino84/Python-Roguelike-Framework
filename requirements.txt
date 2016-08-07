@@ -1,4 +1,5 @@
 cffi==1.7.0
 libtcod-cffi==0.2.8
+peewee==2.8.1
 pycparser==2.14
 tdl==1.5.3
