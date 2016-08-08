@@ -14,13 +14,13 @@ Item Properties:
 Example
     A simple health potion might recover the players health by 10:
 
-        HEALTH_POTION = {
-            'name': 'Health Potion',
-            'desc': 'Heals 10 points of damage.',
-            'stat_mod': 'hp',
-            'op': 'add',
-            'value': 10
-        }
+    HEALTH_POTION = {
+        'name': 'Health Potion',
+        'desc': 'Heals 10 points of damage.',
+        'stat_mod': 'hp',
+        'op': 'add',
+        'value': 10
+    }
 """
 # Item Categories
 CONSUMABLE = 'CONSUMABLE'
@@ -33,6 +33,7 @@ ARMOR = 'ARMOR'
 HEALTH_POTION = {
     'name': 'Health Potion',
     'desc': 'Heals 10 points of damage.',
+    'ascii_char': '!',
     'inventory_list': 'dungeon_list',
     'category': CONSUMABLE,
     'stat_mod': 'hp',
@@ -43,11 +44,14 @@ HEALTH_POTION = {
 CONE_OF_DUNSHIRE = {
     'name': 'Cone of Dunshire',
     'desc': 'An ancient artifact that once belonged to the Architect, Ben Wyatt.',
+    'ascii_char': '!',
     'inventory_list': 'dungeon_list',
     'category': ARTIFACT,
     'stat_mod': None,
     'op': None,
     'value': None
 }
+
+
 
 ITEMS = [HEALTH_POTION, CONE_OF_DUNSHIRE]

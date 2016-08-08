@@ -1,4 +1,4 @@
-from peewee import SqliteDatabase, Model, CharField, IntegerField, TextField, ForeignKeyField
+from peewee import SqliteDatabase, Model, CharField, IntegerField, TextField, ForeignKeyField, FixedCharField
 
 from settings import DATABASE_NAME
 from dungeon.models import DungeonObject,DungeonLevel
@@ -16,6 +16,7 @@ class Item(Model):
     level = ForeignKeyField(DungeonLevel, null=True)
     name = CharField(max_length=20)
     description = TextField()
+    ascii_char = FixedCharField(max_length=1)
     inventory_list = CharField(max_length=20)
     category = CharField(max_length=20)
     stat_mod = CharField(max_length=10, null=True)
