@@ -9,7 +9,7 @@ from item.models import Item
 
 class DungeonGenerator(object):
     """
-    Takes a level config and outputs a new dungeon
+    Takes a level config and outputs a new dungeon maze.
     """
     dungeon_monsters = []
     max_num_items = 0
@@ -20,8 +20,6 @@ class DungeonGenerator(object):
     monster_rooms = []
 
     def _create_room(self, room):
-
-        # choose random number of monsters
         # num_items = random.randint(1, self.max_num_items)
 
         # go through the tiles in the rectangle and make them passable
@@ -40,6 +38,7 @@ class DungeonGenerator(object):
         else:
             self.monster_rooms.append(room)
 
+        # TODO:
         #     # find a spot for items
         #     while num_items > 0:
         #         # tile = self.get_random_room_tile(room)
@@ -201,10 +200,10 @@ class DungeonGenerator(object):
         except IndexError:
             pass
 
+    #     TODO: fix this to use new item system
     # def place_item(self, tile):
-    #       TODO: Fix this
     #     if self.is_final_level:
-    #         ascii_char = '!'  # TODO: change this to something more fitting
+    #         ascii_char = '!'
     #         props = CONE_OF_DUNSHIRE
     #         category = ARTIFACT
     #     else:
@@ -240,7 +239,7 @@ class DungeonGenerator(object):
         tile.contains_object = True
 
     # def place_stairs(self, rooms):
-    #     TODO: fix this
+    #     TODO: fix this to use new item system
     #     room = random.choice(rooms[1::])
     #
     #     (x, y) = room.center()

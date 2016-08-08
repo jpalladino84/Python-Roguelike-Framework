@@ -74,7 +74,7 @@ class DungeonRoom(object):
 class DungeonObject(Model):
     """
     An object that is used to keep track of
-    location, and whether it blocks
+    location, and whether it blocks another object from moving through it.
 
     DungeonObject(
         coords=(10, 20),

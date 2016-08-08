@@ -1,5 +1,6 @@
 """
 Loads data from config files into the database
+This needs to happen before the game fully loads.
 """
 import json
 
@@ -17,6 +18,7 @@ TABLES = [Dungeon, DungeonObject, DungeonLevel, Item, Character, CharacterClass]
 database = SqliteDatabase(DATABASE_NAME)
 
 
+# TODO as a game gets bigger this could take longer... Should maybe insert a loading screen.
 def load_game():
     init_database()
     load_levels()

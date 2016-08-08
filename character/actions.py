@@ -1,5 +1,9 @@
 """
 Action commands
+
+This is where the main business logic lives.
+
+Any action that can be taken by the player or a npc (e.g. monster) is defined here.
 """
 import json
 import math
@@ -7,7 +11,7 @@ import math
 import models
 from settings import COLORS
 from managers.console_manager import CONSOLES
-from dungeon.models import DungeonObject, Dungeon, DungeonLevel
+from dungeon.models import DungeonObject
 
 
 def attack(attacker, target, maze):
@@ -104,7 +108,8 @@ def distance_to(a, b):
 
 def player_move_or_attack(player, dx, dy, maze):
     """
-    Player action
+    Player turn, either move to a new tile or attack
+    whatever is in your way.
     """
     # the coordinates the player is moving to/attacking
     x, y = json.loads(player.dungeon_object.coords)

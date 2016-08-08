@@ -1,6 +1,3 @@
-"""
-Game Manager: Handles setup and progression of the game
-"""
 import json
 
 import tdl
@@ -20,7 +17,9 @@ database = SqliteDatabase(settings.DATABASE_NAME)
 
 class GameManager(object):
     """
-    The game manager role is to
+    Game Manager: Handles setup and progression of the game
+
+    Admittedly this is a bit of a mess and will need to be cleaned up.
     """
     game_state = 'playing'
     player_action = None
@@ -86,6 +85,9 @@ class GameManager(object):
         self.console_manager.render_console(CONSOLES['status'], 41, 45)
 
     def render_all(self):
+        """
+        Render the dungeon, character, items, etc..
+        """
         console = self.console_manager.main_console
         colors = self.colors
 
@@ -156,7 +158,9 @@ class GameManager(object):
             pass
 
     def play_game(self):
-
+        """
+        The main game loop
+        """
         while True:  # Continue in an infinite game loop.
             self.game_state = 'playing' if self.player.character_state == 'alive' else None
             self.console_manager.main_console.clear()  # Blank the console.
@@ -180,6 +184,9 @@ class GameManager(object):
             self.listen_for_events()
 
     def listen_for_events(self):
+        """
+        Any keyboard interaction from the user occurs here
+        """
         for event in tdl.event.get():  # Iterate over recent events.
             if event.type == 'KEYDOWN':
                 if self.game_state == 'playing':

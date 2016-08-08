@@ -1,3 +1,51 @@
+"""
+Character Config
+
+This is where you will create all your characters, and their classes, to place in your dungeon.
+
+Character: The main actor in the dungeon.
+    - name: Character name
+    - ascii_char: The ascii character that will represent your character in the dungeon
+    - fgcolor: The color of your ascii character
+            (See setting.py see a list of all colors or add one)
+    - bgcolor: The background color of your ascii character
+            (See setting.py see a list of all colors or add one)
+    - character_state: Typically 'alive'.
+    - character_class: The class you would like your character to have.
+
+Example:
+    The main actor which the user will control
+
+    PLAYER = {
+        'name': 'player',
+        'ascii_char': '@',
+        'fgcolor': COLORS['white'],
+        'bgcolor': COLORS['black'],
+        'character_state': 'alive',
+        'character_class': FIGHTER
+    }
+
+CharacterClass: Defines the Characters attributes such has health, defence, speed, etc...
+    - name: Name of the class
+    - max_hp: The upper limit on how much health the character has
+    - hp: The current amount of health the character has
+    - defence: How resilient the character is
+    - attack: How powerful the character is
+    - speed: How quick the character is (doesn't really have any effect right now)
+
+Example:
+    The fighter class, has strong attacks, high health, and has some resilience against enemy attacks
+
+    FIGHTER = {
+        'name': 'Fighter',
+        'max_hp': 30,
+        'hp': 30,
+        'defense': 2,
+        'attack': 5,
+        'speed': 3
+    }
+"""
+
 from settings import COLORS
 
 FIGHTER = {

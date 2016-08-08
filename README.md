@@ -1,5 +1,5 @@
 # Python Roguelike Framework
-## >>>>> WARNING This is a Alpha release. WARNING <<<<<
+### >>>>> WARNING This is a Alpha release. WARNING <<<<<
 #### Version: 2.0.0a  
 
 ## Description
@@ -17,6 +17,8 @@ cd roguelike-game
 
 pip install -r requirements.txt
 ```
+
+
 
 ## Running
 The framework starts with 5 levels for you to play around with. Run the game with:
