@@ -1,4 +1,4 @@
-# Python Roguelike Framework
+# Python Roguelike Framework [![Build Status](https://travis-ci.org/jpalladino84/Python-Roguelike-Framework.svg?branch=master)](https://travis-ci.org/jpalladino84/Python-Roguelike-Framework)
 ### >>>>> WARNING This is a Alpha release. WARNING <<<<<
 #### Version: 2.0.0a  
 

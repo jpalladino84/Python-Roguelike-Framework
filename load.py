@@ -54,6 +54,7 @@ def load_levels():
                 level_id=level['id'],
                 name=item['name'],
                 description=item['desc'],
+                ascii_char=item['ascii_char'],
                 inventory_list=item['inventory_list'],
                 category=item['category'],
                 stat_mod=item['stat_mod'],
