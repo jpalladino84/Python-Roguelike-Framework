@@ -19,3 +19,4 @@ Sphinx==1.4.6
 sphinx-autobuild==0.6.0
 tornado==4.4.1
 watchdog==0.8.3
+mock==2.0.0

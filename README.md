@@ -1,6 +1,9 @@
 # Python Roguelike Framework [![Build Status](https://travis-ci.org/jpalladino84/Python-Roguelike-Framework.svg?branch=master)](https://travis-ci.org/jpalladino84/Python-Roguelike-Framework) [![Documentation Status](https://readthedocs.org/projects/python-roguelike-framework/badge/?version=latest)](http://python-roguelike-framework.readthedocs.io/en/latest/?badge=latest)
 ### >>>>> WARNING This is a Alpha release. WARNING <<<<<
-#### Version: 2.0.0a  
+#### Version: 2.0.0a
+
+Online Documentation:
+http://python-roguelike-framework.readthedocs.io/en/latest/
 
 ## Description
 A Python framework for developing Roguelikes.
