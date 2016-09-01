@@ -200,7 +200,27 @@ class DungeonGenerator(object):
         except IndexError:
             pass
 
+    def place_player(self, tile):
+        """
+        Place the player in the maze.
+        """
+        dungeon_object = DungeonObject(
+            coords=json.dumps((tile.x, tile.y)),
+            blocks=True
+        )
+
+        player = Character.get(Character.name == 'player')
+        player.level = self.level
+        player.dungeon_object = dungeon_object
+
+        dungeon_object.save()
+        player.save()
+
+        tile.contains_object = True
+
     #     TODO: fix this to use new item system
+    # def place_item(self, tile):
+
     # def place_item(self, tile):
     #     if self.is_final_level:
     #         ascii_char = '!'
@@ -220,25 +240,7 @@ class DungeonGenerator(object):
     #         properties=props)
     #     tile.contains_object = True
 
-    def place_player(self, tile):
-        """
-        Place the player in the maze.
-        """
-        dungeon_object = DungeonObject(
-            coords=json.dumps((tile.x, tile.y)),
-            blocks=True
-        )
-
-        player = Character.get(Character.name == 'player')
-        player.level = self.level
-        player.dungeon_object = dungeon_object
-
-        dungeon_object.save()
-        player.save()
-
-        tile.contains_object = True
-
-    # def place_stairs(self, rooms):
+    # def place_stairs(self, tile):
     #     TODO: fix this to use new item system
     #     room = random.choice(rooms[1::])
     #
