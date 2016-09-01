@@ -1,3 +1,5 @@
+from math import floor
+
 from peewee import SqliteDatabase, Model, IntegerField, TextField, CharField, BooleanField, ForeignKeyField
 
 from settings import DATABASE_NAME
@@ -63,7 +65,8 @@ class DungeonRoom(object):
     def center(self):
         center_x = (self.x1 + self.x2) / 2
         center_y = (self.y1 + self.y2) / 2
-        return center_x, center_y
+
+        return floor(center_x), floor(center_y)
 
     def intersect(self, other):
         # returns true if this rectangle intersects with another one

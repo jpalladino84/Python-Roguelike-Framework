@@ -8,7 +8,7 @@ Any action that can be taken by the player or a npc (e.g. monster) is defined he
 import json
 import math
 
-import models
+from . import models
 from settings import COLORS
 from managers.console_manager import CONSOLES
 from dungeon.models import DungeonObject
