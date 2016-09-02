@@ -9,6 +9,9 @@ Here you will find the documentation of the code itself.
 Character
 ---------
 
+.. automodule:: character.config
+   :members:
+
 .. automodule:: character.actions
    :members:
 
@@ -18,11 +21,11 @@ Character
 .. automodule:: character.models
    :members:
 
-.. automodule:: character.config
-   :members:
-
 Dungeon
 -------
+
+.. automodule:: dungeon.config
+   :members:
 
 .. automodule:: dungeon.models
    :members:
@@ -30,16 +33,13 @@ Dungeon
 .. automodule:: dungeon.generator
    :members:
 
-.. automodule:: dungeon.config
-   :members:
-
 Item
 ----
 
-.. automodule:: item.models
+.. automodule:: item.config
    :members:
 
-.. automodule:: item.config
+.. automodule:: item.models
    :members:
 
 Managers
