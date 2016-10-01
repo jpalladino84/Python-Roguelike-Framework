@@ -72,7 +72,7 @@ class DungeonGenerator(object):
             return tile
 
         # if we didn't find an empty tile, try again
-        self.get_random_room_tile(room)
+        return self.get_random_room_tile(room)
 
     def _create_h_tunnel(self, x1, x2, y):
         # horizontal tunnel. min() and max() are used in case x1>x2
