@@ -66,7 +66,7 @@ class DungeonRoom(object):
         center_x = (self.x1 + self.x2) / 2
         center_y = (self.y1 + self.y2) / 2
 
-        return floor(center_x), floor(center_y)
+        return int(floor(center_x)), int(floor(center_y))
 
     def intersect(self, other):
         # returns true if this rectangle intersects with another one
