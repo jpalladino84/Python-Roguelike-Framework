@@ -63,7 +63,7 @@ class DungeonGenerator(object):
     def get_random_room_tile(self, room, depth=0):
         """
         Get a random ground tile that does not already contain a object
-
+        @param depth: This prevents crash by infinite recursion.
         @param room:
         @return:
         """
