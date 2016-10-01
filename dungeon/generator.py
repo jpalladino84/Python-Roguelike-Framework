@@ -218,40 +218,30 @@ class DungeonGenerator(object):
 
         tile.contains_object = True
 
-    #     TODO: fix this to use new item system
-    # def place_item(self, tile):
+    def place_item(self, tile):
+        if self.is_final_level:
+            item = Item.get(Item.name == 'CONE_OF_DUNSHIRE')
+        else:
+            item = Item.get(Item.name == 'HEALTH_POTION')
 
-    # def place_item(self, tile):
-    #     if self.is_final_level:
-    #         ascii_char = '!'
-    #         props = CONE_OF_DUNSHIRE
-    #         category = ARTIFACT
-    #     else:
-    #         ascii_char = '!'
-    #         props = HEALTH_POTION
-    #         category = CONSUMABLE
-    #
-    #     item_coords = json.dumps((tile.x, tile.y))
-    #     item = Item(
-    #         coords=item_coords,
-    #         ascii_char=ascii_char,
-    #         name=HEALTH_POTION['name']
-    #         category,
-    #         properties=props)
-    #     tile.contains_object = True
+        item.dungeon_object = DungeonObject(coords=json.dumps((tile.x, tile.y)))
+        item.level = self.level
+        item.dungeon_object.save()
+        item.save()
+        tile.contains_object = True
 
-    # def place_stairs(self, tile):
-    #     TODO: fix this to use new item system
-    #     room = random.choice(rooms[1::])
-    #
-    #     (x, y) = room.center()
-    #
-    #     if not util.is_blocked(x, y, self):
-    #         stairs = DungeonObject(x, y, '>', 'Stairs')
-    #
-    #         self.stairs = stairs
-    #         self.objects.append(stairs)
-    #         util.send_to_back(stairs, self.objects)
-    #     else:
-    #         # if the spot was blocked find another spot to place the item
-    #         self.place_stairs(rooms)
+# def place_stairs(self, tile):
+#     TODO: fix this to use new item system
+#     room = random.choice(rooms[1::])
+#
+#     (x, y) = room.center()
+#
+#     if not util.is_blocked(x, y, self):
+#         stairs = DungeonObject(x, y, '>', 'Stairs')
+#
+#         self.stairs = stairs
+#         self.objects.append(stairs)
+#         util.send_to_back(stairs, self.objects)
+#     else:
+#         # if the spot was blocked find another spot to place the item
+#         self.place_stairs(rooms)
