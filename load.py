@@ -59,7 +59,9 @@ def load_levels():
                 category=item['category'],
                 stat_mod=item['stat_mod'],
                 operation=item['op'],
-                value=item['value']
+                value=item['value'],
+                fgcolor=json.dumps(item['fgcolor']),
+                bgcolor=json.dumps(item['bgcolor'])
             )
             new_item.save()
 

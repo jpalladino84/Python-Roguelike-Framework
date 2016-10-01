@@ -88,4 +88,4 @@ class DungeonObject(Model):
         database = database
 
     coords = CharField(max_length=20)
-    blocks = BooleanField()
+    blocks = BooleanField(default=False)

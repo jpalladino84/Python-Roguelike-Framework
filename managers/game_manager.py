@@ -11,6 +11,7 @@ from dungeon.generator import DungeonGenerator
 from managers.console_manager import ConsoleManager, CONSOLES
 from character import actions
 from character.models import Character
+from item.models import Item
 
 database = SqliteDatabase(settings.DATABASE_NAME)
 
@@ -28,6 +29,7 @@ class GameManager(object):
     level = None
     player = None
     monsters = []
+    items = []
     show_inventory = False
 
     colors = settings.DUNGEON_COLORS
@@ -121,7 +123,16 @@ class GameManager(object):
         # 2. draw monsters
         # 3. draw player
 
-        # TODO: Draw items here
+        for item in filter(lambda item: item.dungeon_object, self.items):
+
+            x, y = json.loads(item.dungeon_object.coords)
+            if (x, y) in self.player.fov:
+                console.drawChar(
+                    x, y,
+                    str(item.ascii_char),
+                    fgcolor=json.loads(item.fgcolor),
+                    bgcolor=json.loads(item.bgcolor)
+                )
 
         # draw monsters
         for monster in self.monsters:
@@ -170,6 +181,11 @@ class GameManager(object):
                                  .where(
                                  (DungeonLevel.level_id == self.dungeon.level.level_id) &
                                  (Character.name != 'player')
+                             ))]
+            self.items = [item for item in
+                          (Item.select().join(DungeonLevel)
+                              .where(
+                              (DungeonLevel.level_id == self.dungeon.level.level_id)
                              ))]
 
             if self.player.character_state == 'dead':

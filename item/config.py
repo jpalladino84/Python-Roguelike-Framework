@@ -22,6 +22,8 @@ Example
         'value': 10
     }
 """
+from settings import Colors
+
 # Item Categories
 CONSUMABLE = 'CONSUMABLE'
 ARTIFACT = 'Artifact'
@@ -34,6 +36,8 @@ HEALTH_POTION = {
     'name': 'Health Potion',
     'desc': 'Heals 10 points of damage.',
     'ascii_char': '!',
+    'fgcolor': Colors.WHITE_COLOR,
+    'bgcolor': Colors.BLACK_COLOR,
     'inventory_list': 'dungeon_list',
     'category': CONSUMABLE,
     'stat_mod': 'hp',
@@ -45,13 +49,14 @@ CONE_OF_DUNSHIRE = {
     'name': 'Cone of Dunshire',
     'desc': 'An ancient artifact that once belonged to the Architect, Ben Wyatt.',
     'ascii_char': '!',
+    'fgcolor': Colors.BLOOD_RED,
+    'bgcolor': Colors.BLACK_COLOR,
     'inventory_list': 'dungeon_list',
     'category': ARTIFACT,
     'stat_mod': None,
     'op': None,
     'value': None
 }
-
 
 
 ITEMS = [HEALTH_POTION, CONE_OF_DUNSHIRE]

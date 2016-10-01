@@ -42,8 +42,9 @@ LEVELS = [
         'max_room_size': 14,
         'min_room_size': 10,
         'max_rooms': 10,
+        'max_num_items': 1,
         'is_final_level': False,
-        'items': [],
+        'items': [HEALTH_POTION],
         'monsters': [
             ORC,
             ORC,

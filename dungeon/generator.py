@@ -1,3 +1,4 @@
+import logging
 import json
 import random
 from collections import deque
@@ -6,13 +7,16 @@ from dungeon.models import Dungeon, DungeonTile, DungeonRoom, DungeonObject, Dun
 from character.models import Character
 from item.models import Item
 
+logger_ = logging.getLogger("generator")
+logger_.addHandler(logging.StreamHandler())
+
 
 class DungeonGenerator(object):
     """
     Takes a level config and outputs a new dungeon maze.
     """
     dungeon_monsters = []
-    max_num_items = 0
+    dungeon_items = []
     num_rooms = 0
     is_final_level = False
     level = None
@@ -20,8 +24,6 @@ class DungeonGenerator(object):
     monster_rooms = []
 
     def _create_room(self, room):
-        # num_items = random.randint(1, self.max_num_items)
-
         # go through the tiles in the rectangle and make them passable
         for x in range(room.x1 + 1, room.x2):
             for y in range(room.y1 + 1, room.y2):
@@ -38,15 +40,6 @@ class DungeonGenerator(object):
         else:
             self.monster_rooms.append(room)
 
-        # TODO:
-        #     # find a spot for items
-        #     while num_items > 0:
-        #         # tile = self.get_random_room_tile(room)
-        #         # self.place_item(tile)
-        #         num_items -= 1
-        #
-        # else:
-
     def place_monsters_in_rooms(self):
         """
         Go through each room and drop a monster in it. Keep
@@ -57,7 +50,17 @@ class DungeonGenerator(object):
                 tile = self.get_random_room_tile(room)
                 self.place_monster(tile)
 
-    def get_random_room_tile(self, room):
+    def place_items_in_rooms(self):
+        """
+        Go through each room and drop an item in it. Keep
+        going until there are no more items to place.
+        """
+        for item in self.dungeon_items:
+            random_room = random.choice(self.monster_rooms)
+            tile = self.get_random_room_tile(random_room)
+            self.place_item(tile, item)
+
+    def get_random_room_tile(self, room, depth=0):
         """
         Get a random ground tile that does not already contain a object
 
@@ -71,8 +74,12 @@ class DungeonGenerator(object):
         if not tile.contains_object:
             return tile
 
+        if depth > 50:
+            logger_.debug("Could not find appropriate tile to spawn item.")
+            return tile
+
         # if we didn't find an empty tile, try again
-        return self.get_random_room_tile(room)
+        return self.get_random_room_tile(room, depth=depth + 1)
 
     def _create_h_tunnel(self, x1, x2, y):
         # horizontal tunnel. min() and max() are used in case x1>x2
@@ -109,6 +116,12 @@ class DungeonGenerator(object):
                                            (DungeonLevel.level_id == level.level_id) &
                                            (Character.name != 'player'))
                                        ])
+
+        self.dungeon_items = deque([item for item in Item
+                                   .select()
+                                   .join(DungeonLevel)
+                                   .where((DungeonLevel.level_id == level.level_id))])
+
         # self.max_num_items = level.max_num_items
         # fill map with "blocked" tiles
         self.maze = [[DungeonTile(x, y, True) for y in range(height)] for x in range(width)]
@@ -162,6 +175,7 @@ class DungeonGenerator(object):
                 self.num_rooms += 1
 
         self.place_monsters_in_rooms()
+        self.place_items_in_rooms()
         # if not level.final_level:
         #     self.place_stairs(rooms)
 
@@ -218,17 +232,11 @@ class DungeonGenerator(object):
 
         tile.contains_object = True
 
-    def place_item(self, tile):
-        if self.is_final_level:
-            item = Item.get(Item.name == 'CONE_OF_DUNSHIRE')
-        else:
-            item = Item.get(Item.name == 'HEALTH_POTION')
-
+    def place_item(self, tile, item):
         item.dungeon_object = DungeonObject(coords=json.dumps((tile.x, tile.y)))
         item.level = self.level
         item.dungeon_object.save()
         item.save()
-        tile.contains_object = True
 
 # def place_stairs(self, tile):
 #     TODO: fix this to use new item system
