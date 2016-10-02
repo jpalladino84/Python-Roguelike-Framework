@@ -154,5 +154,6 @@ def monster_take_turn(monster, player, maze):
                 CONSOLES['action_log'].printStr('{} attacks player...\n\n'.format(monster.name))
                 attack(monster, player, maze)
 
-def get_item(character, item):
-    Inventory()
+
+def get_item(character, item, tile_x, tile_y):
+    character.inventory.add_item(item)
