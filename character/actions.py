@@ -11,7 +11,7 @@ import math
 from . import models
 from settings import Colors
 from managers.console_manager import CONSOLES
-from dungeon.models import DungeonObject
+from area.models import DungeonObject
 
 
 def attack(attacker, target, maze):

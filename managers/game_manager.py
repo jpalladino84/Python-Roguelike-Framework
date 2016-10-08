@@ -1,19 +1,22 @@
 import json
-
+import enum
 import tdl
 from tdl import map
 from peewee import SqliteDatabase
 
 import settings
 from load import TABLES
-from dungeon.models import DungeonLevel, Dungeon, DungeonTile
-from dungeon.generator import DungeonGenerator
+from area.dungeon_generator import DungeonGenerator
 from managers.console_manager import ConsoleManager, CONSOLES
 from character import actions
-from character.models import Character
-from item.models import Item
+from character import character
 
 database = SqliteDatabase(settings.DATABASE_NAME)
+
+
+class GameState(enum):
+    PLAYING = 0
+    ENDED = 1
 
 
 class GameManager(object):
@@ -22,7 +25,8 @@ class GameManager(object):
 
     Admittedly this is a bit of a mess and will need to be cleaned up.
     """
-    game_state = 'playing'
+    game_state = GameState.PLAYING
+
     player_action = None
     dungeon = None
     maze = None
@@ -75,7 +79,7 @@ class GameManager(object):
 
     def player_wins(self):
         # the game ended
-        self.game_state = 'done'
+        self.game_state = GameState.ENDED
 
     def render_gui(self):
         CONSOLES['status'].drawStr(0, 2, "Health: {}\n\n".format(int(self.player.character_class.hp)))
@@ -88,7 +92,7 @@ class GameManager(object):
 
     def render_all(self):
         """
-        Render the dungeon, character, items, etc..
+        Render the area, character, items, etc..
         """
         console = self.console_manager.main_console
         colors = self.colors
@@ -173,7 +177,7 @@ class GameManager(object):
         The main game loop
         """
         while True:  # Continue in an infinite game loop.
-            self.game_state = 'playing' if self.player.character_state == 'alive' else None
+            self.game_state = GameState.PLAYING if self.player.character_state == 'alive' else None
             self.console_manager.main_console.clear()  # Blank the console.
             self.render_all()
             self.monsters = [m for m in
@@ -205,7 +209,7 @@ class GameManager(object):
         """
         for event in tdl.event.get():  # Iterate over recent events.
             if event.type == 'KEYDOWN':
-                if self.game_state == 'playing':
+                if self.game_state == GameState.PLAYING:
 
                     # TODO: Fix inventory system
                     # if self.show_inventory:
@@ -226,12 +230,12 @@ class GameManager(object):
                         actions.player_move_or_attack(self.player, key_x, key_y, self.maze)
 
                         # TODO: Fix the stairs
-                        # if (self.dungeon.stairs and
-                        #    (self.dungeon.stairs.x, self.dungeon.stairs.y) == (self.player.x, self.player.y)):
+                        # if (self.area.stairs and
+                        #    (self.area.stairs.x, self.area.stairs.y) == (self.player.x, self.player.y)):
                         #     self.next_level()
 
                         # let monsters take their turn
-                        if self.game_state == 'playing':
+                        if self.game_state == GameState.PLAYING:
                             for monster in self.monsters:
                                 actions.monster_take_turn(monster, self.player, self.maze)
 
@@ -239,9 +243,9 @@ class GameManager(object):
                     # else:
                     #     if event.keychar.upper() == 'G':
                     #         # pick up an item
-                    #         for object in self.dungeon.objects:  # look for an item in the player's tile
+                    #         for object in self.area.objects:  # look for an item in the player's tile
                     #             if object.x == self.player.x and object.y == self.player.y and object.item:
-                    #                 is_cone = object.item.pickUp(self.dungeon.objects)
+                    #                 is_cone = object.item.pickUp(self.area.objects)
                     #                 if is_cone:
                     #                     self.player_wins()
                     #                 else:  # user picked up a health potion

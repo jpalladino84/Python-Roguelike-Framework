@@ -7,8 +7,8 @@ import json
 from peewee import SqliteDatabase
 
 from settings import DATABASE_NAME
-from dungeon.config import LEVELS
-from dungeon.models import Dungeon, DungeonObject, DungeonLevel
+from area.config import LEVELS
+from area.models import Dungeon, DungeonObject, DungeonLevel
 from item.models import Item
 from item.components import Inventory
 from character.models import Character

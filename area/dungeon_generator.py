@@ -3,7 +3,7 @@ import json
 import random
 from collections import deque
 
-from dungeon.models import Dungeon, DungeonTile, DungeonRoom, DungeonObject, DungeonLevel
+from area.models import Dungeon, DungeonTile, DungeonRoom, DungeonObject, DungeonLevel
 from character.models import Character
 from item.models import Item
 
@@ -13,7 +13,7 @@ logger_.addHandler(logging.StreamHandler())
 
 class DungeonGenerator(object):
     """
-    Takes a level config and outputs a new dungeon maze.
+    Takes a level config and outputs a new area maze.
     """
     dungeon_monsters = []
     dungeon_items = []
@@ -97,7 +97,7 @@ class DungeonGenerator(object):
 
     def generate(self, level):
         """
-        Generates a new dungeon based the level
+        Generates a new area based the level
         @param level:
         """
         width = 80

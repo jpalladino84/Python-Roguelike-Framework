@@ -120,7 +120,7 @@ def quickFOV(x, y, callback, fov='PERMISSIVE', radius=7.5, lightWalls=True, sphe
     Before using this call be sure to make a function, lambda, or method that takes 2
     positional parameters and returns True if light can pass through the tile or False
     for light-blocking tiles and for indexes that are out of bounds of the
-    dungeon.
+    area.
     
     This function is 'quick' as in no hassle but can quickly become a very slow
     function call if a large radius is used or the callback provided itself

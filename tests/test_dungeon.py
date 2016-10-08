@@ -8,12 +8,12 @@ import unittest
 from peewee import SqliteDatabase
 
 import load
-from dungeon.models import Dungeon, DungeonLevel, DungeonObject
+from area.models import Dungeon, DungeonLevel, DungeonObject
 from item.models import Item
 from character.models import Character
 from character.components import CharacterClass
 from character.config import ORC, TROLL
-from dungeon.generator import DungeonGenerator
+from area.dungeon_generator import DungeonGenerator
 
 database = SqliteDatabase('roguelike_test.db')
 TEST_TABLES = [Dungeon, DungeonObject, DungeonLevel, Item, Character, CharacterClass]

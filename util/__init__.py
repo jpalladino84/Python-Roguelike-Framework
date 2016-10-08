@@ -3,7 +3,7 @@ Utility functions
 """
 from peewee import SqliteDatabase
 
-from dungeon.models import DungeonLevel, DungeonObject, Dungeon
+from area.models import DungeonLevel, DungeonObject, Dungeon
 from settings import DATABASE_NAME
 
 
