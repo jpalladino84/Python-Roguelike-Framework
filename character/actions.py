@@ -9,7 +9,7 @@ import json
 import math
 
 from . import models
-from settings import COLORS
+from settings import Colors
 from managers.console_manager import CONSOLES
 from dungeon.models import DungeonObject
 
@@ -31,7 +31,7 @@ def player_death(player):
 
     # for added effect, transform the player into a corpse!
     player.ascii_char = '%'
-    player.fgcolor = json.dumps(COLORS['blood red'])
+    player.fgcolor = json.dumps(Colors.BLOOD_RED)
     player.save()
 
 
@@ -40,7 +40,7 @@ def monster_death(monster):
     # attacked and doesn't move
     CONSOLES['action_log'].printStr('{} has died.\n\n'.format(monster.name))
     monster.ascii_char = '%'
-    monster.fgcolor = json.dumps(COLORS['blood red'])
+    monster.fgcolor = json.dumps(Colors.BLOOD_RED)
     monster.blocks = False
     monster.character_state = 'dead'
     monster.name = 'remains of ' + monster.name
@@ -153,3 +153,7 @@ def monster_take_turn(monster, player, maze):
             elif player.character_class.hp > 0:
                 CONSOLES['action_log'].printStr('{} attacks player...\n\n'.format(monster.name))
                 attack(monster, player, maze)
+
+
+def get_item(character, item, tile_x, tile_y):
+    character.inventory.add_item(item)

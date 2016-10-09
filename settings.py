@@ -49,21 +49,20 @@ KEY_MAPPINGS = {
     'KP9': [1, -1],
 }
 
-BLACK_COLOR = (0, 0, 0)
-WHITE_COLOR = (255, 255, 255)
-DARK_BLUE = (0, 0, 100)
-DARK_GRAY = (75, 75, 75)
-TROLL_GREEN = (100, 180, 150)
-ORC_GREEN = (150, 250, 230)
-BLOOD_RED = (255, 50, 50)
 
-COLORS = {
-    'black': BLACK_COLOR,
-    'white': WHITE_COLOR,
-    'dark blue': DARK_BLUE,
-    'dark gray': DARK_GRAY,
-    'troll green': TROLL_GREEN,
-    'orc green': ORC_GREEN,
-    'blood red': BLOOD_RED
-}
+
+
+
+
+
+
+class Colors:
+    BLACK_COLOR = (0, 0, 0)
+    WHITE_COLOR = (255, 255, 255)
+    DARK_BLUE = (0, 0, 100)
+    DARK_GRAY = (75, 75, 75)
+    TROLL_GREEN = (100, 180, 150)
+    ORC_GREEN = (150, 250, 230)
+    BLOOD_RED = (255, 50, 50)
+
 

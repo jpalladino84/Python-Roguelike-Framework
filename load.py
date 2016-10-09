@@ -10,6 +10,7 @@ from settings import DATABASE_NAME
 from dungeon.config import LEVELS
 from dungeon.models import Dungeon, DungeonObject, DungeonLevel
 from item.models import Item
+from item.components import Inventory
 from character.models import Character
 from character.components import CharacterClass
 from character.config import PLAYER
@@ -59,7 +60,9 @@ def load_levels():
                 category=item['category'],
                 stat_mod=item['stat_mod'],
                 operation=item['op'],
-                value=item['value']
+                value=item['value'],
+                fgcolor=json.dumps(item['fgcolor']),
+                bgcolor=json.dumps(item['bgcolor'])
             )
             new_item.save()
 
@@ -90,6 +93,7 @@ def load_monsters(level_config):
             bgcolor=json.dumps(monster['bgcolor']),
             character_state=monster['character_state'],
             character_class=new_character_class,
+            inventory=Inventory()
         )
         new_monster.save()
 
@@ -112,6 +116,7 @@ def load_player():
         fgcolor=json.dumps(PLAYER['fgcolor']),
         bgcolor=json.dumps(PLAYER['bgcolor']),
         character_state=PLAYER['character_state'],
-        character_class=new_character_class
+        character_class=new_character_class,
+        inventory=Inventory()
     )
     new_player.save()

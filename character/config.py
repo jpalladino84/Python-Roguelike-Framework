@@ -46,7 +46,7 @@ Example:
     }
 """
 
-from settings import COLORS
+from settings import Colors
 
 FIGHTER = {
     'name': 'Fighter',
@@ -78,8 +78,8 @@ TROLL_FIGHTER = {
 PLAYER = {
     'name': 'player',
     'ascii_char': '@',
-    'fgcolor': COLORS['white'],
-    'bgcolor': COLORS['black'],
+    'fgcolor': Colors.WHITE_COLOR,
+    'bgcolor': Colors.BLACK_COLOR,
     'character_state': 'alive',
     'character_class': FIGHTER
 }
@@ -87,8 +87,8 @@ PLAYER = {
 ORC = {
     'name': 'Orc',
     'ascii_char': 'o',
-    'fgcolor': COLORS['orc green'],
-    'bgcolor': COLORS['black'],
+    'fgcolor': Colors.ORC_GREEN,
+    'bgcolor': Colors.BLACK_COLOR,
     'character_state': 'alive',
     'character_class': ORC_FIGHTER
 }
@@ -96,8 +96,8 @@ ORC = {
 TROLL = {
     'name': 'Troll',
     'ascii_char': 'T',
-    'fgcolor': COLORS['orc green'],
-    'bgcolor': COLORS['black'],
+    'fgcolor': Colors.ORC_GREEN,
+    'bgcolor': Colors.BLACK_COLOR,
     'character_state': 'alive',
     'character_class': TROLL_FIGHTER
 }

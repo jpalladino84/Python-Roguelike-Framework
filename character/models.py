@@ -6,6 +6,7 @@ from peewee import SqliteDatabase, Model, ForeignKeyField, FixedCharField, CharF
 from settings import DATABASE_NAME
 from dungeon.models import DungeonObject, DungeonLevel
 from character.components import CharacterClass
+from item.components import Inventory
 
 database = SqliteDatabase(DATABASE_NAME)
 
@@ -23,25 +24,4 @@ class Character(Model):
     character_state = CharField(max_length=10)
     character_class = ForeignKeyField(CharacterClass, null=True)
     dungeon_object = ForeignKeyField(DungeonObject, null=True)
-
-# class Player(Character):
-#     """
-#     Player is a dungeon object.
-#
-#     The player has a state for which the game_manager uses
-#     to keep track of whether the player is alive or dead.
-#     """
-#     class Meta(object):
-#         database = database
-#
-#     player_state = CharField(max_length=10)
-#
-#
-# class Monster(Character):
-#     """
-#     Monsters are just dungeon objects with an AI component
-#     """
-#     class Meta(object):
-#         db_table = 'character'
-#
-#     monster_state = CharField(max_length=10)
+    inventory = Inventory()
