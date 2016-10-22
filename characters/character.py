@@ -1,0 +1,10 @@
+class Character(object):
+    def __init__(self, name, character_class, character_race, stats, display, location, inventory, body):
+        self.name = name
+        self.character_class = character_class
+        self.character_race = character_race
+        self.stats = stats
+        self.display = display
+        self.location = location
+        self.inventory = inventory
+        self.body = body

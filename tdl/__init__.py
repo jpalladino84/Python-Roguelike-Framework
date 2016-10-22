@@ -84,8 +84,8 @@ def _encodeString(string): # still used for filepaths, and that's about it
 #    pass
 
 def _formatChar(char):
-    """Prepares a single character for passing to ctypes calls, needs to return
-    an integer but can also pass None which will keep the current character
+    """Prepares a single characters for passing to ctypes calls, needs to return
+    an integer but can also pass None which will keep the current characters
     instead of overwriting it.
 
     This is called often and needs to be optimized whenever possible.
@@ -97,7 +97,7 @@ def _formatChar(char):
     if isinstance(char, _STRTYPES) and len(char) == 1:
         return ord(char)
     return int(char) # conversion faster than type check
-    #raise TypeError('Expected char parameter to be a single character string, number, or None, got: %s' % repr(char))
+    #raise TypeError('Expected char parameter to be a single characters string, number, or None, got: %s' % repr(char))
 
 _fontinitialized = False
 _rootinitialized = False
@@ -177,7 +177,7 @@ class TDLError(Exception):
 
 class _MetaConsole(object):
     """
-    Contains methods shared by both the L{Console} and L{Window} character.
+    Contains methods shared by both the L{Console} and L{Window} characters.
     """
     __slots__ = ('width', 'height', 'console', '_cursor', '_fgcolor',
                  '_bgcolor', '_bgblend', '_colorLock', '__weakref__', '__dict__')
@@ -362,7 +362,7 @@ class _MetaConsole(object):
         self._cursor = (x, y)
     
     def drawChar(self, x, y, char, fgcolor=(255, 255, 255), bgcolor=(0, 0, 0)):
-        """Draws a single character.
+        """Draws a single characters.
 
         @type x: int
         @param x: X coordinate to draw at.
@@ -370,7 +370,7 @@ class _MetaConsole(object):
         @param y: Y coordinate to draw at.
         
         @type char: int, string, or None
-        @param char: Should be an integer, single character string, or None.
+        @param char: Should be an integer, single characters string, or None.
 
                      You can set the char parameter as None if you only want to change
                      the colors of the tile.
@@ -403,8 +403,8 @@ class _MetaConsole(object):
         written out.  This means you can safely ignore the errors with a
         try... except block if you're fine with partily written strings.
 
-        \\r and \\n are drawn on the console as normal character tiles.  No
-        special encoding is done and any string will translate to the character
+        \\r and \\n are drawn on the console as normal characters tiles.  No
+        special encoding is done and any string will translate to the characters
         table as is.
         
         For a string drawing operation that respects special characters see the
@@ -419,7 +419,7 @@ class _MetaConsole(object):
         @param string: Can be a string or an iterable of numbers.
                        
                        Special characters are ignored and rendered as any other
-                       character.
+                       characters.
         
         @type fgcolor: (r, g, b) or None
         @param fgcolor: For fgcolor and bgcolor you use a 3 items list with
@@ -478,10 +478,10 @@ class _MetaConsole(object):
         @param height: Height of the rectangle.  See width.
         
         @type string: int, string, or None
-        @param string: Should be an integer, single character string, or None.
+        @param string: Should be an integer, single characters string, or None.
 
                        You can set the char parameter as None if you only want
-                       to change the colors of an area.
+                       to change the colors of an areas.
         
         @type fgcolor: (r, g, b) or None
         @param fgcolor: For fgcolor and bgcolor you use a 3 items list with
@@ -505,7 +505,7 @@ class _MetaConsole(object):
         # using ctypes here reduces type converstions later
         grid = itertools.product((ctypes.c_int(x) for x in range(x, x + width)),
                                  (ctypes.c_int(y) for y in range(y, y + height)))
-        # zip the single character in a batch variable
+        # zip the single characters in a batch variable
         batch = zip(grid, itertools.repeat(char, width * height))
         self._setCharBatch(batch, fgcolor, bgcolor, nullChar=(char is None))
 
@@ -527,10 +527,10 @@ class _MetaConsole(object):
         @param height: Height of the rectangle.  See width.
         
         @type string: int, string, or None
-        @param string: Should be an integer, single character string, or None.
+        @param string: Should be an integer, single characters string, or None.
 
                        You can set the char parameter as None if you only want
-                       to change the colors of an area.
+                       to change the colors of an areas.
         
         @type fgcolor: (r, g, b) or None
         @param fgcolor: For fgcolor and bgcolor you use a 3 items list with
@@ -577,7 +577,7 @@ class _MetaConsole(object):
         @param width: Width of the rectangle.
                       
                       Can be None to extend as far as possible to the
-                      bottom right corner of the blit area or can be a negative
+                      bottom right corner of the blit areas or can be a negative
                       number to be sized reltive to the total size of the
                       B{destination} console.
         @type height: int or None
@@ -709,10 +709,10 @@ class _MetaConsole(object):
         coverX, uncoverX = getCover(x, width)
         coverY, uncoverY = getCover(y, height)
         # so at this point we know that coverX and coverY makes a rect that
-        # encases the area that we end up blitting to.  uncoverX/Y makes a
-        # rect in the corner of the uncovered area.  So we need to combine
+        # encases the areas that we end up blitting to.  uncoverX/Y makes a
+        # rect in the corner of the uncovered areas.  So we need to combine
         # the uncoverX/Y with coverY/X to make what's left of the uncovered
-        # area.  Explaining it makes it mush easier to do now.
+        # areas.  Explaining it makes it mush easier to do now.
 
         # But first we need to blit.
         x, width, srcx = getSlide(x, width)
@@ -727,14 +727,14 @@ class _MetaConsole(object):
             self.drawRect(uncoverX[0], uncoverY[0], uncoverX[1], uncoverY[1], 0x20, 0x000000, 0x000000)
 
     def getChar(self, x, y):
-        """Return the character and colors of a tile as (ch, fg, bg)
+        """Return the characters and colors of a tile as (ch, fg, bg)
         
         This method runs very slowly as is not recommended to be called
         frequently.
 
         @rtype: (int, (r, g, b), (r, g, b))
         @returns: Returns a 3-items tuple.  The first items is an integer of the
-                  character at the position (x, y) the second and third are the
+                  characters at the position (x, y) the second and third are the
                   foreground and background colors respectfully.
         """
         raise NotImplementedError('Method here only exists for the docstring')
@@ -746,7 +746,7 @@ class _MetaConsole(object):
         return (0 <= x < self.width) and (0 <= y < self.height)
 
 class Console(_MetaConsole):
-    """Contains character and color data and can be drawn to.
+    """Contains characters and color data and can be drawn to.
 
     The console created by the L{tdl.init} function is the root console and is the
     console that is rendered to the screen with L{flush}.
@@ -864,7 +864,7 @@ class Console(_MetaConsole):
 
     def _setChar(self, x, y, char, fgcolor=None, bgcolor=None, bgblend=1):
         """
-        Sets a character.
+        Sets a characters.
         This is called often and is designed to be as fast as possible.
 
         Because of the need for speed this function will do NO TYPE CHECKING

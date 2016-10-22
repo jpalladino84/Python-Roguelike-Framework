@@ -7,13 +7,13 @@ import json
 from peewee import SqliteDatabase
 
 from settings import DATABASE_NAME
-from area.config import LEVELS
-from area.models import Dungeon, DungeonObject, DungeonLevel
+from areas.config import LEVELS
+from areas.models import Dungeon, DungeonObject, DungeonLevel
 from items.models import Item
 from items.components import Inventory
-from character.models import Character
-from character.components import CharacterClass
-from character.config import PLAYER
+from characters.models import Character
+from characters.components import CharacterClass
+from characters.config import PLAYER
 
 TABLES = [Dungeon, DungeonObject, DungeonLevel, Item, Character, CharacterClass]
 database = SqliteDatabase(DATABASE_NAME)

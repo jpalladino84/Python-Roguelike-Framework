@@ -3,7 +3,7 @@ import math
 
 class Room(object):
     """
-    A rectangle on the area.
+    A rectangle on the areas.
     Used to characterize a room.
     """
     def __init__(self, x, y, w, h):

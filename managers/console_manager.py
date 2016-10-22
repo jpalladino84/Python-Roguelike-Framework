@@ -45,7 +45,7 @@ class ConsoleManager:
         y += 2
         main_menu.print_str('Use Caution as there are Trolls (T)and Orcs (o)', x, y)
         y += 1
-        main_menu.print_str('lurking in this area!', x, y)
+        main_menu.print_str('lurking in this areas!', x, y)
         y += 2
 
         x += 5

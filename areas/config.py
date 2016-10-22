@@ -31,7 +31,7 @@ Example:
 """
 
 from items.config import HEALTH_POTION, CONE_OF_DUNSHIRE
-from character.config import ORC, TROLL
+from characters.config import ORC, TROLL
 
 
 LEVELS = [

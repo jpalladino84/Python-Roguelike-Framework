@@ -3,11 +3,11 @@ import json
 import random
 from collections import deque
 
-from area.area import Area
-from area.level import Level
-from area.room import Room
-from area.tile import Tile
-from character.character import Character
+from areas.area import Area
+from areas.level import Level
+from areas.room import Room
+from areas.tile import Tile
+from characters.character import Character
 from items.item import Item
 
 logger_ = logging.getLogger("generator")
@@ -21,8 +21,9 @@ World Generator, Dungeon Generator, Wilderness Generator.
 
 class DungeonGenerator(object):
     """
-    Takes a level config and outputs a new area maze.
+        Takes a level config and outputs a new areas maze.
     """
+
     dungeon_monsters = []
     dungeon_items = []
     num_rooms = 0
@@ -105,7 +106,7 @@ class DungeonGenerator(object):
 
     def generate(self, level):
         """
-        Generates a new area based the level
+        Generates a new areas based the level
         @param level:
         """
         width = 80

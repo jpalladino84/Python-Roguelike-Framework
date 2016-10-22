@@ -5,8 +5,8 @@ from peewee import SqliteDatabase
 
 import settings
 import tdl
-from character import actions
-from generation.dungeon_generator import DungeonGenerator
+from characters import actions
+from generators.dungeon_generator import DungeonGenerator
 from load import TABLES
 from managers.console_manager import ConsoleManager, CONSOLES
 from tdl import map
@@ -92,7 +92,7 @@ class GameManager(object):
 
     def render_all(self):
         """
-        Render the area, character, items, etc..
+        Render the areas, characters, items, etc..
         """
         console = self.console_manager.main_console
         colors = self.colors
@@ -230,8 +230,8 @@ class GameManager(object):
                         actions.player_move_or_attack(self.player, key_x, key_y, self.maze)
 
                         # TODO: Fix the stairs
-                        # if (self.area.stairs and
-                        #    (self.area.stairs.x, self.area.stairs.y) == (self.player.x, self.player.y)):
+                        # if (self.areas.stairs and
+                        #    (self.areas.stairs.x, self.areas.stairs.y) == (self.player.x, self.player.y)):
                         #     self.next_level()
 
                         # let monsters take their turn
@@ -243,9 +243,9 @@ class GameManager(object):
                     # else:
                     #     if event.keychar.upper() == 'G':
                     #         # pick up an items
-                    #         for object in self.area.objects:  # look for an items in the player's tile
+                    #         for object in self.areas.objects:  # look for an items in the player's tile
                     #             if object.x == self.player.x and object.y == self.player.y and object.items:
-                    #                 is_cone = object.items.pickUp(self.area.objects)
+                    #                 is_cone = object.items.pickUp(self.areas.objects)
                     #                 if is_cone:
                     #                     self.player_wins()
                     #                 else:  # user picked up a health potion
