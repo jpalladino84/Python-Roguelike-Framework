@@ -1,66 +1,43 @@
-import json
-import inspect
+import jsonpickle
 import os
 from components.material import Material, materials
 from components.body import get_humanoid_body_sample
 
 
-class ObjectEncoder(json.JSONEncoder):
-    """
-    Allows more leeway to encode json objects.
-    Taken from http://stackoverflow.com/questions/3768895/how-to-make-a-class-json-serializable
-    """
-    def default(self, obj):
-        if hasattr(obj, "to_json"):
-            return self.default(obj.to_json())
-        elif hasattr(obj, "__dict__"):
-            d = dict(
-                (key, value)
-                for key, value in inspect.getmembers(obj)
-                if not key.startswith("__")
-                and not inspect.isabstract(value)
-                and not inspect.isbuiltin(value)
-                and not inspect.isfunction(value)
-                and not inspect.isgenerator(value)
-                and not inspect.isgeneratorfunction(value)
-                and not inspect.ismethod(value)
-                and not inspect.ismethoddescriptor(value)
-                and not inspect.isroutine(value)
-            )
-            return self.default(d)
-        return obj
-
-
 class JsonTemplateManager(object):
     TEMPLATE_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
     MATERIAL_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'materials.json')
-    BODY_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'bodies.json')
+    BODIES_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'bodies.json')
 
     def __init__(self):
         self.material_templates = []
         self.bodies_templates = []
-        #self._load_templates()
+        self.load_templates()
 
-    def _load_templates(self):
-        self.material_templates = self._load_material_templates()
+    def load_templates(self):
+        self.material_templates = self._load_template_file(self.MATERIAL_FULL_PATH, 'Materials')
+        self.bodies_templates = self._load_template_file(self.BODIES_FULL_PATH, 'Bodies')
 
-    def _load_material_templates(self):
-        if os.path.isfile(self.MATERIAL_FULL_PATH):
-            with open(self.MATERIAL_FULL_PATH, 'r') as material_json_file:
-                return [Material(**material) for material in json.load(material_json_file)]
+    @staticmethod
+    def _load_template_file(full_path, template_name):
+        if os.path.isfile(full_path):
+            with open(full_path, 'r') as open_json_file:
+                return jsonpickle.loads(open_json_file.read())
         else:
-            raise Exception("Materials template file not found at " + self.MATERIAL_FULL_PATH)
+            raise Exception(template_name + " template file not found at " + full_path)
 
-    def save(self):
-        with open(self.MATERIAL_FULL_PATH, 'w') as material_json_file:
-            json.dump(self.material_templates, material_json_file, cls=ObjectEncoder, sort_keys=True)
+    def save_templates(self):
+        self._save_templates_file(self.MATERIAL_FULL_PATH, self.material_templates)
+        self._save_templates_file(self.BODIES_FULL_PATH, self.bodies_templates)
 
-        with open(self.BODY_FULL_PATH, 'w') as body_json_file:
-            json.dump(self.bodies_templates, body_json_file, cls=ObjectEncoder, sort_keys=True)
+    @staticmethod
+    def _save_templates_file(full_path, templates):
+        with open(full_path, 'w') as new_json_file:
+            new_json_file.write(jsonpickle.dumps(templates))
 
 
 if __name__ == '__main__':
     template_manager = JsonTemplateManager()
     template_manager.material_templates = materials
     template_manager.bodies_templates = [get_humanoid_body_sample()]
-    template_manager.save()
+    template_manager.save_templates()
