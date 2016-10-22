@@ -1,6 +1,6 @@
 import jsonpickle
 import os
-from components.material import Material, materials
+from components.material import materials
 from components.body import get_humanoid_body_sample
 
 

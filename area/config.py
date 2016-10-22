@@ -30,7 +30,7 @@ Example:
     }
 """
 
-from item.config import HEALTH_POTION, CONE_OF_DUNSHIRE
+from items.config import HEALTH_POTION, CONE_OF_DUNSHIRE
 from character.config import ORC, TROLL
 
 

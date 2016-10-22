@@ -3,12 +3,20 @@ import json
 import random
 from collections import deque
 
-from area.models import Dungeon, DungeonTile, DungeonRoom, DungeonObject, DungeonLevel
-from character.models import Character
-from item.models import Item
+from area.area import Area
+from area.level import Level
+from area.room import Room
+from area.tile import Tile
+from character.character import Character
+from items.item import Item
 
 logger_ = logging.getLogger("generator")
 logger_.addHandler(logging.StreamHandler())
+
+"""
+We will want to have many generators, as template we could start with
+World Generator, Dungeon Generator, Wilderness Generator.
+"""
 
 
 class DungeonGenerator(object):
@@ -52,7 +60,7 @@ class DungeonGenerator(object):
 
     def place_items_in_rooms(self):
         """
-        Go through each room and drop an item in it. Keep
+        Go through each room and drop an items in it. Keep
         going until there are no more items to place.
         """
         for item in self.dungeon_items:
@@ -75,7 +83,7 @@ class DungeonGenerator(object):
             return tile
 
         if depth > 50:
-            logger_.debug("Could not find appropriate tile to spawn item.")
+            logger_.debug("Could not find appropriate tile to spawn items.")
             return tile
 
         # if we didn't find an empty tile, try again
@@ -239,7 +247,7 @@ class DungeonGenerator(object):
         item.save()
 
 # def place_stairs(self, tile):
-#     TODO: fix this to use new item system
+#     TODO: fix this to use new items system
 #     room = random.choice(rooms[1::])
 #
 #     (x, y) = room.center()
@@ -251,5 +259,5 @@ class DungeonGenerator(object):
 #         self.objects.append(stairs)
 #         util.send_to_back(stairs, self.objects)
 #     else:
-#         # if the spot was blocked find another spot to place the item
+#         # if the spot was blocked find another spot to place the items
 #         self.place_stairs(rooms)

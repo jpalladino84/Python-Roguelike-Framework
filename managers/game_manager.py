@@ -1,15 +1,15 @@
-import json
 import enum
-import tdl
-from tdl import map
+import json
+
 from peewee import SqliteDatabase
 
 import settings
-from load import TABLES
-from area.dungeon_generator import DungeonGenerator
-from managers.console_manager import ConsoleManager, CONSOLES
+import tdl
 from character import actions
-from character import character
+from generation.dungeon_generator import DungeonGenerator
+from load import TABLES
+from managers.console_manager import ConsoleManager, CONSOLES
+from tdl import map
 
 database = SqliteDatabase(settings.DATABASE_NAME)
 
@@ -242,10 +242,10 @@ class GameManager(object):
                     # TODO: Fix pick up and inventory menu functions
                     # else:
                     #     if event.keychar.upper() == 'G':
-                    #         # pick up an item
-                    #         for object in self.area.objects:  # look for an item in the player's tile
-                    #             if object.x == self.player.x and object.y == self.player.y and object.item:
-                    #                 is_cone = object.item.pickUp(self.area.objects)
+                    #         # pick up an items
+                    #         for object in self.area.objects:  # look for an items in the player's tile
+                    #             if object.x == self.player.x and object.y == self.player.y and object.items:
+                    #                 is_cone = object.items.pickUp(self.area.objects)
                     #                 if is_cone:
                     #                     self.player_wins()
                     #                 else:  # user picked up a health potion

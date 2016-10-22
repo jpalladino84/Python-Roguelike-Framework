@@ -112,7 +112,7 @@ def _verify_colors(*colors):
     Raise an assertion error if the parameters can not be converted into colors.
     """
     for color in colors:
-        assert _iscolor(color), 'a color must be a 3 item tuple, web format, or None, received %s' % repr(color)
+        assert _iscolor(color), 'a color must be a 3 items tuple, web format, or None, received %s' % repr(color)
     return True
 
 def _iscolor(color):
@@ -376,7 +376,7 @@ class _MetaConsole(object):
                      the colors of the tile.
 
         @type fgcolor: (r, g, b) or None
-        @param fgcolor: For fgcolor and bgcolor you use a 3 item list with
+        @param fgcolor: For fgcolor and bgcolor you use a 3 items list with
                         integers ranging 0-255 or None.
                         
                         None will keep the current color at this position unchanged.
@@ -422,7 +422,7 @@ class _MetaConsole(object):
                        character.
         
         @type fgcolor: (r, g, b) or None
-        @param fgcolor: For fgcolor and bgcolor you use a 3 item list with
+        @param fgcolor: For fgcolor and bgcolor you use a 3 items list with
                         integers ranging 0-255 or None.
                         
                         None will keep the current color at this position unchanged.
@@ -484,7 +484,7 @@ class _MetaConsole(object):
                        to change the colors of an area.
         
         @type fgcolor: (r, g, b) or None
-        @param fgcolor: For fgcolor and bgcolor you use a 3 item list with
+        @param fgcolor: For fgcolor and bgcolor you use a 3 items list with
                         integers ranging 0-255 or None.
                         
                         None will keep the current color at this position unchanged.
@@ -533,7 +533,7 @@ class _MetaConsole(object):
                        to change the colors of an area.
         
         @type fgcolor: (r, g, b) or None
-        @param fgcolor: For fgcolor and bgcolor you use a 3 item list with
+        @param fgcolor: For fgcolor and bgcolor you use a 3 items list with
                         integers ranging 0-255 or None.
                         
                         None will keep the current color at this position unchanged.
@@ -733,7 +733,7 @@ class _MetaConsole(object):
         frequently.
 
         @rtype: (int, (r, g, b), (r, g, b))
-        @returns: Returns a 3-item tuple.  The first item is an integer of the
+        @returns: Returns a 3-items tuple.  The first items is an integer of the
                   character at the position (x, y) the second and third are the
                   foreground and background colors respectfully.
         """
@@ -849,7 +849,7 @@ class Console(_MetaConsole):
         @type fgcolor: (r, g, b)
         @param fgcolor: Foreground color.
         
-                        Must be a 3-item list with integers that range 0-255.
+                        Must be a 3-items list with integers that range 0-255.
                         
                         Unlike most other operations you cannot use None here.
         @type bgcolor: (r, g, b)
@@ -982,7 +982,7 @@ class Window(_MetaConsole):
         @type fgcolor: (r, g, b)
         @param fgcolor: Foreground color.
         
-                        Must be a 3-item list with integers that range 0-255.
+                        Must be a 3-items list with integers that range 0-255.
                         
                         Unlike most other operations you can not use None here.
         @type bgcolor: (r, g, b)
