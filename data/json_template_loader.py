@@ -2,6 +2,7 @@ import json
 import inspect
 import os
 from components.material import Material, materials
+from components.body import get_humanoid_body_sample
 
 
 class ObjectEncoder(json.JSONEncoder):
@@ -33,9 +34,11 @@ class ObjectEncoder(json.JSONEncoder):
 class JsonTemplateManager(object):
     TEMPLATE_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
     MATERIAL_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'materials.json')
+    BODY_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'bodies.json')
 
     def __init__(self):
         self.material_templates = []
+        self.bodies_templates = []
         #self._load_templates()
 
     def _load_templates(self):
@@ -52,7 +55,12 @@ class JsonTemplateManager(object):
         with open(self.MATERIAL_FULL_PATH, 'w') as material_json_file:
             json.dump(self.material_templates, material_json_file, cls=ObjectEncoder, sort_keys=True)
 
+        with open(self.BODY_FULL_PATH, 'w') as body_json_file:
+            json.dump(self.bodies_templates, body_json_file, cls=ObjectEncoder, sort_keys=True)
+
+
 if __name__ == '__main__':
     template_manager = JsonTemplateManager()
     template_manager.material_templates = materials
+    template_manager.bodies_templates = [get_humanoid_body_sample()]
     template_manager.save()
