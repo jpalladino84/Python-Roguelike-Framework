@@ -1,7 +1,7 @@
-import enum
+from enum import Enum
 
 
-class PhysicalAbilities(enum):
+class PhysicalAbilities(Enum):
     GRASP = 0
     STAND = 1
     SEE = 2
@@ -9,4 +9,6 @@ class PhysicalAbilities(enum):
     BITE = 4
     PUNCH = 5
     KICK = 6
-
+    EAT = 7
+    THINK = 8
+    MOVE = 9

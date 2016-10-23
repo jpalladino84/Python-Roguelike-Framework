@@ -1,5 +1,6 @@
 class Character(object):
-    def __init__(self, name, character_class, character_race, stats, display, location, inventory, body):
+    def __init__(self, uid, name, character_class, character_race, stats, display, location, inventory, body):
+        self.uid = uid
         self.name = name
         self.character_class = character_class
         self.character_race = character_race
