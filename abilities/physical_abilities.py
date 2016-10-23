@@ -12,3 +12,5 @@ class PhysicalAbilities(Enum):
     EAT = 7
     THINK = 8
     MOVE = 9
+    LIVE = 10
+    BREATHE = 11

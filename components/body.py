@@ -1,55 +1,41 @@
-from collections import OrderedDict
 from abilities.physical_abilities import PhysicalAbilities
+import logging
+
+
+logger_ = logging.getLogger()
 
 
 class Body(object):
     """
     Height is in feet, Weight in pounds
     """
-    def __init__(self, uid, name="", height=0, weight=0, central_bodypart=None, outer_material_uid=None,
-                 internal_material_uid=None, structural_material_uid=None, internal_organs_uid=None, blood_type=None):
+    def __init__(self, uid, bodypart_tree, name="", height=0, weight=0, outer_material_uid=None,
+                 internal_material_uid=None, structural_material_uid=None, blood_uid=None):
 
         self.uid = uid
+        self.bodypart_tree = bodypart_tree
         self.name = name
         self.height = height
         self.weight = weight
-        self.central_bodypart = central_bodypart
         self.outer_material_uid = outer_material_uid
         self.inner_material_uid = internal_material_uid
         self.structural_material_uid = structural_material_uid
-        self.blood_type = blood_type
-        if internal_organs_uid:
-            self.internal_organs_uid = internal_organs_uid
-        else:
-            self.internal_organs_uid = []
+        self.blood_uid = blood_uid
 
     def __str__(self):
         return "Body({})".format(self.name)
 
-    def to_json(self):
-        return OrderedDict(uid=self.uid, name=self.uid, height=self.height, weight=self.weight,
-                           outer_material_uid=self.outer_material_uid,
-                           inner_material_uid=self.inner_material_uid,
-                           structural_material_uid=self.structural_material_uid,
-                           internal_organs_uid=self.internal_organs_uid,
-                           central_bodypart=self.central_bodypart.to_json())
-
 
 class BodyPart(object):
-    def __init__(self, name, parent_body_part=None, physical_abilities=None, internal=False, relative_size=1):
+    def __init__(self, uid, physical_abilities=None, relative_size=1):
         """
-        :param name: Name of the body part
-        :param parent_body_part: Parent of the body part
+        :param uid: ID Name of the body part
         :param physical_abilities: Dictionary with abilities granted if any with its relative power as value
-        :param internal: If the body part is inside it's parent.
         :param relative_size: Percentage of body size, does not have to add up to 100
         """
-        self.name = name
+        self.uid = uid
         self.parent_body_part = None
-        self.internal = internal
         self.relative_size = relative_size
-        if parent_body_part:
-            self.connect(parent_body_part)
         self.children_body_parts = []
         if physical_abilities:
             self.physical_abilities = physical_abilities
@@ -64,9 +50,43 @@ class BodyPart(object):
         if child_body_part not in self.children_body_parts:
             self.children_body_parts.append(child_body_part)
 
-    def to_json(self):
-        return OrderedDict(name=self.name, children_body_parts=[
-            body_part.to_json() for body_part in self.children_body_parts])
+
+class BodypartTree(object):
+    CONNECTION_TYPE_CENTER = 0
+    CONNECTION_TYPE_ATTACHED = 1
+    CONNECTION_TYPE_INSERTED = 2
+
+    def __init__(self, central_node_name, central_body_part_uid):
+        self.nodes = [BodypartTreeNode(central_node_name, central_body_part_uid, self.CONNECTION_TYPE_CENTER)]
+
+    def attach(self, parent_node_name, children_node_name, children_body_part_uid):
+        self._bind_new_child_to_parent(
+            parent_node_name, children_node_name, children_body_part_uid, self.CONNECTION_TYPE_ATTACHED)
+
+    def insert(self, parent_node_name, children_node_name, children_body_part_uid):
+        self._bind_new_child_to_parent(
+            parent_node_name, children_node_name, children_body_part_uid, self.CONNECTION_TYPE_INSERTED)
+
+    def _bind_new_child_to_parent(self, parent_node_name, children_node_name, children_body_part_uid, connection_type):
+        parent_node = next((node for node in self.nodes if node.name == parent_node_name), None)
+        if parent_node:
+            child_bodypart_node = BodypartTreeNode(children_node_name, children_body_part_uid, connection_type)
+            parent_node.add_child_node(child_bodypart_node)
+            self.nodes.append(child_bodypart_node)
+        else:
+            logger_.error("Tried to bind bodypart {} to non existing parent {}.".format(children_node_name,
+                                                                                        parent_node_name))
+
+
+class BodypartTreeNode(object):
+    def __init__(self, name, body_part_uid, connection_type):
+        self.name = name
+        self.body_part_uid = body_part_uid
+        self.connection_type = connection_type
+        self.children_nodes = []
+
+    def add_child_node(self, child_node):
+        self.children_nodes.append(child_node)
 
 
 class Blood(object):
@@ -78,36 +98,51 @@ class Blood(object):
         self.name = name
 
 
+def get_body_parts_sample():
+    return [
+        BodyPart('humanoid_head', relative_size=25),
+        BodyPart('humanoid_eye', {PhysicalAbilities.SEE: 1}, relative_size=5),
+        BodyPart('humanoid_ear', {PhysicalAbilities.HEAR: 1}, relative_size=5),
+        BodyPart('humanoid_mouth', {PhysicalAbilities.EAT: 1}, relative_size=5),
+        BodyPart('humanoid_brain', {PhysicalAbilities.THINK: 1}, relative_size=15),
+        BodyPart('humanoid_torso', relative_size=50),
+        BodyPart('humanoid_heart', {PhysicalAbilities.LIVE: 1}, relative_size=25),
+        BodyPart('humanoid_lungs', {PhysicalAbilities.BREATHE: 1}, relative_size=25),
+        BodyPart('humanoid_arm', relative_size=25),
+        BodyPart('humanoid_hand', {PhysicalAbilities.GRASP: 1}, relative_size=10),
+        BodyPart('humanoid_leg', {PhysicalAbilities.STAND: 1,
+                                  PhysicalAbilities.MOVE: 1}, relative_size=25),
+        BodyPart('humanoid_foot', {PhysicalAbilities.STAND: 1,
+                                   PhysicalAbilities.MOVE: 1}, relative_size=10)
+    ]
+
+
 def get_humanoid_body_sample():
-    humanoid_body = Body('humanoid', 'Humanoid', 5, 150)
+    humanoid_tree = BodypartTree('torso', 'humanoid_torso')
+    humanoid_tree.insert('torso', 'heart', 'humanoid_heart')
+    humanoid_tree.insert('torso', 'lungs', 'humanoid_lungs')
+    humanoid_tree.attach('torso', 'head', 'humanoid_head')
+    humanoid_tree.attach('head', 'left eye', 'humanoid_eye')
+    humanoid_tree.attach('head', 'right eye', 'humanoid_eye')
+    humanoid_tree.attach('head', 'left ear', 'humanoid_ear')
+    humanoid_tree.attach('head', 'right ear', 'humanoid_ear')
+    humanoid_tree.attach('head', 'mouth', 'humanoid_mouth')
+    humanoid_tree.insert('head', 'brain', 'humanoid_brain')
+    humanoid_tree.attach('torso', 'left arm', 'humanoid_arm')
+    humanoid_tree.attach('left arm', 'left hand', 'humanoid_hand')
+    humanoid_tree.attach('torso', 'right arm', 'humanoid_arm')
+    humanoid_tree.attach('right arm', 'right hand', 'humanoid_hand')
+    humanoid_tree.attach('torso', 'left leg', 'humanoid_leg')
+    humanoid_tree.attach('left leg', 'left foot', 'humanoid_foot')
+    humanoid_tree.attach('torso', 'right leg', 'humanoid_leg')
+    humanoid_tree.attach('right leg', 'right foot', 'humanoid_foot')
 
-    torso_body_part = BodyPart('Torso', relative_size=50)
-    head = BodyPart('Head', torso_body_part, relative_size=25)
-    left_eye = BodyPart('Left Eye', head, {PhysicalAbilities.SEE: 1}, relative_size=5)
-    right_eye = BodyPart('Right Eye', head, {PhysicalAbilities.SEE: 1}, relative_size=5)
-    left_ear = BodyPart('Left Ear', head, {PhysicalAbilities.HEAR: 1}, relative_size=5)
-    right_ear = BodyPart('Right Ear', head, {PhysicalAbilities.HEAR: 1}, relative_size=5)
-    mouth = BodyPart('Mouth', head, {PhysicalAbilities.EAT: 1}, relative_size=5)
-    brain = BodyPart('Brain', head, {PhysicalAbilities.THINK: 1}, internal=True, relative_size=15)
-
-    left_arm = BodyPart('Left Arm', torso_body_part, relative_size=25)
-    right_arm = BodyPart('Right Arm', torso_body_part, relative_size=25)
-    left_hand = BodyPart('Left Hand', left_arm, {PhysicalAbilities.GRASP: 1}, relative_size=10)
-    right_hand = BodyPart('Right Hand', right_arm, {PhysicalAbilities.GRASP: 1}, relative_size=10)
-    left_leg = BodyPart('Left Leg', torso_body_part,  {PhysicalAbilities.STAND: 1,
-                                                       PhysicalAbilities.MOVE: 1}, relative_size=25)
-    right_leg = BodyPart('Right Leg', torso_body_part,  {PhysicalAbilities.STAND: 1,
-                                                         PhysicalAbilities.MOVE: 1}, relative_size=25)
-    left_foot = BodyPart('Left Foot', left_leg, {PhysicalAbilities.STAND: 1,
-                                                 PhysicalAbilities.MOVE: 1}, relative_size=10)
-    right_foot = BodyPart('Right Foot', right_leg, {PhysicalAbilities.STAND: 1,
-                                                    PhysicalAbilities.MOVE: 1}, relative_size=10)
-
-    humanoid_body.central_bodypart = torso_body_part
+    humanoid_body = Body('humanoid', humanoid_tree, 'Humanoid', 5, 150)
     humanoid_body.inner_material = 'flesh'
     humanoid_body.outer_material = 'skin'
     humanoid_body.structural_material = 'bone'
-    humanoid_body.internal_organs_uid = ['humanoid_heart']
-    humanoid_body.blood_type = Blood('humanoid_blood', 'humanoid_blood')
+    humanoid_body.blood_type = 'humanoid_blood'
 
     return humanoid_body
+
+
