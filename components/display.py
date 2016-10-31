@@ -1,5 +1,8 @@
 class Display(object):
     def __init__(self):
-        self.fgcolor = None
-        self.bgcolor = None
-        self.ascii_char = None
+        self.foreground_color = None
+        self.background_color = None
+        self.ascii_character = None
+
+    def get_draw_info(self):
+        return dict(char=str(self.ascii_character), fgcolor=self.foreground_color, bgcolor=self.background_color)

@@ -1,8 +1,8 @@
 class Tile(object):
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.is_blocked = False
+    def __init__(self, x, y, is_blocked):
+        self.x = x
+        self.y = y
+        self.is_blocked = is_blocked
         self.is_explored = False
         self.is_ground = False
         self.contains_object = None

@@ -32,7 +32,7 @@ class DungeonGenerator(object):
     maze = []
     monster_rooms = []
 
-    def _create_room(self, room):
+    def _create_room(self, room, player):
         # go through the tiles in the rectangle and make them passable
         for x in range(room.x1 + 1, room.x2):
             for y in range(room.y1 + 1, room.y2):
@@ -42,10 +42,11 @@ class DungeonGenerator(object):
                 tile.is_ground = True
 
         # place the player in the center of the first room
+        # TODO We should move this out
         if self.num_rooms == 0:
             x, y = room.center()
             tile = self.maze[x][y]
-            self.place_player(tile)
+            self.place_player(tile, player)
         else:
             self.monster_rooms.append(room)
 
@@ -104,7 +105,7 @@ class DungeonGenerator(object):
             self.maze[x][y].block_sight = False
             self.maze[x][y].is_ground = True
 
-    def generate(self, level):
+    def generate(self, level, player):
         """
         Generates a new areas based the level
         @param level:
@@ -117,23 +118,12 @@ class DungeonGenerator(object):
 
         self.level = level
         self.is_final_level = level.is_final_level
-        self.dungeon_monsters = deque([m for m in
-                                       Character
-                                      .select()
-                                      .join(DungeonLevel)
-                                      .where(
-                                           (DungeonLevel.level_id == level.level_id) &
-                                           (Character.name != 'player'))
-                                       ])
+        # TODO The dungeon's instances are spawned and loaded here.
+        self.dungeon_monsters = deque()
+        self.dungeon_items = deque()
 
-        self.dungeon_items = deque([item for item in Item
-                                   .select()
-                                   .join(DungeonLevel)
-                                   .where((DungeonLevel.level_id == level.level_id))])
-
-        # self.max_num_items = level.max_num_items
         # fill map with "blocked" tiles
-        self.maze = [[DungeonTile(x, y, True) for y in range(height)] for x in range(width)]
+        self.maze = [[Tile(x, y, True) for y in range(height)] for x in range(width)]
 
         rooms = []
 
@@ -141,12 +131,13 @@ class DungeonGenerator(object):
             # random width and height
             w = random.randint(min_room_size, max_room_size)
             h = random.randint(min_room_size, max_room_size)
+
             # random position without going out of the boundaries of the map
             x = random.randint(0, width - w - 1)
             y = random.randint(0, height - h - 1)
 
             # "DungeonRoom" class makes rectangles easier to work with
-            new_room = DungeonRoom(x, y, w, h)
+            new_room = Room(x, y, w, h)
 
             # run through the other rooms and see if they intersect with this one
             failed = False
@@ -159,7 +150,7 @@ class DungeonGenerator(object):
                 # this means there are no intersections, so this room is valid
 
                 # "paint" it to the map's tiles
-                self._create_room(new_room)
+                self._create_room(new_room, player)
 
                 # center coordinates of new room, will be useful later
                 new_x, new_y = new_room.center()
@@ -185,80 +176,33 @@ class DungeonGenerator(object):
 
         self.place_monsters_in_rooms()
         self.place_items_in_rooms()
-        # if not level.final_level:
-        #     self.place_stairs(rooms)
+        if not level.final_level:
+            self.place_stairs(rooms)
 
         # connect them with a tunnel
         self._create_h_tunnel(25, 55, 23)
 
-        serialized_maze = json.dumps([
-            [
-                {
-                    'x': tile.x,
-                    'y': tile.y,
-                    'is_blocked': tile.is_blocked,
-                    'is_explored': tile.is_explored,
-                    'is_ground': tile.is_ground,
-                    'contains_object': tile.contains_object,
-                    'block_sight': tile.block_sight
-                } for tile in row
-            ] for row in self.maze
-        ])
-
-        new_dungeon = Dungeon(level=level, width=width, height=height, maze=serialized_maze)
-        new_dungeon.save()
-
     def place_monster(self, tile):
-
-        try:
             monster = self.dungeon_monsters.popleft()
-            new_dungeon_object = DungeonObject(
-                coords=json.dumps((tile.x, tile.y)),
-                blocks=True
-            )
-            new_dungeon_object.save()
-            monster.dungeon_object = new_dungeon_object
-            monster.save()
+            monster.location.local_x = tile.X
+            monster.location.local_y = tile.y
             tile.contains_object = True
-        except IndexError:
-            pass
 
-    def place_player(self, tile):
+    def place_player(self, tile, player):
         """
         Place the player in the maze.
         """
-        dungeon_object = DungeonObject(
-            coords=json.dumps((tile.x, tile.y)),
-            blocks=True
-        )
-
-        player = Character.get(Character.name == 'player')
-        player.level = self.level
-        player.dungeon_object = dungeon_object
-
-        dungeon_object.save()
-        player.save()
-
+        player.location.local_x = tile.x
+        player.location.local_y = tile.y
+        player.location.level = self.level
         tile.contains_object = True
 
     def place_item(self, tile, item):
-        item.dungeon_object = DungeonObject(coords=json.dumps((tile.x, tile.y)))
+        # TODO This sort of assignment should use a method and set all required things like global x, area, etc
+        item.location.local_x = tile.x
+        item.location.local_y = tile.y
         item.level = self.level
-        item.dungeon_object.save()
-        item.save()
 
-# def place_stairs(self, tile):
-#     TODO: fix this to use new items system
-#     room = random.choice(rooms[1::])
-#
-#     (x, y) = room.center()
-#
-#     if not util.is_blocked(x, y, self):
-#         stairs = DungeonObject(x, y, '>', 'Stairs')
-#
-#         self.stairs = stairs
-#         self.objects.append(stairs)
-#         util.send_to_back(stairs, self.objects)
-#     else:
-#         # if the spot was blocked find another spot to place the items
-#         self.place_stairs(rooms)
+    def place_stairs(self, tile):
+        # TODO Stairs should not be an item but a passable tile.
+        pass

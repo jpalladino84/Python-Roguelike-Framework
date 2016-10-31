@@ -9,3 +9,11 @@ class Character(object):
         self.location = location
         self.inventory = inventory
         self.body = body
+
+    def is_dead(self):
+        """
+        This verifies if the character is really dead, whether living or undead.
+        :return: bool
+        """
+        # TODO Make this
+        pass

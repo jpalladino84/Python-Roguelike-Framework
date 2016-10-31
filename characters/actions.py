@@ -8,10 +8,8 @@ Any action that can be taken by the player or a npc (e.g. monster) is defined he
 import json
 import math
 
-from . import models
 from settings import Colors
 from managers.console_manager import CONSOLES
-from areas.models import DungeonObject
 
 
 def attack(attacker, target, maze):
@@ -31,7 +29,7 @@ def player_death(player):
 
     # for added effect, transform the player into a corpse!
     player.ascii_char = '%'
-    player.fgcolor = json.dumps(Colors.BLOOD_RED)
+    player.display_foreground_color = Colors.BLOOD_RED
     player.save()
 
 
@@ -40,7 +38,7 @@ def monster_death(monster):
     # attacked and doesn't move
     CONSOLES['action_log'].printStr('{} has died.\n\n'.format(monster.name))
     monster.ascii_char = '%'
-    monster.fgcolor = json.dumps(Colors.BLOOD_RED)
+    monster.display.foreground_color = Colors.BLOOD_RED
     monster.blocks = False
     monster.character_state = 'dead'
     monster.name = 'remains of ' + monster.name
