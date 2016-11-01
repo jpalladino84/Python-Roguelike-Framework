@@ -1,5 +1,8 @@
-import enum
-
+from enum import Enum
+from components.stats import CharacterStats
+from components.location import Location
+from components.inventory import Inventory
+from components.display import Display
 import settings
 import tdl
 from characters import actions
@@ -10,7 +13,7 @@ from managers.console_manager import ConsoleManager, CONSOLES
 from tdl import map
 
 
-class GameState(enum):
+class GameState(Enum):
     PLAYING = 0
     ENDED = 1
 
@@ -59,20 +62,22 @@ class GameManager(object):
         self.init_dungeon(level)
 
     def init_dungeon(self, level):
-        self.dungeon_generator.generate(level)
         # TODO The player must be built and retrieved here.
-        self.player = Character("player", "player", None, None, None, None, None, None, None)
-        self.maze = self.dungeon.maze
+        self.player = Character("player", "player", None, None,
+                                CharacterStats(), Display(), Location(), Inventory(), None)
+        self.dungeon = self.dungeon_generator
+        self.dungeon_generator.generate(level, self.player)
+        self.maze = self.dungeon_generator.maze
 
     def player_wins(self):
         # the game ended
         self.game_state = GameState.ENDED
 
     def render_gui(self):
-        CONSOLES['status'].drawStr(0, 2, "Health: {}\n\n".format(int(self.player.character_class.hp)))
-        CONSOLES['status'].drawStr(0, 5, "Attack Power: {}\n\n".format(self.player.character_class.attack))
-        CONSOLES['status'].drawStr(0, 8, "Defense: {}\n\n".format(self.player.character_class.defense))
-        CONSOLES['status'].drawStr(0, 11, "Speed: {}\n\n".format(self.player.character_class.speed))
+        CONSOLES['status'].drawStr(0, 2, "Health: {}\n\n".format(int(self.player.get_health())))
+        CONSOLES['status'].drawStr(0, 5, "Attack Power: {}\n\n".format(self.player.get_attack()))
+        CONSOLES['status'].drawStr(0, 8, "Defense: {}\n\n".format(self.player.get_defense()))
+        CONSOLES['status'].drawStr(0, 11, "Speed: {}\n\n".format(self.player.get_speed()))
 
         self.console_manager.render_console(CONSOLES['action_log'], 0, 45)
         self.console_manager.render_console(CONSOLES['status'], 41, 45)
@@ -99,7 +104,8 @@ class GameManager(object):
                     elif ground:
                         console.drawChar(x, y, '.', fgcolor=colors['dark_ground'])
 
-        player_x, player_y = self.player.location.coords
+        player_x = self.player.location.local_x
+        player_y = self.player.location.local_y
         self.player.fov = map.quickFOV(player_x, player_y, self.is_transparent, 'basic')
         for x, y in self.player.fov:
             if self.maze[x][y].is_blocked:
@@ -126,7 +132,7 @@ class GameManager(object):
                 console.drawChar(x, y, **monster.display.get_draw_info())
 
         # draw player
-        console.drawChar(player_x, player_y, self.player.display.get_draw_info())
+        console.drawChar(player_x, player_y, **self.player.display.get_draw_info())
 
     def is_transparent(self, x, y):
         """

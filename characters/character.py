@@ -17,3 +17,19 @@ class Character(object):
         """
         # TODO Make this
         pass
+
+    def get_attack(self):
+        # TODO Figure out better ways to calculate this
+        return self.stats.strength
+
+    def get_defense(self):
+        # TODO Figure out better ways to calculate this
+        return self.stats.dexterity
+
+    def get_health(self):
+        # TODO Figure out better ways to calculate this
+        return self.stats.health
+
+    def get_speed(self):
+        # TODO Figure out better ways to calculate this
+        return self.stats.dexterity

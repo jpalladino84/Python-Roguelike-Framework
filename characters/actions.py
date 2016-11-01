@@ -110,21 +110,24 @@ def player_move_or_attack(player, dx, dy, maze):
     whatever is in your way.
     """
     # the coordinates the player is moving to/attacking
-    x, y = json.loads(player.dungeon_object.coords)
+    x = player.location.local_x
+    y = player.location.local_y
     new_x = x + dx
     new_y = y + dy
     new_tile = maze[new_x][new_y]
 
     # try to find an attack-able object there
     if new_tile.contains_object:
-        tile_coords = json.dumps((new_tile.x, new_tile.y))
+        tile_coords = (new_tile.x, new_tile.y)
         try:
-            monster = (models.Character.select().join(DungeonObject).where(
-                DungeonObject.coords == tile_coords
-            ).get())
-            CONSOLES['action_log'].printStr('Player attacks {}...\n\n'.format(monster.name))
-            attack(player, monster, maze)
-        except models.Character.DoesNotExist:
+            pass
+            # TODO Seek Monster here
+            # monster = (models.Character.select().join(DungeonObject).where(
+            #     DungeonObject.coords == tile_coords
+            # ).get())
+            # CONSOLES['action_log'].printStr('Player attacks {}...\n\n'.format(monster.name))
+            # attack(player, monster, maze)
+        except:
             pass
     else:
         move(player, dx, dy, maze)

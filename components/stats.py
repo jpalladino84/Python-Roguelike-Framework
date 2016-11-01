@@ -3,6 +3,12 @@ class Stat(object):
         self.current = current
         self.max = max
 
+    def __str__(self):
+        return str(self.current)
+
+    def __int__(self):
+        return int(self.current)
+
     def modify_current(self, value):
         self.current += value
 

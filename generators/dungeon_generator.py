@@ -110,14 +110,18 @@ class DungeonGenerator(object):
         Generates a new areas based the level
         @param level:
         """
+
         width = 80
         height = 45
+        self.width = width
+        self.height = height
         max_rooms = level.max_rooms
         max_room_size = level.max_room_size
         min_room_size = level.min_room_size
 
         self.level = level
-        self.is_final_level = level.is_final_level
+        # TODO a Final Level does not always happen, must be configurable
+        self.is_final_level = False
         # TODO The dungeon's instances are spawned and loaded here.
         self.dungeon_monsters = deque()
         self.dungeon_items = deque()
@@ -176,8 +180,7 @@ class DungeonGenerator(object):
 
         self.place_monsters_in_rooms()
         self.place_items_in_rooms()
-        if not level.final_level:
-            self.place_stairs(rooms)
+        self.place_stairs(rooms)
 
         # connect them with a tunnel
         self._create_h_tunnel(25, 55, 23)
