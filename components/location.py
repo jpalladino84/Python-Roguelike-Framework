@@ -7,3 +7,6 @@ class Location(object):
         self.global_y = 0
         self.area = None
         self.level = None
+
+    def get_local_coords(self):
+        return self.local_x, self.local_y

@@ -58,6 +58,10 @@ class GameManager(object):
     def new_game(self):
         # TODO This should prepare the first level
         level = Level()
+        level.name = "DEFAULT"
+        level.min_room_size = 1
+        level.max_room_size = 10
+        level.max_rooms = 1
         tdl.setTitle(level.name)
         self.init_dungeon(level)
 

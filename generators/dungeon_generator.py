@@ -142,11 +142,12 @@ class DungeonGenerator(object):
 
             # "DungeonRoom" class makes rectangles easier to work with
             new_room = Room(x, y, w, h)
+            rooms.append(new_room)
 
             # run through the other rooms and see if they intersect with this one
             failed = False
             for other_room in rooms:
-                if new_room.intersect(other_room):
+                if other_room is not new_room and new_room.intersect(other_room):
                     failed = True
                     break
 
