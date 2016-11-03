@@ -30,8 +30,8 @@ Example:
     }
 """
 
-from item.config import HEALTH_POTION, CONE_OF_DUNSHIRE
-from character.config import ORC, TROLL
+from items.config import HEALTH_POTION, CONE_OF_DUNSHIRE
+from characters.config import ORC, TROLL
 
 
 LEVELS = [

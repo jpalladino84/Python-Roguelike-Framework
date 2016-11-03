@@ -111,11 +111,11 @@ class KeyEvent(Event):
         'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',
         'NUMLOCK', 'SCROLLLOCK', 'SPACE', 'CHAR'
         
-        For the actual character instead of 'CHAR' use L{keychar}.
+        For the actual characters instead of 'CHAR' use L{keychar}.
         @type: string"""
         char = char if isinstance(char, str) else char.decode()
         self.char = char.replace('\x00', '') # change null to empty string
-        """A single character string of the letter or symbol pressed.
+        """A single characters string of the letter or symbol pressed.
         
         Special characters like delete and return are not cross-platform.
         L{key} or L{keychar} should be used instead for special keys.
