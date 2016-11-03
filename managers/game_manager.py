@@ -1,19 +1,21 @@
-import json
-
-import tdl
-from tdl import map
-from peewee import SqliteDatabase
-
+from enum import Enum
+from components.stats import CharacterStats
+from components.location import Location
+from components.inventory import Inventory
+from components.display import Display
 import settings
-from load import TABLES
-from dungeon.models import DungeonLevel, Dungeon, DungeonTile
-from dungeon.generator import DungeonGenerator
+import tdl
+from characters import actions
+from characters.character import Character
+from generators.dungeon_generator import DungeonGenerator
+from areas.level import Level
 from managers.console_manager import ConsoleManager, CONSOLES
-from character import actions
-from character.models import Character
-from item.models import Item
+from tdl import map
 
-database = SqliteDatabase(settings.DATABASE_NAME)
+
+class GameState(Enum):
+    PLAYING = 0
+    ENDED = 1
 
 
 class GameManager(object):
@@ -22,7 +24,8 @@ class GameManager(object):
 
     Admittedly this is a bit of a mess and will need to be cleaned up.
     """
-    game_state = 'playing'
+    game_state = GameState.PLAYING
+
     player_action = None
     dungeon = None
     maze = None
@@ -46,49 +49,46 @@ class GameManager(object):
         key_event = tdl.event.keyWait()
         if key_event.keychar.upper() == 'A':
             self.new_game()
+            # TODO Before playing, we need to LOAD game data.
             self.play_game()
         elif key_event.keychar.upper() == 'B':
             # Halt the script using SystemExit
-            database.connect()
-            database.truncate_tables(TABLES)
-            database.drop_tables(TABLES)
             raise SystemExit('The window has been closed.')
 
     def new_game(self):
-        level = DungeonLevel.get(level_id=1)
-        tdl.setTitle(level.level_name)
+        # TODO This should prepare the first level
+        level = Level()
+        level.name = "DEFAULT"
+        level.min_room_size = 1
+        level.max_room_size = 10
+        level.max_rooms = 1
+        tdl.setTitle(level.name)
         self.init_dungeon(level)
 
     def init_dungeon(self, level):
-        self.dungeon_generator.generate(level)
-        self.dungeon = (Dungeon.select().join(DungeonLevel).where(DungeonLevel.level_id == level.level_id).get())
-        self.player = Character.get(Character.name == 'player')
-        self.maze = [[DungeonTile(
-            tile_dict['x'],
-            tile_dict['y'],
-            tile_dict['is_blocked'],
-            is_explored=tile_dict['is_explored'],
-            is_ground=tile_dict['is_ground'],
-            contains_object=tile_dict['contains_object'],
-            block_sight=tile_dict['block_sight']
-        ) for tile_dict in row] for row in json.loads(self.dungeon.maze)]
+        # TODO The player must be built and retrieved here.
+        self.player = Character("player", "player", None, None,
+                                CharacterStats(), Display(), Location(), Inventory(), None)
+        self.dungeon = self.dungeon_generator
+        self.dungeon_generator.generate(level, self.player)
+        self.maze = self.dungeon_generator.maze
 
     def player_wins(self):
         # the game ended
-        self.game_state = 'done'
+        self.game_state = GameState.ENDED
 
     def render_gui(self):
-        CONSOLES['status'].drawStr(0, 2, "Health: {}\n\n".format(int(self.player.character_class.hp)))
-        CONSOLES['status'].drawStr(0, 5, "Attack Power: {}\n\n".format(self.player.character_class.attack))
-        CONSOLES['status'].drawStr(0, 8, "Defense: {}\n\n".format(self.player.character_class.defense))
-        CONSOLES['status'].drawStr(0, 11, "Speed: {}\n\n".format(self.player.character_class.speed))
+        CONSOLES['status'].drawStr(0, 2, "Health: {}\n\n".format(int(self.player.get_health())))
+        CONSOLES['status'].drawStr(0, 5, "Attack Power: {}\n\n".format(self.player.get_attack()))
+        CONSOLES['status'].drawStr(0, 8, "Defense: {}\n\n".format(self.player.get_defense()))
+        CONSOLES['status'].drawStr(0, 11, "Speed: {}\n\n".format(self.player.get_speed()))
 
         self.console_manager.render_console(CONSOLES['action_log'], 0, 45)
         self.console_manager.render_console(CONSOLES['status'], 41, 45)
 
     def render_all(self):
         """
-        Render the dungeon, character, items, etc..
+        Render the areas, characters, items, etc..
         """
         console = self.console_manager.main_console
         colors = self.colors
@@ -108,7 +108,8 @@ class GameManager(object):
                     elif ground:
                         console.drawChar(x, y, '.', fgcolor=colors['dark_ground'])
 
-        player_x, player_y = json.loads(self.player.dungeon_object.coords)
+        player_x = self.player.location.local_x
+        player_y = self.player.location.local_y
         self.player.fov = map.quickFOV(player_x, player_y, self.is_transparent, 'basic')
         for x, y in self.player.fov:
             if self.maze[x][y].is_blocked:
@@ -123,35 +124,19 @@ class GameManager(object):
         # 2. draw monsters
         # 3. draw player
 
-        for item in filter(lambda item: item.dungeon_object, self.items):
-
-            x, y = json.loads(item.dungeon_object.coords)
+        for item in self.items:
+            x, y = item.location.coords
             if (x, y) in self.player.fov:
-                console.drawChar(
-                    x, y,
-                    str(item.ascii_char),
-                    fgcolor=json.loads(item.fgcolor),
-                    bgcolor=json.loads(item.bgcolor)
-                )
+                console.drawChar(x, y, **item.display.get_draw_info())
 
         # draw monsters
         for monster in self.monsters:
-            x, y = json.loads(monster.dungeon_object.coords)
+            x, y = monster.location.coords
             if (x, y) in self.player.fov:
-                console.drawChar(
-                    x, y,
-                    str(monster.ascii_char),
-                    fgcolor=json.loads(monster.fgcolor),
-                    bgcolor=json.loads(monster.bgcolor)
-                )
+                console.drawChar(x, y, **monster.display.get_draw_info())
 
         # draw player
-        console.drawChar(
-            player_x, player_y,
-            str(self.player.ascii_char),
-            fgcolor=json.loads(self.player.fgcolor),
-            bgcolor=json.loads(self.player.bgcolor)
-        )
+        console.drawChar(player_x, player_y, **self.player.display.get_draw_info())
 
     def is_transparent(self, x, y):
         """
@@ -173,28 +158,17 @@ class GameManager(object):
         The main game loop
         """
         while True:  # Continue in an infinite game loop.
-            self.game_state = 'playing' if self.player.character_state == 'alive' else None
+            self.game_state = GameState.PLAYING if not self.player.is_dead() else None
             self.console_manager.main_console.clear()  # Blank the console.
             self.render_all()
-            self.monsters = [m for m in
-                             (Character.select().join(DungeonLevel)
-                                 .where(
-                                 (DungeonLevel.level_id == self.dungeon.level.level_id) &
-                                 (Character.name != 'player')
-                             ))]
-            self.items = [item for item in
-                          (Item.select().join(DungeonLevel)
-                              .where(
-                              (DungeonLevel.level_id == self.dungeon.level.level_id)
-                             ))]
 
-            if self.player.character_state == 'dead':
+            if self.player.is_dead():
                 CONSOLES['status'].drawStr(0, 4, 'You have died!')
 
             # TODO: Fix win condition
             # elif player.character_state == 'done':
             #     STATUS.move(0, 4)
-            #     STATUS.printStr('CONGRADULATIONS!\n\nYou have found a Cone of Dunshire!')
+            #     STATUS.printStr('CONGRATULATIONS!\n\nYou have found a Cone of Dunshire!')
 
             tdl.flush()  # Update the window.
             self.listen_for_events()
@@ -203,9 +177,11 @@ class GameManager(object):
         """
         Any keyboard interaction from the user occurs here
         """
+        # TODO We need a binding system.
+        # TODO Possibly just a dictionary with keyboard input as keys and Action Enum as value
         for event in tdl.event.get():  # Iterate over recent events.
             if event.type == 'KEYDOWN':
-                if self.game_state == 'playing':
+                if self.game_state == GameState.PLAYING:
 
                     # TODO: Fix inventory system
                     # if self.show_inventory:
@@ -226,22 +202,22 @@ class GameManager(object):
                         actions.player_move_or_attack(self.player, key_x, key_y, self.maze)
 
                         # TODO: Fix the stairs
-                        # if (self.dungeon.stairs and
-                        #    (self.dungeon.stairs.x, self.dungeon.stairs.y) == (self.player.x, self.player.y)):
+                        # if (self.areas.stairs and
+                        #    (self.areas.stairs.x, self.areas.stairs.y) == (self.player.x, self.player.y)):
                         #     self.next_level()
 
                         # let monsters take their turn
-                        if self.game_state == 'playing':
+                        if self.game_state == GameState.PLAYING:
                             for monster in self.monsters:
                                 actions.monster_take_turn(monster, self.player, self.maze)
 
                     # TODO: Fix pick up and inventory menu functions
                     # else:
                     #     if event.keychar.upper() == 'G':
-                    #         # pick up an item
-                    #         for object in self.dungeon.objects:  # look for an item in the player's tile
-                    #             if object.x == self.player.x and object.y == self.player.y and object.item:
-                    #                 is_cone = object.item.pickUp(self.dungeon.objects)
+                    #         # pick up an items
+                    #         for object in self.areas.objects:  # look for an items in the player's tile
+                    #             if object.x == self.player.x and object.y == self.player.y and object.items:
+                    #                 is_cone = object.items.pickUp(self.areas.objects)
                     #                 if is_cone:
                     #                     self.player_wins()
                     #                 else:  # user picked up a health potion
@@ -258,7 +234,13 @@ class GameManager(object):
 
             if event.type == 'QUIT':
                 # Halt the script using SystemExit
-                database.connect()
-                database.truncate_tables(TABLES)
-                database.drop_tables(TABLES)
                 raise SystemExit('The window has been closed.')
+
+    def load_game_data(self):
+        """
+        This is where the data is loaded.
+        """
+        # TODO This should load all templates to be instantiated later.
+
+        self.monsters = []
+        self.items = []

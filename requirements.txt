@@ -1,3 +1,4 @@
+jsonpickle
 cffi==1.7.0
 libtcod-cffi==0.2.8
 peewee==2.8.1

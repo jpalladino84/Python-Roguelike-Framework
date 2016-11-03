@@ -5,15 +5,15 @@ python2.7 -m unittest discover tests
 import json
 import unittest
 
+from areas.models import Dungeon, DungeonLevel, DungeonObject
+from characters.components import CharacterClass
+from characters.models import Character
+from items.models import Item
 from peewee import SqliteDatabase
 
 import load
-from dungeon.models import Dungeon, DungeonLevel, DungeonObject
-from item.models import Item
-from character.models import Character
-from character.components import CharacterClass
-from character.config import ORC, TROLL
-from dungeon.generator import DungeonGenerator
+from characters.config import ORC, TROLL
+from generators.dungeon_generator import DungeonGenerator
 
 database = SqliteDatabase('roguelike_test.db')
 TEST_TABLES = [Dungeon, DungeonObject, DungeonLevel, Item, Character, CharacterClass]
