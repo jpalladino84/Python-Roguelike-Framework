@@ -12,17 +12,20 @@ class JsonTemplateManager(object):
     MATERIAL_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'materials.json')
     BODIES_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'bodies.json')
     BODYPARTS_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'bodyparts.json')
+    MONSTERS_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'monsters.json')
 
     def __init__(self):
         self.material_templates = []
         self.bodies_templates = []
         self.bodyparts_templates = []
+        self.monster_templates = []
         self.load_templates()
 
     def load_templates(self):
         self.material_templates = self._load_template_file(self.MATERIAL_FULL_PATH, 'Materials')
         self.bodies_templates = self._load_template_file(self.BODIES_FULL_PATH, 'Bodies')
         self.bodyparts_templates = self._load_template_file(self.BODYPARTS_FULL_PATH, 'Bodyparts')
+        self.monster_templates = self._load_template_file(self.MONSTERS_FULL_PATH, 'Monsters')
 
     @staticmethod
     def _load_template_file(full_path, template_name):
@@ -36,6 +39,7 @@ class JsonTemplateManager(object):
         self._save_templates_file(self.MATERIAL_FULL_PATH, self.material_templates)
         self._save_templates_file(self.BODIES_FULL_PATH, self.bodies_templates)
         self._save_templates_file(self.BODYPARTS_FULL_PATH, self.bodyparts_templates)
+        self._save_templates_file(self.MONSTERS_FULL_PATH, self.monster_templates)
 
     @staticmethod
     def _save_templates_file(full_path, templates):
@@ -44,6 +48,9 @@ class JsonTemplateManager(object):
 
 
 if __name__ == '__main__':
+    from characters.character import Character
+    from characters.race import Race
+    Orc = Character("orc", "Orc", None, None, )
     template_manager = JsonTemplateManager()
     template_manager.material_templates = materials
     template_manager.bodies_templates = [get_humanoid_body_sample()]
