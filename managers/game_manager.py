@@ -61,7 +61,7 @@ class GameManager(object):
         level.name = "DEFAULT"
         level.min_room_size = 1
         level.max_room_size = 10
-        level.max_rooms = 1
+        level.max_rooms = 10
         tdl.setTitle(level.name)
         self.init_dungeon(level)
 
@@ -112,12 +112,17 @@ class GameManager(object):
         player_y = self.player.location.local_y
         self.player.fov = map.quickFOV(player_x, player_y, self.is_transparent, 'basic')
         for x, y in self.player.fov:
-            if self.maze[x][y].is_blocked:
-                console.drawChar(x, y, '#', fgcolor=colors['light_wall'])
-                self.maze[x][y].is_explored = True
-            if self.maze[x][y].is_ground is True:
-                console.drawChar(x, y, '.', fgcolor=colors['light_ground'])
-                self.maze[x][y].is_explored = True
+            if not x >= len(self.maze) and not y >= len(self.maze[x]):
+                try:
+                    if self.maze[x][y].is_blocked:
+                        console.drawChar(x, y, '#', fgcolor=colors['light_wall'])
+                        self.maze[x][y].is_explored = True
+                    if self.maze[x][y].is_ground is True:
+                        console.drawChar(x, y, '.', fgcolor=colors['light_ground'])
+                        self.maze[x][y].is_explored = True
+                except IndexError:
+                    raise
+
 
         # NB: Order in which things are render is important
         # 1. draw items
