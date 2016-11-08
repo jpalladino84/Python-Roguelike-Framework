@@ -20,13 +20,13 @@ class ExperiencePool(object):
         self.child_pools.remove(child_pool)
 
     def add_experience(self, experience_amount):
-        divided_experience = experience_amount / len(self.child_pools) if self.child_pools else experience_amount
+        divided_experience = experience_amount / (len(self.child_pools) + 1) if self.child_pools else experience_amount
         self.experience += divided_experience
         for child_pool in self.child_pools:
             child_pool.add_experience(divided_experience)
 
     def remove_experience(self, experience_amount):
-        divided_experience = experience_amount / len(self.child_pools) if self.child_pools else experience_amount
+        divided_experience = experience_amount / (len(self.child_pools) + 1) if self.child_pools else experience_amount
         self.experience -= divided_experience
         for child_pool in self.child_pools:
             child_pool.remove_experience(divided_experience)
