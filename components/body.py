@@ -1,6 +1,6 @@
-from abilities.physical_abilities import PhysicalAbilities
 import logging
 
+from components.abilities.physical_abilities import PhysicalAbilities
 
 logger_ = logging.getLogger()
 
