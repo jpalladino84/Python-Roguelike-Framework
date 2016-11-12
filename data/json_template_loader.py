@@ -4,6 +4,7 @@ import os
 from components.material import materials
 from components.body import get_humanoid_body_sample, get_body_parts_sample
 from characters.race import get_race_samples
+from characters.classes import get_sample_classes
 
 logger_ = logging.getLogger()
 
@@ -15,6 +16,7 @@ class JsonTemplateManager(object):
     BODYPARTS_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'bodyparts.json')
     MONSTERS_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'monsters.json')
     RACE_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'races.json')
+    CLASSES_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'classes.json')
 
     def __init__(self):
         self.material_templates = []
@@ -22,6 +24,7 @@ class JsonTemplateManager(object):
         self.bodyparts_templates = []
         #self.monster_templates = []
         self.race_templates = []
+        self.class_templates = []
         self.load_templates()
 
     def load_templates(self):
@@ -30,6 +33,7 @@ class JsonTemplateManager(object):
         self.bodyparts_templates = self._load_template_file(self.BODYPARTS_FULL_PATH, 'Bodyparts')
         #self.monster_templates = self._load_template_file(self.MONSTERS_FULL_PATH, 'Monsters')
         self.race_templates = self._load_template_file(self.RACE_FULL_PATH, 'Races')
+        self.class_templates = self._load_template_file(self.CLASSES_FULL_PATH, 'Classes')
 
     @staticmethod
     def _load_template_file(full_path, template_name):
@@ -45,6 +49,7 @@ class JsonTemplateManager(object):
         self._save_templates_file(self.BODYPARTS_FULL_PATH, self.bodyparts_templates)
         #self._save_templates_file(self.MONSTERS_FULL_PATH, self.monster_templates)
         self._save_templates_file(self.RACE_FULL_PATH, self.race_templates)
+        self._save_templates_file(self.CLASSES_FULL_PATH, self.class_templates)
 
     @staticmethod
     def _save_templates_file(full_path, templates):
@@ -58,4 +63,5 @@ if __name__ == '__main__':
     template_manager.bodies_templates = [get_humanoid_body_sample()]
     template_manager.bodyparts_templates = get_body_parts_sample()
     template_manager.race_templates = get_race_samples()
+    template_manager.class_templates = get_sample_classes()
     template_manager.save_templates()

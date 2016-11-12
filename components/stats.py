@@ -1,4 +1,5 @@
 from enum import Enum
+import math
 
 
 class Stat(object):
@@ -21,9 +22,20 @@ class Stat(object):
 
 
 class StatModifier(object):
-    def __init__(self, uid, value):
+    def __init__(self, uid, value, level_progression=0):
         self.uid = uid
         self.value = value
+        self.level_progression = level_progression
+
+    def __int__(self):
+        return
+
+    def get_leveled_value(self, level, initial_level):
+        if self.level_progression > 0:
+            multiplier = (level - initial_level) / self.level_progression
+            return math.ceil(self.value * multiplier)
+        else:
+            return self.value
 
 
 class CharacterStats(object):
@@ -47,3 +59,5 @@ class Stats(Enum):
     Intelligence = 'intelligence'
     Charisma = 'charisma'
     Wisdom = 'wisdom'
+
+
