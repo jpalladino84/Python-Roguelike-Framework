@@ -5,3 +5,8 @@ class CharacterClass(object):
         self.level_tree = level_tree
         self.experience_penalty = experience_penalty
 
+
+class CharacterClassInstance(object):
+    def __init__(self, template, experience_pool):
+        self.template = template
+        self.experience_pool = experience_pool

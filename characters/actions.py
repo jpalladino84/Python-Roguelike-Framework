@@ -7,7 +7,7 @@ Any action that can be taken by the player or a npc (e.g. monster) is defined he
 """
 import math
 
-from settings import Colors
+from components.colors import Colors
 from managers.console_manager import CONSOLES
 
 # TODO One thing I want to change is the tile contains flag
