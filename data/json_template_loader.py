@@ -18,12 +18,12 @@ class JsonTemplateManager(object):
     CLASSES_FULL_PATH = os.path.join(TEMPLATE_FOLDER_PATH, 'classes.json')
 
     def __init__(self):
-        self.material_templates = []
-        self.bodies_templates = []
-        self.bodyparts_templates = []
-        self.monster_templates = []
-        self.race_templates = []
-        self.class_templates = []
+        self.material_templates = {}
+        self.bodies_templates = {}
+        self.bodyparts_templates = {}
+        self.monster_templates = {}
+        self.race_templates = {}
+        self.class_templates = {}
         self.load_templates()
 
     def load_templates(self):
@@ -58,10 +58,10 @@ class JsonTemplateManager(object):
 
 if __name__ == '__main__':
     template_manager = JsonTemplateManager()
-    template_manager.material_templates = materials
-    template_manager.bodies_templates = [get_humanoid_body_sample()]
-    template_manager.bodyparts_templates = get_body_parts_sample()
-    template_manager.race_templates = get_race_samples()
-    template_manager.class_templates = get_sample_classes()
-    template_manager.monster_templates = get_sample_monsters()
+    template_manager.material_templates = {material.uid: material for material in materials}
+    template_manager.bodies_templates = {body.uid: body for body in get_humanoid_body_sample()}
+    template_manager.bodyparts_templates = {body_part.uid for body_part in get_body_parts_sample()}
+    template_manager.race_templates = {race.uid for race in get_race_samples()}
+    template_manager.class_templates = {c_class.uid: c_class for c_class in get_sample_classes()}
+    template_manager.monster_templates = {monster.uid: monster for monster in get_sample_monsters()}
     template_manager.save_templates()

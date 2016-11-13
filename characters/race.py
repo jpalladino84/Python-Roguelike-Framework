@@ -19,3 +19,20 @@ class MetaRace(Race):
         self.body_modifier_template_uid = body_modifier_template_uid
 
 
+class RaceInstance(object):
+    def __init__(self, template, experience_pool):
+        self.template = template
+        self.experience_pool = experience_pool
+
+    @property
+    def name(self):
+        return self.template.name
+
+    @property
+    def level_tree(self):
+        return self.template.level_tree
+
+    @property
+    def experience_penalty(self):
+        return self.template.level_tree
+

@@ -10,3 +10,11 @@ class CharacterClassInstance(object):
     def __init__(self, template, experience_pool):
         self.template = template
         self.experience_pool = experience_pool
+
+    @property
+    def name(self):
+        return self.template.name
+
+    @property
+    def level_tree(self):
+        return self.template.level_tree

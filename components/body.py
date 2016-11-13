@@ -143,6 +143,6 @@ def get_humanoid_body_sample():
     humanoid_body.structural_material = 'bone'
     humanoid_body.blood_type = 'humanoid_blood'
 
-    return humanoid_body
+    return [humanoid_body]
 
 
