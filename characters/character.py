@@ -33,3 +33,15 @@ class Character(object):
     def get_speed(self):
         # TODO Figure out better ways to calculate this
         return self.stats.dexterity
+
+
+class CharacterTemplate(object):
+    def __init__(self, uid, name, class_uid, race_uid, base_stats, display, body_uid, cumulative_level):
+        self.uid = uid
+        self.name = name
+        self.class_uid = class_uid
+        self.race_uid = race_uid
+        self.base_stats = base_stats
+        self.display = display
+        self.body_uid = body_uid
+        self.cumulative_level = cumulative_level

@@ -3,8 +3,7 @@ import jsonpickle
 import os
 from components.material import materials
 from components.body import get_humanoid_body_sample, get_body_parts_sample
-from characters.race import get_race_samples
-from characters.classes import get_sample_classes
+from characters.samples import get_sample_monsters, get_sample_classes, get_race_samples
 
 logger_ = logging.getLogger()
 
@@ -22,7 +21,7 @@ class JsonTemplateManager(object):
         self.material_templates = []
         self.bodies_templates = []
         self.bodyparts_templates = []
-        #self.monster_templates = []
+        self.monster_templates = []
         self.race_templates = []
         self.class_templates = []
         self.load_templates()
@@ -31,7 +30,7 @@ class JsonTemplateManager(object):
         self.material_templates = self._load_template_file(self.MATERIAL_FULL_PATH, 'Materials')
         self.bodies_templates = self._load_template_file(self.BODIES_FULL_PATH, 'Bodies')
         self.bodyparts_templates = self._load_template_file(self.BODYPARTS_FULL_PATH, 'Bodyparts')
-        #self.monster_templates = self._load_template_file(self.MONSTERS_FULL_PATH, 'Monsters')
+        self.monster_templates = self._load_template_file(self.MONSTERS_FULL_PATH, 'Monsters')
         self.race_templates = self._load_template_file(self.RACE_FULL_PATH, 'Races')
         self.class_templates = self._load_template_file(self.CLASSES_FULL_PATH, 'Classes')
 
@@ -47,7 +46,7 @@ class JsonTemplateManager(object):
         self._save_templates_file(self.MATERIAL_FULL_PATH, self.material_templates)
         self._save_templates_file(self.BODIES_FULL_PATH, self.bodies_templates)
         self._save_templates_file(self.BODYPARTS_FULL_PATH, self.bodyparts_templates)
-        #self._save_templates_file(self.MONSTERS_FULL_PATH, self.monster_templates)
+        self._save_templates_file(self.MONSTERS_FULL_PATH, self.monster_templates)
         self._save_templates_file(self.RACE_FULL_PATH, self.race_templates)
         self._save_templates_file(self.CLASSES_FULL_PATH, self.class_templates)
 
@@ -64,4 +63,5 @@ if __name__ == '__main__':
     template_manager.bodyparts_templates = get_body_parts_sample()
     template_manager.race_templates = get_race_samples()
     template_manager.class_templates = get_sample_classes()
+    template_manager.monster_templates = get_sample_monsters()
     template_manager.save_templates()

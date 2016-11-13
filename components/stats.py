@@ -3,10 +3,10 @@ import math
 
 
 class Stat(object):
-    def __init__(self, uid, current, max):
+    def __init__(self, uid, current, maximum):
         self.uid = uid
         self.current = current
-        self.max = max
+        self.maximum = maximum
 
     def __str__(self):
         return str(self.current)
@@ -18,7 +18,7 @@ class Stat(object):
         self.current += value
 
     def modify_max(self, value):
-        self.max += value
+        self.maximum += value
 
 
 class StatModifier(object):
@@ -39,15 +39,15 @@ class StatModifier(object):
 
 
 class CharacterStats(object):
-    def __init__(self):
-        self.health = Stat(Stats.Health, 1, 1)
-        self.mana = Stat(Stats.Mana, 1, 1)
-        self.strength = Stat(Stats.Strength, 1, 1)
-        self.dexterity = Stat(Stats.Dexterity, 1, 1)
-        self.constitution = Stat(Stats.Constitution, 1, 1)
-        self.intelligence = Stat(Stats.Intelligence, 1, 1)
-        self.charisma = Stat(Stats.Charisma, 1, 1)
-        self.wisdom = Stat(Stats.Wisdom, 1, 1)
+    def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8, intelligence=8, charisma=8, wisdom=8):
+        self.health = Stat(Stats.Health, health, health)
+        self.mana = Stat(Stats.Mana, mana, mana)
+        self.strength = Stat(Stats.Strength, strength, strength)
+        self.dexterity = Stat(Stats.Dexterity, dexterity, dexterity)
+        self.constitution = Stat(Stats.Constitution, constitution, constitution)
+        self.intelligence = Stat(Stats.Intelligence, intelligence, intelligence)
+        self.charisma = Stat(Stats.Charisma, charisma, charisma)
+        self.wisdom = Stat(Stats.Wisdom, wisdom, wisdom)
 
 
 class Stats(Enum):
