@@ -12,7 +12,7 @@ class BodyFactory(object):
         :return: Built instance from template.
         """
 
-        body_template = next((template for template in self.body_templates if template.uid == uid), None)
+        body_template = self.body_templates[uid]
         if body_template:
             return self._create_instance_of_template(body_template)
         else:

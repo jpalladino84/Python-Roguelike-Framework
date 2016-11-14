@@ -1,5 +1,5 @@
 class Character(object):
-    def __init__(self, uid, name, character_class, character_race, stats, display, location, inventory, body):
+    def __init__(self, uid, name, character_class, character_race, stats, display, location, inventory, body, main_experience_pool):
         self.uid = uid
         self.name = name
         self.character_class = character_class
@@ -9,6 +9,7 @@ class Character(object):
         self.location = location
         self.inventory = inventory
         self.body = body
+        self.main_experience_pool = main_experience_pool
 
     def is_dead(self):
         """

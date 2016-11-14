@@ -39,7 +39,7 @@ class StatModifier(object):
 
 
 class CharacterStats(object):
-    def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8, intelligence=8, charisma=8, wisdom=8):
+    def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8, intelligence=8, charisma=8, wisdom=8, **kwargs):
         self.health = Stat(Stats.Health, health, health)
         self.mana = Stat(Stats.Mana, mana, mana)
         self.strength = Stat(Stats.Strength, strength, strength)
