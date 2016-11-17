@@ -7,7 +7,7 @@ Any action that can be taken by the player or a npc (e.g. monster) is defined he
 """
 import math
 
-from settings import Colors
+from components.colors import Colors
 from managers.console_manager import CONSOLES
 
 # TODO One thing I want to change is the tile contains flag
@@ -157,7 +157,7 @@ def monster_take_turn(monster, player, maze):
     A basic monster takes its turn.
     If you can see it, it can see you
     """
-    if monster.character_state == 'alive':
+    if not monster.is_dead:
         x, y = monster.location.get_local_coords()
         if (x, y) in player.fov:
 

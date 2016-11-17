@@ -46,7 +46,7 @@ Example:
     }
 """
 
-from settings import Colors
+from components.colors import Colors
 
 FIGHTER = {
     'name': 'Fighter',
