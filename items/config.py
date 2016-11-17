@@ -22,7 +22,7 @@ Example
         'value': 10
     }
 """
-from settings import Colors
+from components.colors import Colors
 
 # Item Categories
 CONSUMABLE = 'CONSUMABLE'
