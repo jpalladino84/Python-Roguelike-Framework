@@ -57,7 +57,6 @@ class CharacterFactory(object):
             ),
             stats=CharacterStats(**character_template.base_stats.__dict__),
             display=Display(**character_template.display.__dict__),
-            location=None,
             body=self.factory_service.build_body_instance_by_uid(character_template.body_uid),
             main_experience_pool=race_experience_pool,
             inventory=Inventory()

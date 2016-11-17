@@ -9,6 +9,10 @@ from characters import actions
 from characters.character import Character
 from generators.dungeon_generator import DungeonGenerator
 from areas.level import Level
+from factories.factory_service import FactoryService
+from factories.character_factory import CharacterFactory
+from factories.body_factory import BodyFactory
+from data.json_template_loader import JsonTemplateManager
 from managers.console_manager import ConsoleManager, CONSOLES
 from tdl import map
 
@@ -42,6 +46,8 @@ class GameManager(object):
     def __init__(self):
         # Pre-load levels into database
         self.dungeon_generator = DungeonGenerator()
+        self.factory_service = None
+        self.load_game_data()
 
     def show_main_menu(self):
         self.console_manager.render_main_menu()
@@ -67,8 +73,7 @@ class GameManager(object):
 
     def init_dungeon(self, level):
         # TODO The player must be built and retrieved here.
-        self.player = Character("player", "player", None, None,
-                                CharacterStats(), Display(), Location(), Inventory(), None)
+        self.player = self.monsters[0]
         self.dungeon = self.dungeon_generator
         self.dungeon_generator.generate(level, self.player)
         self.maze = self.dungeon_generator.maze
@@ -136,11 +141,11 @@ class GameManager(object):
 
         # draw monsters
         for monster in self.monsters:
-            x, y = monster.location.coords
+            x, y = monster.location.get_local_coords()
             if (x, y) in self.player.fov:
                 console.drawChar(x, y, **monster.display.get_draw_info())
 
-        # draw player
+        # draw player2
         console.drawChar(player_x, player_y, **self.player.display.get_draw_info())
 
     def is_transparent(self, x, y):
@@ -246,6 +251,18 @@ class GameManager(object):
         This is where the data is loaded.
         """
         # TODO This should load all templates to be instantiated later.
-
-        self.monsters = []
+        json_template_loader = JsonTemplateManager()
+        self.factory_service = FactoryService(
+            template_loader=json_template_loader,
+            body_factory=BodyFactory(json_template_loader.bodies_templates),
+        )
+        character_factory = CharacterFactory(
+            character_templates=json_template_loader.monster_templates,
+            factory_service=self.factory_service,
+            race_templates=json_template_loader.race_templates,
+            class_templates=json_template_loader.class_templates
+        )
+        self.factory_service.character_factory = character_factory
+        self.monsters = [character_factory.build(uid) for uid, monster in
+                         json_template_loader.monster_templates.items()]
         self.items = []

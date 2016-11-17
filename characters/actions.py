@@ -157,7 +157,7 @@ def monster_take_turn(monster, player, maze):
     A basic monster takes its turn.
     If you can see it, it can see you
     """
-    if monster.character_state == 'alive':
+    if not monster.is_dead:
         x, y = monster.location.get_local_coords()
         if (x, y) in player.fov:
 
