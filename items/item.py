@@ -1,3 +1,6 @@
+import copy
+
+
 class Item(object):
     """
     What is an item?
@@ -9,9 +12,47 @@ class Item(object):
     A good loot system can go a long way in terms of prolonging gameplay.
     """
     def __init__(self):
+        self.uid = ""
         self.name = ""
         self.description = ""
         self.location = None
         self.display = None
         self.weight = 1
         self.health = 1
+
+    def __eq__(self, other):
+        return (
+            self.uid == other.uid
+            and self.health == other.health
+        )
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(
+            (
+                self.uid,
+                self.health
+            )
+        )
+
+
+class ItemStack(object):
+    """
+    Used to combine every identical instances of a specific type in a single stack
+    """
+    def __init__(self, item):
+        self.amount = 1
+        self.item = item
+
+    def add_to_stack(self):
+        self.amount += 1
+
+    def pop_from_stack(self):
+        if self.amount:
+            self.amount -= 1
+            return copy.copy(self.item)
+
+    def __hash__(self):
+        return hash(self.item)
