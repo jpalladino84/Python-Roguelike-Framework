@@ -11,14 +11,14 @@ class Item(object):
     Painted, customized, engraved.
     A good loot system can go a long way in terms of prolonging gameplay.
     """
-    def __init__(self):
-        self.uid = ""
-        self.name = ""
-        self.description = ""
-        self.location = None
-        self.display = None
-        self.weight = 1
-        self.health = 1
+    def __init__(self, uid, name="", description="", location=None, display=None, weight=1, health=1):
+        self.uid = uid
+        self.name = name
+        self.description = description
+        self.location = location
+        self.display = display
+        self.weight = weight
+        self.health = health
 
     def __eq__(self, other):
         return (
