@@ -3,20 +3,45 @@ from items.item import ItemStack
 
 class Inventory(object):
     """
-    The inventory object containing Items via InventorySlots
+    The inventory object containing Items via ItemSlots.
+    While getting an item from an item seems useless it's to be combined with another type of inventory.
+    See Keybound below which is meant for a player.
     """
     def __init__(self):
         self._item_stacks = dict()
 
     def add_item(self, item):
-        if item.uid in self._item_stacks:
-            self._item_stacks[item.uid].add_to_stack()
+        if item in self._item_stacks:
+            self._item_stacks[item].add_to_stack()
         else:
-            self._item_stacks[item.uid] = ItemStack(item)
+            self._item_stacks[item] = ItemStack(item)
 
-    def pop_item(self, item_uid):
-        if item_uid in self._item_stacks:
-            return self._item_stacks[item_uid].pop_from_stack()
+    def pop_item(self, item):
+        if item in self._item_stacks:
+            popped_item = self._item_stacks[item].pop_from_stack()
+            if self._item_stacks[item].amount <= 0:
+                del self._item_stacks[item]
+            return popped_item
+
+    def get_items(self, uid, count=0, pop=False):
+        """
+        :param uid: uid of item to get.
+        :param count: How many to retrieve.
+        :param pop: bool to know if we remove it or not.
+        :return: List of items found.
+        """
+        found_items = []
+        item_stacks = [item_stack for item_stack in self._item_stacks.values() if item_stack.item.uid == uid]
+        for item_stack in item_stacks:
+            if count and len(found_items) >= count:
+                break
+
+            if pop:
+                found_items.append(self.pop_item(item_stack.item))
+            else:
+                found_items.append(item_stack.item)
+
+        return found_items
 
     def get_all_items(self):
         return self._item_stacks.values()
@@ -40,16 +65,22 @@ class KeyBoundInventory(Inventory):
         if item not in self._item_stacks:
             super(KeyBoundInventory, self).add_item(item)
             next_symbol = self.__return_next_assigned_symbol()
-            self._assigned_symbols[self._page][next_symbol] = item.uid
+            self._assigned_symbols[self._page][next_symbol] = item
             return next_symbol
 
         super(KeyBoundInventory, self).add_item(item)
-        return self.get_symbol_from_uid(item.uid)
+        return self.get_symbol_from_item(item)
 
     def get_symbol_from_uid(self, item_uid):
         return next(
             (symbol for page, symbols in self._assigned_symbols.items()
-             for symbol, uid in symbols.items() if uid == item_uid))
+             for symbol, item in symbols.items() if item.uid == item_uid))
+
+    def get_symbol_from_item(self, item):
+        for page in self._assigned_symbols.keys():
+            for key, value in self._assigned_symbols[page].items():
+                if value == item:
+                    return key
 
     def pop_item_from_symbol(self, symbol):
         self._unassigned_symbols[self._page].append(symbol)
