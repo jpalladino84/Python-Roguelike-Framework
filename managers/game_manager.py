@@ -75,6 +75,7 @@ class GameManager(object):
         # TODO The player must be built and retrieved here.
         self.player = self.monsters[0]
         self.dungeon = self.dungeon_generator
+        level.monsters = self.monsters
         self.dungeon_generator.generate(level, self.player)
         self.maze = self.dungeon_generator.maze
 
@@ -140,7 +141,7 @@ class GameManager(object):
                 console.drawChar(x, y, **item.display.get_draw_info())
 
         # draw monsters
-        for monster in self.monsters:
+        for monster in self.player.location.level.monsters:
             x, y = monster.location.get_local_coords()
             if (x, y) in self.player.fov:
                 console.drawChar(x, y, **monster.display.get_draw_info())

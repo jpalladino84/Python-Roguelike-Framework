@@ -6,3 +6,4 @@ class Level(object):
         self.min_room_size = 0
         self.max_rooms = 0
         self.tiles = []
+        self.monsters = []

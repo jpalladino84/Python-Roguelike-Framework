@@ -55,10 +55,11 @@ class DungeonGenerator(object):
         Go through each room and drop a monster in it. Keep
         going until there are no more monsters to place.
         """
-        while len(self.dungeon_monsters):
-            for room in self.monster_rooms:
-                tile = self.get_random_room_tile(room)
-                self.place_monster(tile)
+        for room in self.monster_rooms:
+            if not self.dungeon_monsters:
+                break
+            tile = self.get_random_room_tile(room)
+            self.place_monster(tile)
 
     def place_items_in_rooms(self):
         """
@@ -77,8 +78,16 @@ class DungeonGenerator(object):
         @param room:
         @return:
         """
-        x = random.randint(room.x1 + 1, room.x2 - 1)
-        y = random.randint(room.y1 + 1, room.y2 - 1)
+        if room.x1 + 1 < room.x2 - 1:
+            x = random.randint(room.x1 + 1, room.x2 - 1)
+        else:
+            x = room.x1 + 1
+
+        if room.y1 + 1 < room.y2 - 1:
+            y = random.randint(room.y1 + 1, room.y2 - 1)
+        else:
+            y = room.y1 + 1
+
         tile = self.maze[x][y]
 
         if not tile.contains_object:
@@ -123,7 +132,7 @@ class DungeonGenerator(object):
         # TODO a Final Level does not always happen, must be configurable
         self.is_final_level = False
         # TODO The dungeon's instances are spawned and loaded here.
-        self.dungeon_monsters = deque()
+        self.dungeon_monsters = level.monsters
         self.dungeon_items = deque()
 
         # fill map with "blocked" tiles
@@ -187,10 +196,11 @@ class DungeonGenerator(object):
         self._create_h_tunnel(25, 55, 23)
 
     def place_monster(self, tile):
-            monster = self.dungeon_monsters.popleft()
-            monster.location.local_x = tile.X
-            monster.location.local_y = tile.y
-            tile.contains_object = True
+        # TODO This kind of spawning has a few issues, it should use a service to spawn monsters.
+        monster = self.dungeon_monsters.pop(0)
+        monster.location.local_x = tile.x
+        monster.location.local_y = tile.y
+        tile.contains_object = True
 
     def place_player(self, tile, player):
         """
