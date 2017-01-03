@@ -114,7 +114,7 @@ class DungeonGenerator(object):
             self.maze[x][y].block_sight = False
             self.maze[x][y].is_ground = True
 
-    def generate(self, level, player):
+    def generate(self, level, player, factory_service):
         """
         Generates a new areas based the level
         @param level:
@@ -124,6 +124,7 @@ class DungeonGenerator(object):
         height = 45
         self.width = width
         self.height = height
+        self.factory_service = factory_service
         max_rooms = level.max_rooms
         max_room_size = level.max_room_size
         min_room_size = level.min_room_size
@@ -132,7 +133,7 @@ class DungeonGenerator(object):
         # TODO a Final Level does not always happen, must be configurable
         self.is_final_level = False
         # TODO The dungeon's instances are spawned and loaded here.
-        self.dungeon_monsters = level.monsters
+        self.dungeon_monsters = level.spawn_list
         self.dungeon_items = deque()
 
         # fill map with "blocked" tiles
@@ -200,6 +201,7 @@ class DungeonGenerator(object):
         monster = self.dungeon_monsters.pop(0)
         monster.location.local_x = tile.x
         monster.location.local_y = tile.y
+        self.level.spawned_monsters.append(monster)
         tile.contains_object = True
 
     def place_player(self, tile, player):
