@@ -55,7 +55,6 @@ class DungeonGenerator(object):
         going until there are no more items to place.
         """
         for item in level.item_spawn_list:
-            # TODO Why monster rooms?
             random_room = random.choice(level.monster_rooms)
             tile = self.get_random_room_tile(random_room, level)
             self.place_item(level, tile, item)

@@ -18,7 +18,6 @@ class ConsoleManager:
 
         # Create the root console.
         self.main_console = tdl.init(self.main_console_w, self.main_console_h, 'Roguelike Game')
-
         CONSOLES['action_log'] = self.create_new_console(40, 15)
         CONSOLES['status'] = self.create_new_console(40, 15)
 
@@ -30,32 +29,6 @@ class ConsoleManager:
         console = tdl.Console(width, height)
         console.setMode(mode)
         return console
-
-    def render_main_menu(self):
-        options = ['Play a new game', 'Quit']
-
-        main_menu = Menu('Main Menu', options, self.main_console_w, self.main_console_h)
-
-        x = 20
-        y = 20
-
-        main_menu.print_str('Welcome', x, y)
-        y += 2
-        main_menu.print_str('Your goal is to find the Cone of Dunshire (!).', x, y)
-        y += 2
-        main_menu.print_str('Use Caution as there are Trolls (T)and Orcs (o)', x, y)
-        y += 1
-        main_menu.print_str('lurking in this areas!', x, y)
-        y += 2
-
-        x += 5
-        for option_text in options:
-            text = '(' + chr(main_menu.letter_index) + ') ' + option_text
-            main_menu.print_str(text, x, y)
-            y += 2
-            main_menu.letter_index += 1
-        self.render_console(main_menu, 0, 0)
-        tdl.flush()
 
     def render_inventory_menu(self, inventory_list):
 

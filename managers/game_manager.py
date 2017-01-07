@@ -10,6 +10,7 @@ from factories.character_factory import CharacterFactory
 from factories.factory_service import FactoryService
 from generators.dungeon_generator import DungeonGenerator
 from managers.console_manager import ConsoleManager, CONSOLES
+from managers.scene_manager import SceneManager
 from tdl import map
 
 
@@ -42,18 +43,15 @@ class GameManager(object):
         self.factory_service = None
         self.load_game_data()
         self.dungeon_generator = DungeonGenerator(self.factory_service)
+        self.scene_manager = SceneManager(self.console_manager)
 
-    def show_main_menu(self):
-        self.console_manager.render_main_menu()
-
-        key_event = tdl.event.keyWait()
-        if key_event.keychar.upper() == 'A':
-            self.new_game()
-            # TODO Before playing, we need to LOAD game data.
-            self.play_game()
-        elif key_event.keychar.upper() == 'B':
-            # Halt the script using SystemExit
-            raise SystemExit('The window has been closed.')
+    def start(self):
+        self.scene_manager.current_scene.render()
+        while True:  # Continue in an infinite game loop.
+            self.game_state = GameState.PLAYING if not self.player.is_dead() else None
+            self.console_manager.main_console.clear()  # Blank the console.
+            self.scene_manager.render()
+            self.scene_manager.handle_input()
 
     def new_game(self):
         # TODO This should prepare the first level
@@ -77,91 +75,7 @@ class GameManager(object):
         # the game ended
         self.game_state = GameState.ENDED
 
-    def render_gui(self):
-        CONSOLES['status'].drawStr(0, 2, "Health: {}\n\n".format(int(self.player.get_health())))
-        CONSOLES['status'].drawStr(0, 5, "Attack Power: {}\n\n".format(self.player.get_attack()))
-        CONSOLES['status'].drawStr(0, 8, "Defense: {}\n\n".format(self.player.get_defense()))
-        CONSOLES['status'].drawStr(0, 11, "Speed: {}\n\n".format(self.player.get_speed()))
 
-        self.console_manager.render_console(CONSOLES['action_log'], 0, 45)
-        self.console_manager.render_console(CONSOLES['status'], 41, 45)
-
-    def render_all(self):
-        """
-        Render the areas, characters, items, etc..
-        """
-        console = self.console_manager.main_console
-        colors = self.colors
-
-        self.render_gui()
-
-        # go through all tiles, and set their background color
-        current_level = self.player.location.level
-        for y in range(current_level.height):
-            for x in range(current_level.width):
-                tile = current_level.maze[x][y]
-                wall = tile.block_sight
-                ground = tile.is_ground
-
-                if tile.is_explored:
-                    if wall:
-                        console.drawChar(x, y, '#', fgcolor=colors['dark_gray_wall'])
-                    elif ground:
-                        console.drawChar(x, y, '.', fgcolor=colors['dark_ground'])
-
-        player_x = self.player.location.local_x
-        player_y = self.player.location.local_y
-
-        def is_transparent_callback(x, y):
-            return self.is_transparent(current_level, x, y)
-
-        self.player.fov = map.quickFOV(player_x, player_y, is_transparent_callback, 'basic')
-        for x, y in self.player.fov:
-            if not x >= len(current_level.maze) and not y >= len(current_level.maze[x]):
-                try:
-                    if current_level.maze[x][y].is_blocked:
-                        console.drawChar(x, y, '#', fgcolor=colors['light_wall'])
-                        current_level.maze[x][y].is_explored = True
-                    if current_level.maze[x][y].is_ground is True:
-                        console.drawChar(x, y, '.', fgcolor=colors['light_ground'])
-                        current_level.maze[x][y].is_explored = True
-                except IndexError:
-                    raise
-
-        # NB: Order in which things are render is important
-        # 1. draw items
-        # 2. draw monsters
-        # 3. draw player
-
-        for item in self.items:
-            x, y = item.location.coords
-            if (x, y) in self.player.fov:
-                console.drawChar(x, y, **item.display.get_draw_info())
-
-        # draw monsters
-        for monster in self.player.location.level.spawned_monsters:
-            x, y = monster.location.get_local_coords()
-            if (x, y) in self.player.fov:
-                console.drawChar(x, y, **monster.display.get_draw_info())
-
-        # draw player2
-        console.drawChar(player_x, player_y, **self.player.display.get_draw_info())
-
-    @staticmethod
-    def is_transparent(current_level, x, y):
-        """
-        Used by map.quickFOV to determine which tile fall within the players "field of view"
-        """
-        try:
-            # Pass on IndexErrors raised for when a player gets near the edge of the screen
-            # and tile within the field of view fall out side the bounds of the maze.
-            tile = current_level.maze[x][y]
-            if tile.block_sight and tile.is_blocked:
-                return False
-            else:
-                return True
-        except IndexError:
-            pass
 
     def play_game(self):
         """
