@@ -41,14 +41,14 @@ class StatModifier(object):
 # TODO I'm not sure we want classes for stats, maybe just use this to assign proper stats to an object instead?
 class CharacterStats(object):
     def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8, intelligence=8, charisma=8, wisdom=8, **kwargs):
-        self.health = Stat(Stats.Health, health, health)
-        self.mana = Stat(Stats.Mana, mana, mana)
-        self.strength = Stat(Stats.Strength, strength, strength)
-        self.dexterity = Stat(Stats.Dexterity, dexterity, dexterity)
-        self.constitution = Stat(Stats.Constitution, constitution, constitution)
-        self.intelligence = Stat(Stats.Intelligence, intelligence, intelligence)
-        self.charisma = Stat(Stats.Charisma, charisma, charisma)
-        self.wisdom = Stat(Stats.Wisdom, wisdom, wisdom)
+        self.health = Stat(Stats.Health, int(health), int(health))
+        self.mana = Stat(Stats.Mana, int(mana), int(mana))
+        self.strength = Stat(Stats.Strength, int(strength), int(strength))
+        self.dexterity = Stat(Stats.Dexterity, int(dexterity), int(dexterity))
+        self.constitution = Stat(Stats.Constitution, int(constitution), int(constitution))
+        self.intelligence = Stat(Stats.Intelligence, int(intelligence), int(intelligence))
+        self.charisma = Stat(Stats.Charisma, int(charisma), int(charisma))
+        self.wisdom = Stat(Stats.Wisdom, int(wisdom), int(wisdom))
 
 
 class ItemStats(object):

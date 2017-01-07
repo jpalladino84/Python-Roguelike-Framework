@@ -42,6 +42,10 @@ class Character(object):
         # TODO Figure out better ways to calculate this
         return self.stats.dexterity
 
+    @property
+    def current_level(self):
+        return self.location.level
+
 
 class CharacterTemplate(object):
     def __init__(self, uid, name, class_uid, race_uid, base_stats, display, body_uid, cumulative_level):

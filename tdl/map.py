@@ -113,7 +113,7 @@ class AStar(object):
         while _lib.TCOD_path_walk(self, xRef, yRef, recalculate):
             path.append((x.value, y.value))
         return path
-    
+
 def quickFOV(x, y, callback, fov='PERMISSIVE', radius=7.5, lightWalls=True, sphere=True):
     """All field-of-view functionality in one call.
     

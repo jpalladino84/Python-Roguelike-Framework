@@ -1,18 +1,14 @@
 from enum import Enum
-from components.stats import CharacterStats
-from components.location import Location
-from components.inventory import Inventory
-from components.display import Display
+
 import settings
 import tdl
-from characters import actions
-from characters.character import Character
-from generators.dungeon_generator import DungeonGenerator
 from areas.level import Level
-from factories.factory_service import FactoryService
-from factories.character_factory import CharacterFactory
-from factories.body_factory import BodyFactory
+from characters import actions
 from data.json_template_loader import JsonTemplateManager
+from factories.body_factory import BodyFactory
+from factories.character_factory import CharacterFactory
+from factories.factory_service import FactoryService
+from generators.dungeon_generator import DungeonGenerator
 from managers.console_manager import ConsoleManager, CONSOLES
 from tdl import map
 
@@ -31,9 +27,6 @@ class GameManager(object):
     game_state = GameState.PLAYING
 
     player_action = None
-    dungeon = None
-    maze = None
-    level = None
     player = None
     monsters = []
     items = []
@@ -45,9 +38,10 @@ class GameManager(object):
 
     def __init__(self):
         # Pre-load levels into database
-        self.dungeon_generator = DungeonGenerator()
+        self.loaded_levels = []
         self.factory_service = None
         self.load_game_data()
+        self.dungeon_generator = DungeonGenerator(self.factory_service)
 
     def show_main_menu(self):
         self.console_manager.render_main_menu()
@@ -68,16 +62,16 @@ class GameManager(object):
         level.min_room_size = 1
         level.max_room_size = 10
         level.max_rooms = 10
+        level.width = 80
+        level.height = 45
         tdl.setTitle(level.name)
         self.init_dungeon(level)
 
     def init_dungeon(self, level):
         # TODO The player must be built and retrieved here.
         self.player = self.monsters[0]
-        self.dungeon = self.dungeon_generator
-        level.spawn_list = self.monsters
-        self.dungeon_generator.generate(level, self.player, self.factory_service)
-        self.maze = self.dungeon_generator.maze
+        level.monster_spawn_list = self.monsters
+        self.dungeon_generator.generate(level, self.player)
 
     def player_wins(self):
         # the game ended
@@ -102,9 +96,10 @@ class GameManager(object):
         self.render_gui()
 
         # go through all tiles, and set their background color
-        for y in range(self.dungeon.height):
-            for x in range(self.dungeon.width):
-                tile = self.maze[x][y]
+        current_level = self.player.location.level
+        for y in range(current_level.height):
+            for x in range(current_level.width):
+                tile = current_level.maze[x][y]
                 wall = tile.block_sight
                 ground = tile.is_ground
 
@@ -116,19 +111,22 @@ class GameManager(object):
 
         player_x = self.player.location.local_x
         player_y = self.player.location.local_y
-        self.player.fov = map.quickFOV(player_x, player_y, self.is_transparent, 'basic')
+
+        def is_transparent_callback(x, y):
+            return self.is_transparent(current_level, x, y)
+
+        self.player.fov = map.quickFOV(player_x, player_y, is_transparent_callback, 'basic')
         for x, y in self.player.fov:
-            if not x >= len(self.maze) and not y >= len(self.maze[x]):
+            if not x >= len(current_level.maze) and not y >= len(current_level.maze[x]):
                 try:
-                    if self.maze[x][y].is_blocked:
+                    if current_level.maze[x][y].is_blocked:
                         console.drawChar(x, y, '#', fgcolor=colors['light_wall'])
-                        self.maze[x][y].is_explored = True
-                    if self.maze[x][y].is_ground is True:
+                        current_level.maze[x][y].is_explored = True
+                    if current_level.maze[x][y].is_ground is True:
                         console.drawChar(x, y, '.', fgcolor=colors['light_ground'])
-                        self.maze[x][y].is_explored = True
+                        current_level.maze[x][y].is_explored = True
                 except IndexError:
                     raise
-
 
         # NB: Order in which things are render is important
         # 1. draw items
@@ -149,14 +147,15 @@ class GameManager(object):
         # draw player2
         console.drawChar(player_x, player_y, **self.player.display.get_draw_info())
 
-    def is_transparent(self, x, y):
+    @staticmethod
+    def is_transparent(current_level, x, y):
         """
         Used by map.quickFOV to determine which tile fall within the players "field of view"
         """
         try:
             # Pass on IndexErrors raised for when a player gets near the edge of the screen
             # and tile within the field of view fall out side the bounds of the maze.
-            tile = self.maze[x][y]
+            tile = current_level.maze[x][y]
             if tile.block_sight and tile.is_blocked:
                 return False
             else:
@@ -210,7 +209,7 @@ class GameManager(object):
                         # Then we add the vector to the current player position.
 
                         # player moves or attacks in the specified direction
-                        actions.player_move_or_attack(self.player, key_x, key_y, self.maze)
+                        actions.move_or_attack(self.player, key_x, key_y)
 
                         # TODO: Fix the stairs
                         # if (self.areas.stairs and
