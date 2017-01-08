@@ -8,4 +8,4 @@ addons:
       - libffi-dev
 install:
   - pip install -r requirements.txt
-script: python3.5 pytest
+script: pytest
