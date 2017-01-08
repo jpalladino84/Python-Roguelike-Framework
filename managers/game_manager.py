@@ -28,6 +28,7 @@ class GameManager(object):
 
     def start(self):
         self.scene_manager.current_scene.render()
+        tdl.setTitle("Roguelike Framework")
         while True:  # Continue in an infinite game loop.
             self.console_manager.main_console.clear()  # Blank the console
             self.scene_manager.render(player=self.player)
@@ -44,7 +45,6 @@ class GameManager(object):
         level.max_rooms = 10
         level.width = 80
         level.height = 45
-        tdl.setTitle(level.name)
         self.init_dungeon(level)
 
     def init_dungeon(self, level):
