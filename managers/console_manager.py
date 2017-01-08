@@ -12,8 +12,7 @@ class ConsoleManager:
     def __init__(self):
         self.main_console_w = 80
         self.main_console_h = 60
-
-        font_path = os.path.normpath(os.path.join(os.path.realpath(__file__), "..\\..\\terminal8x8_gs_ro.png"))
+        font_path = os.path.normpath(os.path.join(os.path.realpath(__file__), "..", "..", "terminal8x8_gs_ro.png"))
         tdl.setFont(font_path)
         self.main_console = tdl.init(self.main_console_w, self.main_console_h, 'Roguelike Game')
 
