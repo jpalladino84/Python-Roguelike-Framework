@@ -26,11 +26,10 @@ pip install -r requirements.txt
 ## Running
 The framework starts with 5 levels for you to play around with. Run the game with:
 
-`python2.7 run.py`
+`python3.5 run.py`
 
 ## Configure
 The true power of this framework is the ability to configure the game to your liking.
-Each module has a `config.py` file where various settings can be modified to craft a unique experience.
 
 
 ## Contributing
@@ -38,7 +37,6 @@ Contributions are welcomed!
 
 Keep in mind when contributing that the goal of this framework is that it should be easy to
 use and configure for newcomers, but also powerful for advanced users.
-- Any new features added should be made available to configure through a `config.py`
 - Features should be well documented
 
 ## Further Reading

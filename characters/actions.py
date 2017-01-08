@@ -34,12 +34,10 @@ def player_death(player, console):
     # TODO This should not be here
     # the game ended!
     console.printStr('You have died... Game Over\n\n')
-    player.character_state = 'dead'
 
     # for added effect, transform the player into a corpse!
-    player.ascii_char = '%'
-    player.display_foreground_color = Colors.BLOOD_RED
-    player.save()
+    player.display.ascii_character = '%'
+    player.display.foreground_color = Colors.BLOOD_RED
 
 
 def monster_death(monster, console):
@@ -47,10 +45,9 @@ def monster_death(monster, console):
     # transform it into a nasty corpse! it doesn't block, can't be
     # attacked and doesn't move
     console.printStr('{} has died.\n\n'.format(monster.name))
-    monster.ascii_char = '%'
+    monster.display.ascii_character = '%'
     monster.display.foreground_color = Colors.BLOOD_RED
     monster.blocks = False
-    monster.character_state = 'dead'
     monster.name = 'remains of ' + monster.name
 
 
@@ -63,7 +60,7 @@ def take_damage(actor, damage, console):
 
     # check for death. if there's a death function, call it
     if int(actor.get_health()) <= 0:
-        if actor.name == 'player':
+        if actor.is_player:
             player_death(actor, console)
         else:
             monster_death(actor, console)
@@ -117,7 +114,7 @@ def move_or_attack(character, target_x, target_y, console):
         monster = next((monster for monster in character.current_level.spawned_monsters
                         if monster.location.get_local_coords() == tile_coords), None)
         if monster:
-            console.printStr('Player attacks {}...\n\n'.format(monster.name))
+            console.printStr('{} attacks {}...\n\n'.format(character.name, monster.name))
             attack(character, monster, console)
     else:
         move(character, target_x, target_y)
@@ -155,7 +152,7 @@ def monster_take_turn(monster, player, console):
                 move_towards(monster, player)
             # close enough, attack! (if the player is still alive.)
             elif int(player.get_health()) > 0:
-                console.printStr('{} attacks player...\n\n'.format(monster.name))
+                console.printStr('{} attacks {}..\n\n'.format(monster.name, player.name))
                 attack(monster, player, console)
 
 

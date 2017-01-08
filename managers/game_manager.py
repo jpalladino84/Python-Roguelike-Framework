@@ -50,6 +50,7 @@ class GameManager(object):
     def init_dungeon(self, level):
         # TODO The player must be built and retrieved here.
         self.player = self.monsters.pop(-1)
+        self.player.is_player = True
         level.monster_spawn_list = self.monsters
         self.dungeon_generator.generate(level, self.player)
 

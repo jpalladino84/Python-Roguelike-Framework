@@ -5,7 +5,7 @@ class Character(object):
     def __init__(self, uid, name, character_class, character_race, stats, display,
                  inventory, body, main_experience_pool, location=None):
         self.uid = uid
-        self.name = name
+        self._name = name
         self.character_class = character_class
         self.character_race = character_race
         self.stats = stats
@@ -17,6 +17,17 @@ class Character(object):
         self.inventory = inventory
         self.body = body
         self.main_experience_pool = main_experience_pool
+        self.is_player = False
+
+    @property
+    def name(self):
+        if self.is_player:
+            return "(You)" + self._name
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     def is_dead(self):
         """
