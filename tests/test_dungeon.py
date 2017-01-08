@@ -24,6 +24,9 @@ class DungeonTestCase(unittest.TestCase):
         self.game_manager.init_dungeon(level)
         self.level = level
 
+    def tearDown(self):
+        self.game_manager.console_manager._close_font()
+
     def test_generate_dungeon(self):
         self.assertEqual(self.level.name, "DEFAULT")
 

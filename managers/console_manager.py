@@ -28,6 +28,12 @@ class ConsoleManager:
         console.setMode(mode)
         return console
 
+    def _close_font(self):
+        """
+        Close font resource for unittests.
+        """
+        tdl.file.close()
+
 
 class Menu(Console):
     def __init__(self, name, options, width, height):
