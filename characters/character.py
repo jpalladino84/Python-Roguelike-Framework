@@ -24,7 +24,7 @@ class Character(object):
         :return: bool
         """
         # TODO Make this
-        return False
+        return int(self.stats.health) <= 0
 
     def get_attack(self):
         # TODO Figure out better ways to calculate this

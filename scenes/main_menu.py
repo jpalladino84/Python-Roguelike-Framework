@@ -1,5 +1,5 @@
-from managers.console_manager import Menu
 import tdl
+from managers.console_manager import Menu
 
 
 class MainMenuScene(object):
@@ -13,6 +13,7 @@ class MainMenuScene(object):
         self.current_x = 20
         self.current_y = 20
         self.start_game_callback = start_game_callback
+        self.create_menu()
 
     def get_next_y(self):
         self.current_y += 2
@@ -22,7 +23,7 @@ class MainMenuScene(object):
         self.current_x += 5
         return self.current_x
 
-    def render(self):
+    def create_menu(self):
         x = self.current_x
         self.menu.print_str('Welcome', x, self.get_next_y())
         self.menu.print_str('Your goal is to find the Cone of Dunshire (!).', x, self.get_next_y())
@@ -34,10 +35,12 @@ class MainMenuScene(object):
             text = '(' + chr(self.menu.letter_index) + ') ' + option_text
             self.menu.print_str(text, x, self.get_next_y())
             self.menu.letter_index += 1
+
+    def render(self, **kwargs):
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
-    def handle_input(self):
+    def handle_input(self, **kwargs):
         key_event = tdl.event.keyWait()
         if key_event.keychar.upper() == 'A':
             self.start_game_callback()
