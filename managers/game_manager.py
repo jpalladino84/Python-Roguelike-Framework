@@ -16,6 +16,7 @@ class GameManager(object):
     """
     def __init__(self):
         # Pre-load levels into database
+        self.json_template_loader = None
         self.loaded_levels = []
         self.items = []
         self.monsters = []
@@ -23,7 +24,9 @@ class GameManager(object):
         self.player = None
         self.load_game_data()
         self.console_manager = ConsoleManager()
-        self.scene_manager = SceneManager(self.console_manager, start_game_callback=self.new_game)
+        self.scene_manager = SceneManager(self.console_manager,
+                                          start_game_callback=self.new_game,
+                                          template_manager=self.json_template_loader)
         self.dungeon_generator = DungeonGenerator(self.factory_service)
 
     def start(self):
@@ -58,20 +61,20 @@ class GameManager(object):
         """
         This is where the game templates / data is loaded.
         """
-        json_template_loader = JsonTemplateManager()
+        self.json_template_loader = JsonTemplateManager()
         self.factory_service = FactoryService(
-            template_loader=json_template_loader,
-            body_factory=BodyFactory(json_template_loader.bodies_templates),
+            template_loader=self.json_template_loader,
+            body_factory=BodyFactory(self.json_template_loader.bodies_templates),
         )
         character_factory = CharacterFactory(
-            character_templates=json_template_loader.monster_templates,
+            character_templates=self.json_template_loader.monster_templates,
             factory_service=self.factory_service,
-            race_templates=json_template_loader.race_templates,
-            class_templates=json_template_loader.class_templates
+            race_templates=self.json_template_loader.race_templates,
+            class_templates=self.json_template_loader.class_templates
         )
         self.factory_service.character_factory = character_factory
         # TODO Currently it builds the monsters one time, it does validate if the template is correct BUT
         # TODO Do we really want to hold an instance of each in memory?
         self.monsters = [character_factory.build(uid) for uid, monster in
-                         json_template_loader.monster_templates.items()]
+                         self.json_template_loader.monster_templates.items()]
         self.items = []

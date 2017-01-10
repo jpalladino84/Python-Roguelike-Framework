@@ -17,6 +17,8 @@ class CharacterCreationScene(object):
         self.active_control = self.control_name
         self.options = ["Finish"]
         self.menu = Menu('Main Menu', self.options, self.main_console.width, self.main_console.height)
+        # TODO THIS should be in the menu itself.
+        self.menu_draws = []
         self.current_x = 20
         self.current_y = 20
         self.start_game_callback = start_game_callback
@@ -34,13 +36,24 @@ class CharacterCreationScene(object):
         x = self.get_next_x()
         for option_text in self.options:
             text = '(' + chr(self.menu.letter_index) + ') ' + option_text
-            self.menu.print_str(text, x, self.get_next_y())
+            y = self.get_next_y()
+            self.menu.print_str(text, x, y)
             self.menu.letter_index += 1
+            self.menu_draws.append((text, x, y))
+
+    def render_menu(self):
+        for text, x, y in self.menu_draws:
+            self.menu.print_str(text, x, y)
 
     def render(self, **kwargs):
+        self.current_x = 20
+        self.current_y = 20
+        self.menu.clear()
         for control in self.controls:
-            self.menu.printStr(control.text)
+            self.menu.print_str(control.text, self.current_x, self.current_y)
+            self.current_y += 1
 
+        self.render_menu()
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
@@ -52,6 +65,7 @@ class CharacterCreationScene(object):
         else:
             key_event = tdl.event.keyWait()
             if key_event.keychar.upper() == 'A':
+                # TODO Assign new player here, via SERVICE is preferred.
                 self.start_game_callback()
             elif key_event.keychar.upper() == 'B':
                 # Halt the script using SystemExit
@@ -74,8 +88,11 @@ class InputControl(object):
             if key_event.key == "ENTER":
                 self.finished = True
                 return
+            if key_event.key == "BACKSPACE":
+                if len(self.answer) > 0:
+                    self.answer = self.answer[:-1]
             else:
-                self.answer += key_event.keychar
+                self.answer += key_event.char
 
     @property
     def text(self):

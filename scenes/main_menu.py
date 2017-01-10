@@ -5,14 +5,14 @@ from managers.console_manager import Menu
 class MainMenuScene(object):
     ID = "MainMenu"
 
-    def __init__(self, console_manager, start_game_callback):
+    def __init__(self, console_manager, character_creation_callback):
         self.console_manager = console_manager
         self.main_console = console_manager.main_console
         self.options = ['Play a new game', 'Quit']
         self.menu = Menu('Main Menu', self.options, self.main_console.width, self.main_console.height)
         self.current_x = 20
         self.current_y = 20
-        self.start_game_callback = start_game_callback
+        self.character_creation_callback = character_creation_callback
         self.create_menu()
 
     def get_next_y(self):
@@ -43,7 +43,7 @@ class MainMenuScene(object):
     def handle_input(self, **kwargs):
         key_event = tdl.event.keyWait()
         if key_event.keychar.upper() == 'A':
-            self.start_game_callback()
+            self.character_creation_callback()
         elif key_event.keychar.upper() == 'B':
             # Halt the script using SystemExit
             raise SystemExit('The window has been closed.')
