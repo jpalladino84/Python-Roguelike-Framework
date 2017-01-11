@@ -7,7 +7,7 @@ class BodyFactory(object):
 
     def build(self, uid):
         """
-        Builds a characters instance from a template using the uid.
+        Builds a body instance from a template using the uid.
         :param uid: uid of the template to instantiate.
         :return: Built instance from template.
         """

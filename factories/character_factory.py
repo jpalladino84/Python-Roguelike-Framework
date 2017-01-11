@@ -32,6 +32,35 @@ class CharacterFactory(object):
         else:
             raise Exception("Could not find template for UID " + uid)
 
+    def create(self, name, class_uid, race_uid, stats, body_uid):
+        """
+        Creates a new character based on arguments
+        :return:
+        """
+        uid = "player"
+        race_experience_pool = ExperiencePool()
+        class_experience_pool = ExperiencePool()
+        race_experience_pool.add_child_pool(class_experience_pool)
+        new_instance = Character(
+            uid=uid,
+            name=name,
+            character_class=CharacterClassInstance(
+                template=self.get_class_template_by_uid(class_uid),
+                experience_pool=class_experience_pool
+            ),
+            character_race=RaceInstance(
+                template=self.get_race_template_by_uid(race_uid),
+                experience_pool=race_experience_pool
+            ),
+            stats=stats,
+            display=Display((255, 255, 255), (0, 0, 0), "@"),
+            body=self.factory_service.build_body_instance_by_uid(body_uid),
+            main_experience_pool=race_experience_pool,
+            inventory=Inventory()
+        )
+
+        return new_instance
+
     def _create_instance_of_template(self, character_template):
         instance_id = 0
         if character_template.uid in self.template_instance_count:

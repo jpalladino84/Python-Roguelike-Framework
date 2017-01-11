@@ -72,6 +72,7 @@ class GameScene(object):
 
         player = kwargs["player"]
         current_level = player.location.level
+        moved = False
 
         for event in tdl.event.get():  # Iterate over recent events.
             if event.type == 'KEYDOWN':
@@ -81,12 +82,18 @@ class GameScene(object):
 
                 # We mix special keys with normal characters so we use keychar.
                 if not player.is_dead():
+                    if event.key == 'KP5' or event.key == '.':
+                        moved = True
+
                     if event.keychar.upper() in self.movement_keys:
                         key_x, key_y = self.movement_keys[event.keychar.upper()]
                         self.action_manager.move_or_attack(player, key_x, key_y)
+                        moved = True
 
+                    if moved:
                         for monster in current_level.spawned_monsters:
                             self.action_manager.monster_take_turn(monster, player)
+                        moved = False
 
             if event.type == 'QUIT':
                 # Halt the script using SystemExit

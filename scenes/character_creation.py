@@ -1,13 +1,16 @@
 import tdl
+from components.stats import CharacterStats
 from managers.console_manager import Menu
 
 
 class CharacterCreationScene(object):
     ID = "CharacterCreation"
 
-    def __init__(self, console_manager, template_manager, start_game_callback):
+    def __init__(self, console_manager, game_context, start_game_callback):
+        self.game_context = game_context
+        self.character_factory = self.game_context.character_factory
         self.console_manager = console_manager
-        self.template_manager = template_manager
+        self.template_manager = game_context.template_manager
         self.main_console = console_manager.main_console
         self.menus = []
         self.control_name = InputControl("Name:")
@@ -53,7 +56,8 @@ class CharacterCreationScene(object):
             self.menu.print_str(control.text, self.current_x, self.current_y)
             self.current_y += 1
 
-        self.render_menu()
+        if not self.active_control:
+            self.render_menu()
         self.main_console.blit(self.menu, 0, 0)
         tdl.flush()
 
@@ -66,10 +70,14 @@ class CharacterCreationScene(object):
             key_event = tdl.event.keyWait()
             if key_event.keychar.upper() == 'A':
                 # TODO Assign new player here, via SERVICE is preferred.
+                self.game_context.player = self.character_factory.create(
+                    name=self.control_name.answer,
+                    class_uid=self.character_factory.class_templates[0].uid,
+                    race_uid=self.character_factory.race_templates[0].uid,
+                    stats=CharacterStats(health=16),
+                    body_uid=self.game_context.
+                )
                 self.start_game_callback()
-            elif key_event.keychar.upper() == 'B':
-                # Halt the script using SystemExit
-                raise SystemExit('The window has been closed.')
 
 
 # TODO This is the wrong place to put this
@@ -85,6 +93,9 @@ class InputControl(object):
     def handle_input(self, **kwargs):
         key_event = tdl.event.keyWait()
         if key_event.keychar:
+            if key_event.key == "F4":
+                # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
+                raise SystemExit("Window was closed.")
             if key_event.key == "ENTER":
                 self.finished = True
                 return
