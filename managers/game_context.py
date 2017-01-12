@@ -7,4 +7,6 @@ class GameContext(object):
     def __init__(self):
         self.player = None
         self.factory_service = None
+        self.body_factory = None
+        self.character_factory = None
         self.json_template_loader = None

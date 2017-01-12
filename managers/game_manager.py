@@ -77,6 +77,8 @@ class GameManager(object):
             class_templates=json_template_loader.class_templates
         )
         factory_service.character_factory = character_factory
+        self.game_context.character_factory = character_factory
+        self.game_context.body_factory = factory_service.body_factory
         # TODO Currently it builds the monsters one time, it does validate if the template is correct BUT
         # TODO Do we really want to hold an instance of each in memory?
         self.monsters = [character_factory.build(uid) for uid, monster in
