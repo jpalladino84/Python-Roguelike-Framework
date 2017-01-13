@@ -37,21 +37,21 @@ class Character(object):
         # TODO Make this
         return int(self.stats.health) <= 0
 
-    def get_attack(self):
+    def get_attack_total(self):
         # TODO Figure out better ways to calculate this
-        return self.stats.strength
+        return self.stats.strength.current + self.character_race.get_stat_modifier(self.stats.strength)
 
-    def get_defense(self):
+    def get_defense_total(self):
         # TODO Figure out better ways to calculate this
-        return self.stats.dexterity
+        return self.stats.dexterity.current + self.character_race.get_stat_modifier(self.stats.dexterity)
 
-    def get_health(self):
+    def get_health_total(self):
         # TODO Figure out better ways to calculate this
-        return self.stats.health
+        return self.stats.health.current + self.character_race.get_stat_modifier(self.stats.health)
 
-    def get_speed(self):
+    def get_speed_total(self):
         # TODO Figure out better ways to calculate this
-        return self.stats.dexterity
+        return self.stats.dexterity.current + self.character_race.get_stat_modifier(self.stats.dexterity)
 
     @property
     def current_level(self):

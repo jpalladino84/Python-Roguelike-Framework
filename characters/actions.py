@@ -21,8 +21,8 @@ from components.colors import Colors
 def attack(attacker, target, console):
     # a simple formula for attack damage
     hit_roll = random.randint(1, 20)
-    damage_roll = random.randint(1, 4)
-    hit_check = int(attacker.get_attack()) + hit_roll - int(target.get_defense())
+    damage_roll = random.randint(1, 4) + math.floor(attacker.get_attack_total() / 8)
+    hit_check = int(attacker.get_attack_total()) + hit_roll - int(target.get_defense_total())
     if hit_check > 0:
         # make the target take some damage
         take_damage(target, damage_roll, console)
@@ -56,10 +56,10 @@ def take_damage(actor, damage, console):
     # apply damage if possible
     if damage > 0:
         console.printStr('{} takes {} damage.\n\n'.format(actor.name, damage))
-        actor.get_health().modify_current(-damage)
+        actor.stats.health.modify_current(-damage)
 
     # check for death. if there's a death function, call it
-    if int(actor.get_health()) <= 0:
+    if int(actor.get_health_total()) <= 0:
         if actor.is_player:
             player_death(actor, console)
         else:
@@ -151,7 +151,7 @@ def monster_take_turn(monster, player, console):
             if distance_to(monster, player) >= 2:
                 move_towards(monster, player)
             # close enough, attack! (if the player is still alive.)
-            elif int(player.get_health()) > 0:
+            elif int(player.get_health_total()) > 0:
                 console.printStr('{} attacks {}..\n\n'.format(monster.name, player.name))
                 attack(monster, player, console)
 

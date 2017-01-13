@@ -19,10 +19,13 @@ class CharacterCreationScene(object):
         self.options = ["Finish"]
 
         self.control_name = InputControl("Name:")
+        self.control_class = ListChoiceControl("Class:", root_console=self.main_console,
+                                               options=self.game_context.character_factory.class_templates.values())
         self.control_race = ListChoiceControl(question="Race:", root_console=self.main_console,
                                               options=self.game_context.character_factory.race_templates.values())
         self.controls = [
             self.control_name,
+            self.control_class,
             self.control_race
         ]
         self.menu = Menu('Main Menu', self.options, self.main_console.width, self.main_console.height)
@@ -88,8 +91,8 @@ class CharacterCreationScene(object):
                 # TODO He should be able to choose his stats but racial BONUSES to his stats should be applied somehow.
                 self.game_context.player = self.character_factory.create(
                     name=self.control_name.answer,
-                    class_uid="warrior",
-                    race_uid="human",
+                    class_uid=self.control_class.answer.uid,
+                    race_uid=self.control_race.answer.uid,
                     stats=CharacterStats(health=16),
                     body_uid="humanoid"
                 )
@@ -176,3 +179,50 @@ class ListChoiceControl(object):
             if chosen_option:
                 self.answer = chosen_option
                 self.finished = True
+
+
+class PointDistributionControl(object):
+    def __init__(self, question, options, root_console, total_points):
+        self.question = question
+        self.options = options
+        self.assigned_points = {option: 0 for option in self.options}
+        self.active_option = options[0]
+        self.answer = None
+        self.root_console = root_console
+        self.finished = False
+        self._formatted_options = ""
+        # TODO This isn't very good
+        self.lines = 0
+
+    @property
+    def text(self):
+        return self.question + "\n" + self._get_formatted_options()
+
+    def _get_formatted_options(self):
+        if self._formatted_options:
+            return self._formatted_options
+
+        text = ""
+        width_char_count = 0
+        for option, value in self.assigned_points:
+            new_text = "    {}: {}".format(option, value)
+            if width_char_count + len(new_text) > self.root_console.width:
+                new_text += "\n"
+                width_char_count = 0
+                self.lines += 1
+
+            text += new_text
+            width_char_count += len(new_text)
+        self._formatted_options = text
+
+        return self._formatted_options
+
+    def handle_input(self, **kwargs):
+        key_event = tdl.event.keyWait()
+        if key_event.keychar:
+            if key_event.key == "F4":
+                # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
+                raise SystemExit("Window was closed.")
+
+            # TODO HERE WE CHECK IF LEFT OR RIGHT TO INCREASE DIMINISH POINT
+            # TODO CHECK UP OR DOWN TO WRAP AROUND OPTIONS

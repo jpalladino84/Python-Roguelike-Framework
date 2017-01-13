@@ -36,3 +36,8 @@ class RaceInstance(object):
     def experience_penalty(self):
         return self.template.level_tree
 
+    def get_stat_modifier(self, stat):
+        modifiers = self.template.level_tree.get_stat_modifiers(self.experience_pool.get_pool_level())
+        if stat.uid in modifiers:
+            return modifiers[stat.uid]
+        return 0

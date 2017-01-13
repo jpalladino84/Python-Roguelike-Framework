@@ -13,7 +13,7 @@ class LevelTree(object):
         final_modifiers = {}
         ordered_modifiers = sorted(self.stats_modifiers.keys())
         for level in ordered_modifiers:
-            if level > current_level:
+            if int(level) > int(current_level):
                 continue
             for stat_modifier in self.stats_modifiers[level]:
                 if stat_modifier.uid in final_modifiers:

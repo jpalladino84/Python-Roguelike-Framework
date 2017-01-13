@@ -9,9 +9,12 @@ class ExperiencePool(object):
     When he gains 500 xp, 250 goes to orc, 250 goes to warrior and 125 goes to berserker.
     Once he reaches max level of Orc then the full amount goes to warrior, which gives half of what it has to berserker.
     """
+    STARTING_LEVEL = 1
+
     def __init__(self):
         self.experience = 0
         self.child_pools = []
+
 
     def add_child_pool(self, child_pool):
         self.child_pools.append(child_pool)
@@ -35,7 +38,7 @@ class ExperiencePool(object):
         levels = self.get_pool_level()
         for child_pool in self.child_pools:
             levels += child_pool.get_pool_level()
-        return levels
+        return levels + self.STARTING_LEVEL
 
     def get_pool_level(self):
-        return floor(self.experience / 5000)
+        return floor(self.experience / 5000) + self.STARTING_LEVEL
