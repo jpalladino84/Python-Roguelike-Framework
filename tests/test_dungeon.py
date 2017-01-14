@@ -7,6 +7,8 @@ import unittest
 
 from areas.level import Level
 from managers.game_manager import GameManager
+from characters.character import Character
+from components.stats import CharacterStats
 
 
 class DungeonTestCase(unittest.TestCase):
@@ -21,6 +23,8 @@ class DungeonTestCase(unittest.TestCase):
         level.width = 80
         level.height = 45
 
+        self.game_manager.game_context.player = self.game_manager.game_context.character_factory.create(
+            "test", "warrior", "human", CharacterStats(), "humanoid")
         self.game_manager.init_dungeon(level)
         self.level = level
 
@@ -31,7 +35,7 @@ class DungeonTestCase(unittest.TestCase):
         self.assertEqual(self.level.name, "DEFAULT")
 
     def test_dungeon_contains_player(self):
-        player = self.game_manager.player
+        player = self.game_manager.game_context.player
         self.assertEqual(player.current_level, self.level)
         self.assertFalse(player.is_dead())
 
