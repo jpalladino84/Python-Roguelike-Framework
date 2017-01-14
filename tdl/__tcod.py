@@ -323,8 +323,8 @@ KEY_RELEASED = 2
 
 
 #class char_t(Structure):
-#    _fields_ = [('c', c_int), # character ascii code
-#                ('cf', c_int), # character number in font
+#    _fields_ = [('c', c_int), # characters ascii code
+#                ('cf', c_int), # characters number in font
 #                ('fore', _Color), ('back', _Color),
 #                ('dirty', c_uint8)]
                 

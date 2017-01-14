@@ -44,9 +44,9 @@ class AStar(object):
         When using the second type of callback be sure to set advanced=True
         
         @type width: int
-        @param width: width of the pathfinding area in tiles
+        @param width: width of the pathfinding areas in tiles
         @type height: int
-        @param height: height of the pathfinding area in tiles
+        @param height: height of the pathfinding areas in tiles
         
         @type callback: function
         @param callback: A callback taking parameters depending on the setting
@@ -113,14 +113,14 @@ class AStar(object):
         while _lib.TCOD_path_walk(self, xRef, yRef, recalculate):
             path.append((x.value, y.value))
         return path
-    
+
 def quickFOV(x, y, callback, fov='PERMISSIVE', radius=7.5, lightWalls=True, sphere=True):
     """All field-of-view functionality in one call.
     
     Before using this call be sure to make a function, lambda, or method that takes 2
     positional parameters and returns True if light can pass through the tile or False
     for light-blocking tiles and for indexes that are out of bounds of the
-    dungeon.
+    areas.
     
     This function is 'quick' as in no hassle but can quickly become a very slow
     function call if a large radius is used or the callback provided itself
