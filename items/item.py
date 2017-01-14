@@ -83,5 +83,8 @@ class ItemStack(object):
             self.amount -= 1
             return copy.copy(self.item)
 
+    def tuple(self):
+        return self.item, self.amount
+
     def __hash__(self):
         return hash(self.item)

@@ -81,7 +81,7 @@ class CharacterCreationScene(object):
 
     def handle_input(self, **kwargs):
         if self.active_control:
-            self.active_control.handle_input()
+            self.active_control.handle_input(**kwargs)
             if self.active_control.finished:
                 new_index = self.controls.index(self.active_control) + 1
                 if new_index < len(self.controls):
@@ -89,7 +89,7 @@ class CharacterCreationScene(object):
                 else:
                     self.active_control = None
         else:
-            key_event = tdl.event.keyWait()
+            key_event = kwargs["key_event"]
             if key_event.keychar.upper() == 'A':
                 self.game_context.player = self.character_factory.create(
                     name=self.control_name.answer,

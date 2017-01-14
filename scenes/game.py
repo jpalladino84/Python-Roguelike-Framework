@@ -22,8 +22,9 @@ class GameScene(object):
     """
     ID = "Game"
 
-    def __init__(self, console_manager):
+    def __init__(self, console_manager, scene_manager):
         self.console_manager = console_manager
+        self.scene_manager = scene_manager
         self.main_console = console_manager.main_console
         # TODO Eventually we will want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
@@ -74,28 +75,31 @@ class GameScene(object):
         current_level = player.location.level
         moved = False
 
-        for event in tdl.event.get():  # Iterate over recent events.
-            if event.type == 'KEYDOWN':
-                # TODO Make Inventory System, Switch to Inventory Scene
-                # TODO Make stairs system to go up or down
-                # TODO Add Action to pick up items
+        key_event = kwargs["key_event"]
+        if key_event.type == 'KEYDOWN':
+            # TODO Make Inventory System, Switch to Inventory Scene
+            # TODO Make stairs system to go up or down
+            # TODO Add Action to pick up items
 
-                # We mix special keys with normal characters so we use keychar.
-                if not player.is_dead():
-                    if event.key == 'KP5' or event.key == '.':
-                        moved = True
+            # We mix special keys with normal characters so we use keychar.
+            if not player.is_dead():
+                if key_event.key == 'KP5' or key_event.key == '.':
+                    moved = True
 
-                    if event.keychar.upper() in self.movement_keys:
-                        key_x, key_y = self.movement_keys[event.keychar.upper()]
-                        self.action_manager.move_or_attack(player, key_x, key_y)
-                        moved = True
+                if key_event.keychar.upper() in self.movement_keys:
+                    key_x, key_y = self.movement_keys[key_event.keychar.upper()]
+                    self.action_manager.move_or_attack(player, key_x, key_y)
+                    moved = True
 
-                    if moved:
-                        for monster in current_level.spawned_monsters:
-                            self.action_manager.monster_take_turn(monster, player)
-                        moved = False
+                if key_event.keychar == "i":
+                    self.scene_manager.enter_inventory_screen(**kwargs)
 
-            if event.type == 'QUIT':
+                if moved:
+                    for monster in current_level.spawned_monsters:
+                        self.action_manager.monster_take_turn(monster, player)
+                    moved = False
+
+            if key_event.type == 'QUIT':
                 # Halt the script using SystemExit
                 raise SystemExit('The window has been closed.')
 

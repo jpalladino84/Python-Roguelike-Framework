@@ -41,7 +41,7 @@ class MainMenuScene(object):
         tdl.flush()
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
+        key_event = kwargs["key_event"]
         if key_event.keychar.upper() == 'A':
             self.character_creation_callback()
         elif key_event.keychar.upper() == 'B':

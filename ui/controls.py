@@ -1,7 +1,8 @@
 import tdl
 
-ACTIVE_CONTROL_COLOR = (255, 255, 100)
+ACTIVE_CONTROL_COLOR = (255, 255, 0)
 INACTIVE_CONTROL_COLOR = (255, 255, 255)
+CHOSEN_CONTROL_COLOR = (100, 255, 100)
 BLACK_COLOR = (0, 0, 0)
 
 
@@ -15,7 +16,7 @@ class InputControl(object):
         self.finished = False
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
+        key_event = kwargs["key_event"]
         if key_event.keychar:
             if key_event.key == "F4":
                 # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
@@ -79,7 +80,7 @@ class ListChoiceControl(object):
         return self._formatted_options
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
+        key_event = kwargs["key_event"]
         if key_event.keychar:
             if key_event.key == "F4":
                 # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
@@ -96,8 +97,19 @@ class ListChoiceControl(object):
         else:
             color = INACTIVE_CONTROL_COLOR
 
-        console.setColors(fg=color, bg=BLACK_COLOR)
-        console.printStr(self.text)
+        width_char_count = 0
+        for letter, option in self.options:
+            new_text = "    ({}){}".format(letter, option.name)
+            if width_char_count + len(new_text) > self.root_console.width:
+                new_text += "\n"
+                width_char_count = 0
+            width_char_count += len(new_text)
+
+            if self.answer and self.answer == option:
+                console.setColors(fg=CHOSEN_CONTROL_COLOR, bg=BLACK_COLOR)
+            else:
+                console.setColors(fg=color, bg=BLACK_COLOR)
+            console.printStr(new_text)
 
 
 class PointDistributionControl(object):
@@ -136,7 +148,7 @@ class PointDistributionControl(object):
         return self._formatted_options
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
+        key_event = kwargs["key_event"]
         if key_event.keychar:
             if key_event.key == "F4":
                 # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
