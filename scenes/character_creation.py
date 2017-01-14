@@ -89,15 +89,16 @@ class CharacterCreationScene(object):
                 else:
                     self.active_control = None
         else:
-            key_event = kwargs["key_event"]
-            if key_event.keychar.upper() == 'A':
-                self.game_context.player = self.character_factory.create(
-                    name=self.control_name.answer,
-                    class_uid=self.control_class.answer.uid,
-                    race_uid=self.control_race.answer.uid,
-                    stats=CharacterStats(
-                        health=16,
-                        **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
-                    body_uid="humanoid"
-                )
-                self.start_game_callback()
+            key_events = kwargs["key_events"]
+            for key_event in key_events:
+                if key_event.keychar.upper() == 'A':
+                    self.game_context.player = self.character_factory.create(
+                        name=self.control_name.answer,
+                        class_uid=self.control_class.answer.uid,
+                        race_uid=self.control_race.answer.uid,
+                        stats=CharacterStats(
+                            health=16,
+                            **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
+                        body_uid="humanoid"
+                    )
+                    self.start_game_callback()

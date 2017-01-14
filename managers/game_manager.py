@@ -35,8 +35,14 @@ class GameManager(object):
             self.console_manager.main_console.clear()  # Blank the console
             self.scene_manager.render(player=self.game_context.player)
             # TODO We might want to GET the tdl key event here so we don't have to reimplement generic stuff.
-            key_event = tdl.event.keyWait()
-            self.scene_manager.handle_input(player=self.game_context.player, key_event=key_event)
+            all_key_events = list(tdl.event.get())
+            for key_event in all_key_events:
+                if key_event.type == 'QUIT':
+                    # Halt the script using SystemExit
+                    raise SystemExit('The window has been closed.')
+            key_events = [key_event for key_event in all_key_events if key_event.type == 'KEYDOWN']
+
+            self.scene_manager.handle_input(player=self.game_context.player, key_events=key_events)
             tdl.flush()
             # TODO When dead it should switch to a new scene for character dump.
 

@@ -38,17 +38,18 @@ class InventoryScene(object):
             window.render(**kwargs)
 
     def handle_input(self, **kwargs):
-        key_event = kwargs["key_event"]
-        if key_event.key == "ESCAPE":
-            self.exit_inventory_callback()
-            return
-        for window in self.windows:
-            window.handle_input(**kwargs)
+        key_events = kwargs["key_events"]
+        for key_event in key_events:
+            if key_event.key == "ESCAPE":
+                self.exit_inventory_callback()
+                return
+            for window in self.windows:
+                window.handle_input(**kwargs)
 
-        if self.active_window == self.windows.index(self.item_list_window):
-            if self.item_list_window.chosen_item is not None:
-                self.item_detail_window.build(self.item_list_window.chosen_item)
-                self.active_window = self.windows.index(self.item_detail_window)
+            if self.active_window == self.windows.index(self.item_list_window):
+                if self.item_list_window.chosen_item is not None:
+                    self.item_detail_window.build(self.item_list_window.chosen_item)
+                    self.active_window = self.windows.index(self.item_detail_window)
 
 
 class ItemListWindow(object):
@@ -69,8 +70,10 @@ class ItemListWindow(object):
             self.control = controls.ListChoiceControl("Items:", player.inventory.get_all_items(), self.window)
 
     def render(self, **kwargs):
+        self.window.move(0, 0)
+        self.window.printStr("Inventory:\n")
         if self.control:
-            self.control.render()
+            self.control.render(self.window, True, **kwargs)
 
     def handle_input(self, **kwargs):
         if self.control:
@@ -97,8 +100,9 @@ class ItemDetailWindow(object):
             pass
 
     def render(self, **kwargs):
+        self.window.move(0, 0)
         if self.control:
-            self.control.render()
+            self.control.render(**kwargs)
 
     def handle_input(self, **kwargs):
         if self.control:
