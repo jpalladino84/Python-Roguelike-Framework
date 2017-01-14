@@ -23,10 +23,20 @@ class CharacterCreationScene(object):
                                                options=self.game_context.character_factory.class_templates.values())
         self.control_race = ListChoiceControl(question="Race:", root_console=self.main_console,
                                               options=self.game_context.character_factory.race_templates.values())
+        self.control_stats = PointDistributionControl(
+            question="Stats:",
+            options=["Strength", "Dexterity", "Constitution", "Intelligence", "Charisma", "Wisdom"],
+            root_console=self.main_console,
+            total_points=16,
+            initial_value=8,
+            max_value=18
+        )
+
         self.controls = [
             self.control_name,
             self.control_class,
-            self.control_race
+            self.control_race,
+            self.control_stats
         ]
         self.menu = Menu('Main Menu', self.options, self.main_console.width, self.main_console.height)
         self.active_control = self.control_name
@@ -182,12 +192,15 @@ class ListChoiceControl(object):
 
 
 class PointDistributionControl(object):
-    def __init__(self, question, options, root_console, total_points):
+    def __init__(self, question, options, root_console, initial_value, max_value, total_points):
         self.question = question
         self.options = options
-        self.assigned_points = {option: 0 for option in self.options}
+        self.initial_value = initial_value
+        self.max_value = max_value
+        self.total_points = total_points
+        self.used_points = 0
+        self.assigned_points = {option: initial_value for option in self.options}
         self.active_option = options[0]
-        self.answer = None
         self.root_console = root_console
         self.finished = False
         self._formatted_options = ""
@@ -198,21 +211,16 @@ class PointDistributionControl(object):
     def text(self):
         return self.question + "\n" + self._get_formatted_options()
 
+    @property
+    def answer(self):
+        return self.assigned_points
+
     def _get_formatted_options(self):
-        if self._formatted_options:
-            return self._formatted_options
-
         text = ""
-        width_char_count = 0
-        for option, value in self.assigned_points:
-            new_text = "    {}: {}".format(option, value)
-            if width_char_count + len(new_text) > self.root_console.width:
-                new_text += "\n"
-                width_char_count = 0
-                self.lines += 1
-
+        for option in self.options:
+            new_text = "    {}: {} \n".format(option, self.assigned_points[option])
+            self.lines += 1
             text += new_text
-            width_char_count += len(new_text)
         self._formatted_options = text
 
         return self._formatted_options
@@ -224,5 +232,46 @@ class PointDistributionControl(object):
                 # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
                 raise SystemExit("Window was closed.")
 
-            # TODO HERE WE CHECK IF LEFT OR RIGHT TO INCREASE DIMINISH POINT
-            # TODO CHECK UP OR DOWN TO WRAP AROUND OPTIONS
+            if key_event.key == 'KP6' or key_event.key == "RIGHT":
+                self.__increase_value()
+
+            if key_event.key == 'KP4' or key_event.key == "LEFT":
+                self.__decrease_value()
+
+            if key_event.key == "KP8" or key_event.key == "UP":
+                self.__cycle_previous_option()
+
+            if key_event.key == "KP2" or key_event.key == "DOWN":
+                self.__cycle_next_option()
+
+            if key_event.key == "ENTER":
+                if self.options.index(self.active_option) == len(self.options) - 1:
+                    self.finished = True
+                    return
+                else:
+                    self.__cycle_next_option()
+
+    def __increase_value(self):
+        if (self.used_points < self.total_points
+                and self.assigned_points[self.active_option] < self.max_value):
+            self.used_points += 1
+            self.assigned_points[self.active_option] += 1
+
+    def __decrease_value(self):
+        if self.assigned_points[self.active_option] > self.initial_value:
+            self.used_points -= 1
+            self.assigned_points[self.active_option] -= 1
+
+    def __cycle_next_option(self):
+        current_index = self.options.index(self.active_option)
+        if current_index == len(self.options) - 1:
+            self.active_option = self.options[0]
+        else:
+            self.active_option = self.options[current_index + 1]
+
+    def __cycle_previous_option(self):
+        current_index = self.options.index(self.active_option)
+        if current_index == 0:
+            self.active_option = self.options[-1]
+        else:
+            self.active_option = self.options[current_index - 1]
