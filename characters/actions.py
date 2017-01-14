@@ -20,9 +20,11 @@ from components.colors import Colors
 
 def attack(attacker, target, console):
     # a simple formula for attack damage
+    attack_modifier = math.floor((attacker.get_attack_total() - 8) / 2)
+    defense_modifier = math.floor((target.get_defense_total() - 8) / 2)
     hit_roll = random.randint(1, 20)
-    damage_roll = random.randint(1, 4) + math.floor(attacker.get_attack_total() / 8)
-    hit_check = int(attacker.get_attack_total()) + hit_roll - int(target.get_defense_total())
+    damage_roll = random.randint(1, 4) + attack_modifier
+    hit_check = int(attack_modifier) + hit_roll - (10 + defense_modifier)
     if hit_check > 0:
         # make the target take some damage
         take_damage(target, damage_roll, console)
