@@ -100,6 +100,7 @@ class ListChoiceControl(object):
             color = INACTIVE_CONTROL_COLOR
 
         width_char_count = 0
+        console.printStr(self.question + "\n")
         for letter, option in self.options:
             new_text = "    ({}){}".format(letter, option.name)
             if width_char_count + len(new_text) > self.root_console.width:
@@ -112,6 +113,7 @@ class ListChoiceControl(object):
             else:
                 console.setColors(fg=color, bg=BLACK_COLOR)
             console.printStr(new_text)
+        console.printStr("\n")
 
 
 class PointDistributionControl(object):

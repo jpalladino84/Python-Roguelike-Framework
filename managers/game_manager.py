@@ -74,7 +74,10 @@ class GameManager(object):
 
         self.game_context.factory_service = FactoryService(
             template_loader=json_template_loader,
-            body_factory=BodyFactory(json_template_loader.bodies_templates),
+            body_factory=BodyFactory(
+                json_template_loader.bodies_templates,
+                json_template_loader.bodyparts_templates
+            ),
         )
         factory_service = self.game_context.factory_service
         character_factory = CharacterFactory(

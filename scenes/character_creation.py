@@ -102,6 +102,7 @@ class CharacterCreationScene(object):
                         body_uid="humanoid"
                     )
                     # Give that poor guy a sword...
-                    self.game_context.player.inventory.add_item(self.game_context.item_factory.build("short_sword"))
-                    self.game_context.player.equipment.wield(self.game_context.item_factory.build("short_sword"))
+                    self.game_context.player.inventory.add_item(self.game_context.item_factory.build("helmet"))
+                    self.game_context.player.equipment.wield(
+                        self.game_context.item_factory.build("short_sword"))
                     self.start_game_callback()

@@ -89,13 +89,10 @@ class ItemListWindow(object):
     def render(self, **kwargs):
         self.window.move(0, 0)
         if self.wielded_items_control:
-            self.window.printStr("Wielded Items:\n")
             self.wielded_items_control.render(self.window, True, **kwargs)
         if self.worn_items_control:
-            self.window.printStr("Worn Items:\n")
             self.worn_items_control.render(self.window, True, **kwargs)
         if self.inventory_items_control:
-            self.window.printStr("Inventory:\n")
             self.inventory_items_control.render(self.window, True, **kwargs)
 
     def handle_input(self, **kwargs):

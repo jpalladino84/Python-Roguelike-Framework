@@ -10,8 +10,8 @@ class FactoryService(object):
         self.character_factory = character_factory
 
     def build_body_instance_by_uid(self, body_uid):
-        return self.body_factory.build(body_uid)
+        return self.body_factory.build_body(body_uid)
 
     def build_character_instance_by_uid(self, character_uid):
         if self.character_factory:
-            return self.character_factory.build(character_uid)
+            return self.character_factory.build_body(character_uid)

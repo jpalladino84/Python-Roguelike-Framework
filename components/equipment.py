@@ -33,14 +33,16 @@ class Equipment(object):
             if grasp_able_body_part in self.wielded_equipment_map:
                 continue
 
-            relative_size_modifier = grasp_able_body_part.relative_size - 50
+            # 10 is the normal relative_size for a hand
+            relative_size_modifier = grasp_able_body_part.relative_size - 10
             relative_size_modifier = round(relative_size_modifier / 10) if relative_size_modifier else 0
             relative_size = self.host.stats.size + relative_size_modifier
-            if relative_size >= item.stats.size >= relative_size - 2:
+            item_size = int(item.stats.size)
+            if relative_size >= item_size >= relative_size - 2:
                 # Can be wielded in one "hands"
                 self.wielded_equipment_map[grasp_able_body_part] = item
                 return True
-            elif relative_size < item.stats.size <= relative_size + 2:
+            elif relative_size < item_size <= relative_size + 2:
                 # Can be wielded in two "hands"
                 two_hands_wielders.append(grasp_able_body_part)
 

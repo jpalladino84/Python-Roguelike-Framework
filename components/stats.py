@@ -40,7 +40,8 @@ class StatModifier(object):
 
 # TODO I'm not sure we want classes for stats, maybe just use this to assign proper stats to an object instead?
 class CharacterStats(object):
-    def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8, intelligence=8, charisma=8, wisdom=8, **kwargs):
+    def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8,
+                 intelligence=8, charisma=8, wisdom=8, size=5, **kwargs):
         self.health = Stat(Stats.Health, int(health), int(health))
         self.mana = Stat(Stats.Mana, int(mana), int(mana))
         self.strength = Stat(Stats.Strength, int(strength), int(strength))
@@ -49,6 +50,7 @@ class CharacterStats(object):
         self.intelligence = Stat(Stats.Intelligence, int(intelligence), int(intelligence))
         self.charisma = Stat(Stats.Charisma, int(charisma), int(charisma))
         self.wisdom = Stat(Stats.Wisdom, int(wisdom), int(wisdom))
+        self.size = size
 
 
 class ItemStats(object):
@@ -109,11 +111,11 @@ class Stats(Enum):
     MinDamage = 'min_damage'
 
 
-class Size(Enum):
-    Fine = 0,
-    Diminutive = 1,
-    Tiny = 2,
-    Small = 3,
+class Size:
+    Fine = 0
+    Diminutive = 1
+    Tiny = 2
+    Small = 3
     Medium = 4
     Large = 5
     Huge = 6
