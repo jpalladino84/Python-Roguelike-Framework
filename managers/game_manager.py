@@ -4,6 +4,7 @@ from data.json_template_loader import JsonTemplateManager
 from factories.body_factory import BodyFactory
 from factories.character_factory import CharacterFactory
 from factories.factory_service import FactoryService
+from factories.item_factory import ItemFactory
 from generators.dungeon_generator import DungeonGenerator
 from managers.console_manager import ConsoleManager
 from managers.scene_manager import SceneManager
@@ -76,7 +77,6 @@ class GameManager(object):
             body_factory=BodyFactory(json_template_loader.bodies_templates),
         )
         factory_service = self.game_context.factory_service
-
         character_factory = CharacterFactory(
             character_templates=json_template_loader.monster_templates,
             factory_service=self.game_context.factory_service,
@@ -86,8 +86,15 @@ class GameManager(object):
         factory_service.character_factory = character_factory
         self.game_context.character_factory = character_factory
         self.game_context.body_factory = factory_service.body_factory
+        self.game_context.item_factory = ItemFactory(
+            item_templates=json_template_loader.item_templates,
+            material_templates=json_template_loader.material_templates
+        )
+        item_factory = self.game_context.item_factory
         # TODO Currently it builds the monsters one time, it does validate if the template is correct BUT
         # TODO Do we really want to hold an instance of each in memory?
         self.monsters = [character_factory.build(uid) for uid, monster in
                          json_template_loader.monster_templates.items()]
-        self.items = []
+
+        self.items = [item_factory.build(uid) for uid, item in
+                      json_template_loader.item_templates.items()]

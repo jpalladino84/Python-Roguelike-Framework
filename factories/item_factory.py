@@ -8,10 +8,9 @@ class ItemFactory(object):
     At first this will only instantiate templates but eventually it should be able
     to pump out variations of a template ex: Adjusted to match player level.
     """
-    def __init__(self, item_templates, factory_service, material_templates):
+    def __init__(self, item_templates, material_templates):
         self.item_templates = item_templates
         self.template_instance_count = {}
-        self.factory_service = factory_service
         self.material_templates = material_templates
 
     def build(self, uid):

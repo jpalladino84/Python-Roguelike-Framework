@@ -25,6 +25,15 @@ class Body(object):
     def __str__(self):
         return "Body({})".format(self.name)
 
+    def get_body_part(self, uid):
+        for body_part in self.bodypart_tree.nodes:
+            if body_part.uid == uid:
+                return body_part
+
+    def get_grasp_able_body_parts(self):
+        return [body_part for body_part in self.bodypart_tree.nodes
+                if PhysicalAbilities.GRASP in body_part.physical_abilities]
+
 
 class BodyPart(object):
     def __init__(self, uid, physical_abilities=None, relative_size=1):

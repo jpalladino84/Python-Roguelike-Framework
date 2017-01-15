@@ -9,6 +9,12 @@ class DamageType(Enum):
     Pierce = 2
 
 
+class WornLayer(Enum):
+    Inner = 0
+    Outer = 1
+    Extra = 2
+
+
 class Item(object):
     """
     What is an item?
@@ -20,7 +26,8 @@ class Item(object):
     A good loot system can go a long way in terms of extending play time.
     """
     def __init__(self, uid, name="", description="", location=None,
-                 display=None, material=None, stats=None, melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None):
+                 display=None, material=None, stats=None, melee_damage_type=DamageType.Blunt,
+                 wearable_bodyparts_uid=None, worn_layer=0):
         self.uid = uid
         self._name = name
         self._description = description
@@ -30,6 +37,7 @@ class Item(object):
         self.stats = stats
         self.melee_damage_type = melee_damage_type
         self.wearable_bodyparts_uid = wearable_bodyparts_uid if wearable_bodyparts_uid else []
+        self.worn_layer = worn_layer
 
     @property
     def description(self):
@@ -73,7 +81,7 @@ class Item(object):
 
 class ItemTemplate(object):
     def __init__(self, uid, name, description, display, material_uid, base_stats,
-                 melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None):
+                 melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None, worn_layer=0):
         self.uid = uid
         self.name = name
         self.description = description
@@ -82,6 +90,7 @@ class ItemTemplate(object):
         self.base_stats = base_stats
         self.melee_damage_type = melee_damage_type
         self.wearable_bodyparts_uid = wearable_bodyparts_uid if wearable_bodyparts_uid else []
+        self.worn_layer = worn_layer
 
 
 class ItemStack(object):
@@ -105,3 +114,19 @@ class ItemStack(object):
 
     def __hash__(self):
         return hash(self.item)
+
+    @property
+    def description(self):
+        """
+        This property will be able to return altered descriptions for customized items.
+        :return: String of current description.
+        """
+        return self.item.description
+
+    @property
+    def name(self):
+        """
+        This property will be able to return engraved names for customized items.
+        :return: String of current name.
+        """
+        return self.item.name

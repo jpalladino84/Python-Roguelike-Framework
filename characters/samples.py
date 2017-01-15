@@ -5,9 +5,9 @@ from components.abilities.power_abilities import PowerAbilities
 from components.abilities.ability import Ability
 from components.display import Display
 from components.colors import Colors
-from .classes import CharacterClass
-from .character import CharacterTemplate
-from ..items.item import ItemTemplate, DamageType
+from characters.classes import CharacterClass
+from characters.character import CharacterTemplate
+from items.item import ItemTemplate, DamageType, WornLayer
 from components.stats import ItemStats, Size
 from components import material
 
@@ -131,6 +131,7 @@ def get_sample_items():
         display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
         material_uid=material.Iron.uid,
         base_stats=ItemStats(health=10, size=Size.Medium),
-        wearable_bodyparts_uid=["humanoid_head"]
+        wearable_bodyparts_uid=["humanoid_head"],
+        worn_layer=WornLayer.Outer
     )
     return [steel_sword, helmet]

@@ -101,4 +101,7 @@ class CharacterCreationScene(object):
                             **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
                         body_uid="humanoid"
                     )
+                    # Give that poor guy a sword...
+                    self.game_context.player.inventory.add_item(self.game_context.item_factory.build("short_sword"))
+                    self.game_context.player.equipment.wield(self.game_context.item_factory.build("short_sword"))
                     self.start_game_callback()

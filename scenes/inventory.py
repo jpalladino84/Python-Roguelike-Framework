@@ -60,26 +60,50 @@ class ItemListWindow(object):
             width=int(math.floor(self.main_console.width / 2)),
             height=self.main_console.height
         )
-        self.control = None
+        self.wielded_items_control = None
+        self.worn_items_control = None
+        self.inventory_items_control = None
         self.chosen_item = None
 
     def build(self, player):
         # TODO Not sure how often this should be rebuilt but at least every time the menu is opened
         # TODO and another every removed item
+        if player and player.equipment:
+            self.wielded_items_control = controls.ListChoiceControl(
+                "Wielded Items:",
+                player.equipment.get_wielded_items(),
+                self.window
+            )
+            self.worn_items_control = controls.ListChoiceControl(
+                "Worn Items:",
+                player.equipment.get_worn_items(),
+                self.window
+            )
         if player and player.inventory:
-            self.control = controls.ListChoiceControl("Items:", player.inventory.get_all_items(), self.window)
+            self.inventory_items_control = controls.ListChoiceControl(
+                "Items:",
+                player.inventory.get_all_items(),
+                self.window
+            )
 
     def render(self, **kwargs):
         self.window.move(0, 0)
-        self.window.printStr("Inventory:\n")
-        if self.control:
-            self.control.render(self.window, True, **kwargs)
+        if self.wielded_items_control:
+            self.window.printStr("Wielded Items:\n")
+            self.wielded_items_control.render(self.window, True, **kwargs)
+        if self.worn_items_control:
+            self.window.printStr("Worn Items:\n")
+            self.worn_items_control.render(self.window, True, **kwargs)
+        if self.inventory_items_control:
+            self.window.printStr("Inventory:\n")
+            self.inventory_items_control.render(self.window, True, **kwargs)
 
     def handle_input(self, **kwargs):
-        if self.control:
-            self.control.handle_input(**kwargs)
-            if self.control.finished:
-                self.chosen_item = self.control.answer
+        # TODO Find an intuitive way to handle all three sections
+        if self.inventory_items_control:
+            self.inventory_items_control.handle_input(**kwargs)
+            if self.inventory_items_control.finished:
+                self.chosen_item = self.inventory_items_control.answer
 
 
 class ItemDetailWindow(object):
