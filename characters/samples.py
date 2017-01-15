@@ -7,6 +7,9 @@ from components.display import Display
 from components.colors import Colors
 from .classes import CharacterClass
 from .character import CharacterTemplate
+from ..items.item import ItemTemplate, DamageType
+from components.stats import ItemStats, Size
+from components import material
 
 
 def get_race_samples():
@@ -109,3 +112,25 @@ def get_sample_monsters():
     )
 
     return [weak_orc, strong_orc, weak_troll, human_warrior, human_thief]
+
+
+def get_sample_items():
+    steel_sword = ItemTemplate(
+        uid="short_sword",
+        name="Short Sword",
+        description="A short sword.",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        material_uid=material.Iron.uid,
+        base_stats=ItemStats(health=1, size=Size.Medium, min_damage=1, max_damage=6),
+        melee_damage_type=DamageType.Slash
+    )
+    helmet = ItemTemplate(
+        uid="helmet",
+        name="Helmet",
+        description="A helmet.",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        material_uid=material.Iron.uid,
+        base_stats=ItemStats(health=10, size=Size.Medium),
+        wearable_bodyparts_uid=["humanoid_head"]
+    )
+    return [steel_sword, helmet]

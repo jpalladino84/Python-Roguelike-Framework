@@ -2,6 +2,13 @@ import copy
 from enum import Enum
 
 
+# TODO Take this out
+class DamageType(Enum):
+    Blunt = 0
+    Slash = 1
+    Pierce = 2
+
+
 class Item(object):
     """
     What is an item?
@@ -12,7 +19,8 @@ class Item(object):
     Painted, customized, engraved.
     A good loot system can go a long way in terms of extending play time.
     """
-    def __init__(self, uid, name="", description="", location=None, display=None, material=None, stats=None):
+    def __init__(self, uid, name="", description="", location=None,
+                 display=None, material=None, stats=None, melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None):
         self.uid = uid
         self._name = name
         self._description = description
@@ -20,6 +28,8 @@ class Item(object):
         self.display = display
         self.material = material
         self.stats = stats
+        self.melee_damage_type = melee_damage_type
+        self.wearable_bodyparts_uid = wearable_bodyparts_uid if wearable_bodyparts_uid else []
 
     @property
     def description(self):
@@ -36,12 +46,6 @@ class Item(object):
         :return: String of current name.
         """
         return self._name
-
-    def get_flat_values(self):
-        """
-        This will be used for item filtering.
-        :return:
-        """
 
     def __eq__(self, other):
         return (
@@ -65,6 +69,19 @@ class Item(object):
                 self.stats
             )
         )
+
+
+class ItemTemplate(object):
+    def __init__(self, uid, name, description, display, material_uid, base_stats,
+                 melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None):
+        self.uid = uid
+        self.name = name
+        self.description = description
+        self.display = display
+        self.material_uid = material_uid
+        self.base_stats = base_stats
+        self.melee_damage_type = melee_damage_type
+        self.wearable_bodyparts_uid = wearable_bodyparts_uid if wearable_bodyparts_uid else []
 
 
 class ItemStack(object):

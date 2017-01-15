@@ -52,7 +52,7 @@ class CharacterStats(object):
 
 
 class ItemStats(object):
-    def __init__(self, health=0, mana=0, sharpness=0, hardness=0, weight=0, size=0, potency=0):
+    def __init__(self, health=0, mana=0, sharpness=0, hardness=0, weight=0, size=0, potency=0, min_damage=0, max_damage=0):
         self.health = Stat(Stats.Health, health, health)
         self.mana = Stat(Stats.Mana, mana, mana)
         self.sharpness = Stat(Stats.Sharpness, sharpness, sharpness)
@@ -60,6 +60,8 @@ class ItemStats(object):
         self.weight = Stat(Stats.Weight, weight, weight)
         self.size = Stat(Stats.Size, size, size)
         self.potency = Stat(Stats.Potency, potency, potency)
+        self.min_damage = Stat(Stats.MinDamage, min_damage, min_damage)
+        self.max_damage = Stat(Stats.MaxDamage, max_damage, max_damage)
 
     def __eq__(self, other):
         return (
@@ -103,5 +105,20 @@ class Stats(Enum):
     Weight = 'weight'
     Size = 'size'
     Potency = 'potency'
+    MaxDamage = 'max_damage'
+    MinDamage = 'min_damage'
+
+
+class Size(Enum):
+    Fine = 0,
+    Diminutive = 1,
+    Tiny = 2,
+    Small = 3,
+    Medium = 4
+    Large = 5
+    Huge = 6
+    Gargantuan = 7
+    Colossal = 8
+
 
 
