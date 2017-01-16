@@ -40,7 +40,8 @@ class StatModifier(object):
 
 # TODO I'm not sure we want classes for stats, maybe just use this to assign proper stats to an object instead?
 class CharacterStats(object):
-    def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8, intelligence=8, charisma=8, wisdom=8, **kwargs):
+    def __init__(self, health=1, mana=1, strength=8, dexterity=8, constitution=8,
+                 intelligence=8, charisma=8, wisdom=8, size=5, **kwargs):
         self.health = Stat(Stats.Health, int(health), int(health))
         self.mana = Stat(Stats.Mana, int(mana), int(mana))
         self.strength = Stat(Stats.Strength, int(strength), int(strength))
@@ -49,10 +50,11 @@ class CharacterStats(object):
         self.intelligence = Stat(Stats.Intelligence, int(intelligence), int(intelligence))
         self.charisma = Stat(Stats.Charisma, int(charisma), int(charisma))
         self.wisdom = Stat(Stats.Wisdom, int(wisdom), int(wisdom))
+        self.size = size
 
 
 class ItemStats(object):
-    def __init__(self, health=0, mana=0, sharpness=0, hardness=0, weight=0, size=0, potency=0):
+    def __init__(self, health=0, mana=0, sharpness=0, hardness=0, weight=0, size=0, potency=0, min_damage=0, max_damage=0):
         self.health = Stat(Stats.Health, health, health)
         self.mana = Stat(Stats.Mana, mana, mana)
         self.sharpness = Stat(Stats.Sharpness, sharpness, sharpness)
@@ -60,6 +62,8 @@ class ItemStats(object):
         self.weight = Stat(Stats.Weight, weight, weight)
         self.size = Stat(Stats.Size, size, size)
         self.potency = Stat(Stats.Potency, potency, potency)
+        self.min_damage = Stat(Stats.MinDamage, min_damage, min_damage)
+        self.max_damage = Stat(Stats.MaxDamage, max_damage, max_damage)
 
     def __eq__(self, other):
         return (
@@ -103,5 +107,20 @@ class Stats(Enum):
     Weight = 'weight'
     Size = 'size'
     Potency = 'potency'
+    MaxDamage = 'max_damage'
+    MinDamage = 'min_damage'
+
+
+class Size:
+    Fine = 0
+    Diminutive = 1
+    Tiny = 2
+    Small = 3
+    Medium = 4
+    Large = 5
+    Huge = 6
+    Gargantuan = 7
+    Colossal = 8
+
 
 

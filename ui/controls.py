@@ -1,7 +1,8 @@
 import tdl
 
-ACTIVE_CONTROL_COLOR = (255, 255, 100)
+ACTIVE_CONTROL_COLOR = (255, 255, 0)
 INACTIVE_CONTROL_COLOR = (255, 255, 255)
+CHOSEN_CONTROL_COLOR = (100, 255, 100)
 BLACK_COLOR = (0, 0, 0)
 
 
@@ -15,25 +16,26 @@ class InputControl(object):
         self.finished = False
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
-        if key_event.keychar:
-            if key_event.key == "F4":
-                # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
-                raise SystemExit("Window was closed.")
-            if key_event.key == "ENTER":
-                self.finished = True
-                return
-            if key_event.key == "BACKSPACE":
-                if len(self.answer) > 0:
-                    self.answer = self.answer[:-1]
-            else:
-                self.answer += key_event.char
+        key_events = kwargs["key_events"]
+        for key_event in key_events:
+            if key_event.keychar:
+                if key_event.key == "F4":
+                    # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
+                    raise SystemExit("Window was closed.")
+                if key_event.key == "ENTER":
+                    self.finished = True
+                    return
+                if key_event.key == "BACKSPACE":
+                    if len(self.answer) > 0:
+                        self.answer = self.answer[:-1]
+                else:
+                    self.answer += key_event.char
 
     @property
     def text(self):
         return self.question + " " + self.answer
 
-    def render(self, console, active):
+    def render(self, console, active, **kwargs):
         if active:
             color = ACTIVE_CONTROL_COLOR
         else:
@@ -79,25 +81,39 @@ class ListChoiceControl(object):
         return self._formatted_options
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
-        if key_event.keychar:
-            if key_event.key == "F4":
-                # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
-                raise SystemExit("Window was closed.")
+        key_events = kwargs["key_events"]
+        for key_event in key_events:
+            if key_event.keychar:
+                if key_event.key == "F4":
+                    # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
+                    raise SystemExit("Window was closed.")
 
-            chosen_option = next((option for letter, option in self.options if letter == key_event.keychar), None)
-            if chosen_option:
-                self.answer = chosen_option
-                self.finished = True
+                chosen_option = next((option for letter, option in self.options if letter == key_event.keychar), None)
+                if chosen_option:
+                    self.answer = chosen_option
+                    self.finished = True
 
-    def render(self, console, active):
+    def render(self, console, active, **kwargs):
         if active:
             color = ACTIVE_CONTROL_COLOR
         else:
             color = INACTIVE_CONTROL_COLOR
 
-        console.setColors(fg=color, bg=BLACK_COLOR)
-        console.printStr(self.text)
+        width_char_count = 0
+        console.printStr(self.question + "\n")
+        for letter, option in self.options:
+            new_text = "    ({}){}".format(letter, option.name)
+            if width_char_count + len(new_text) > self.root_console.width:
+                new_text += "\n"
+                width_char_count = 0
+            width_char_count += len(new_text)
+
+            if self.answer and self.answer == option:
+                console.setColors(fg=CHOSEN_CONTROL_COLOR, bg=BLACK_COLOR)
+            else:
+                console.setColors(fg=color, bg=BLACK_COLOR)
+            console.printStr(new_text)
+        console.printStr("\n")
 
 
 class PointDistributionControl(object):
@@ -136,32 +152,33 @@ class PointDistributionControl(object):
         return self._formatted_options
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
-        if key_event.keychar:
-            if key_event.key == "F4":
-                # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
-                raise SystemExit("Window was closed.")
+        key_events = kwargs["key_events"]
+        for key_event in key_events:
+            if key_event.keychar:
+                if key_event.key == "F4":
+                    # TODO I REALLY dislike the F4.. as if F4 always closed the game! Find the source and make it right
+                    raise SystemExit("Window was closed.")
 
-            if key_event.key == 'KP6' or key_event.key == "RIGHT":
-                self.__increase_value()
+                if key_event.key == 'KP6' or key_event.key == "RIGHT":
+                    self.__increase_value()
 
-            if key_event.key == 'KP4' or key_event.key == "LEFT":
-                self.__decrease_value()
+                if key_event.key == 'KP4' or key_event.key == "LEFT":
+                    self.__decrease_value()
 
-            if key_event.key == "KP8" or key_event.key == "UP":
-                self.__cycle_previous_option()
+                if key_event.key == "KP8" or key_event.key == "UP":
+                    self.__cycle_previous_option()
 
-            if key_event.key == "KP2" or key_event.key == "DOWN":
-                self.__cycle_next_option()
-
-            if key_event.key == "ENTER":
-                if self.options.index(self.active_option) == len(self.options) - 1:
-                    self.finished = True
-                    return
-                else:
+                if key_event.key == "KP2" or key_event.key == "DOWN":
                     self.__cycle_next_option()
 
-    def render(self, console, active):
+                if key_event.key == "ENTER":
+                    if self.options.index(self.active_option) == len(self.options) - 1:
+                        self.finished = True
+                        return
+                    else:
+                        self.__cycle_next_option()
+
+    def render(self, console, active, **kwargs):
         self._get_formatted_options()
         for option, text in self.list_formatted_options:
             if active and option == self.active_option:

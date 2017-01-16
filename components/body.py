@@ -25,6 +25,15 @@ class Body(object):
     def __str__(self):
         return "Body({})".format(self.name)
 
+    def get_body_part(self, uid):
+        for node in self.bodypart_tree.nodes:
+            if node.instance.body_part.uid == uid:
+                return node.instance.body_part
+
+    def get_grasp_able_body_parts(self):
+        return [node.instance for node in self.bodypart_tree.nodes
+                if PhysicalAbilities.GRASP in node.instance.physical_abilities]
+
 
 class BodyPart(object):
     def __init__(self, uid, physical_abilities=None, relative_size=1):
@@ -34,21 +43,11 @@ class BodyPart(object):
         :param relative_size: Percentage of body size, does not have to add up to 100
         """
         self.uid = uid
-        self.parent_body_part = None
         self.relative_size = relative_size
-        self.children_body_parts = []
         if physical_abilities:
             self.physical_abilities = physical_abilities
         else:
             self.physical_abilities = {}
-
-    def connect(self, parent_body_part):
-        self.parent_body_part = parent_body_part
-        parent_body_part.add_child(self)
-
-    def add_child(self, child_body_part):
-        if child_body_part not in self.children_body_parts:
-            self.children_body_parts.append(child_body_part)
 
 
 class BodypartTree(object):
@@ -82,6 +81,7 @@ class BodypartTreeNode(object):
     def __init__(self, name, body_part_uid, connection_type):
         self.name = name
         self.body_part_uid = body_part_uid
+        self.instance = None
         self.connection_type = connection_type
         self.children_nodes = []
 
