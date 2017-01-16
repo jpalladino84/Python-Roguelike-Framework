@@ -93,7 +93,7 @@ def get_sample_monsters():
         cumulative_level=4
     )
     human_warrior = CharacterTemplate(
-        uid="human_warrior", name="human_warrior",
+        uid="human_warrior", name="Human Warrior",
         class_uid=sample_classes[0].uid,
         race_uid=sample_races[2].uid,
         base_stats=CharacterStats(health=10, strength=12, constitution=12, dexterity=10),
@@ -102,7 +102,7 @@ def get_sample_monsters():
         cumulative_level=0
     )
     human_thief = CharacterTemplate(
-        uid="human_thief", name="human_thief",
+        uid="human_thief", name="Human Thief",
         class_uid=sample_classes[1].uid,
         race_uid=sample_races[2].uid,
         base_stats=CharacterStats(health=6, constitution=10, dexterity=16),
