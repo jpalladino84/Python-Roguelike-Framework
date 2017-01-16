@@ -41,9 +41,10 @@ class MainMenuScene(object):
         tdl.flush()
 
     def handle_input(self, **kwargs):
-        key_event = tdl.event.keyWait()
-        if key_event.keychar.upper() == 'A':
-            self.character_creation_callback()
-        elif key_event.keychar.upper() == 'B':
-            # Halt the script using SystemExit
-            raise SystemExit('The window has been closed.')
+        key_events = kwargs["key_events"]
+        for key_event in key_events:
+            if key_event.keychar.upper() == 'A':
+                self.character_creation_callback()
+            elif key_event.keychar.upper() == 'B':
+                # Halt the script using SystemExit
+                raise SystemExit('The window has been closed.')

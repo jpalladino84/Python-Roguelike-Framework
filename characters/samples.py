@@ -5,8 +5,11 @@ from components.abilities.power_abilities import PowerAbilities
 from components.abilities.ability import Ability
 from components.display import Display
 from components.colors import Colors
-from .classes import CharacterClass
-from .character import CharacterTemplate
+from characters.classes import CharacterClass
+from characters.character import CharacterTemplate
+from items.item import ItemTemplate, DamageType, WornLayer
+from components.stats import ItemStats, Size
+from components import material
 
 
 def get_race_samples():
@@ -90,7 +93,7 @@ def get_sample_monsters():
         cumulative_level=4
     )
     human_warrior = CharacterTemplate(
-        uid="human_warrior", name="human_warrior",
+        uid="human_warrior", name="Human Warrior",
         class_uid=sample_classes[0].uid,
         race_uid=sample_races[2].uid,
         base_stats=CharacterStats(health=10, strength=12, constitution=12, dexterity=10),
@@ -99,7 +102,7 @@ def get_sample_monsters():
         cumulative_level=0
     )
     human_thief = CharacterTemplate(
-        uid="human_thief", name="human_thief",
+        uid="human_thief", name="Human Thief",
         class_uid=sample_classes[1].uid,
         race_uid=sample_races[2].uid,
         base_stats=CharacterStats(health=6, constitution=10, dexterity=16),
@@ -109,3 +112,26 @@ def get_sample_monsters():
     )
 
     return [weak_orc, strong_orc, weak_troll, human_warrior, human_thief]
+
+
+def get_sample_items():
+    steel_sword = ItemTemplate(
+        uid="short_sword",
+        name="Short Sword",
+        description="A short sword.",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        material_uid=material.Iron.uid,
+        base_stats=ItemStats(health=1, size=Size.Medium, min_damage=1, max_damage=6),
+        melee_damage_type=DamageType.Slash
+    )
+    helmet = ItemTemplate(
+        uid="helmet",
+        name="Helmet",
+        description="A helmet.",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+        material_uid=material.Iron.uid,
+        base_stats=ItemStats(health=10, size=Size.Medium),
+        wearable_bodyparts_uid=["humanoid_head"],
+        worn_layer=WornLayer.Outer
+    )
+    return [steel_sword, helmet]

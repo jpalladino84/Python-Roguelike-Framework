@@ -4,6 +4,7 @@ from data.json_template_loader import JsonTemplateManager
 from factories.body_factory import BodyFactory
 from factories.character_factory import CharacterFactory
 from factories.factory_service import FactoryService
+from factories.item_factory import ItemFactory
 from generators.dungeon_generator import DungeonGenerator
 from managers.console_manager import ConsoleManager
 from managers.scene_manager import SceneManager
@@ -35,7 +36,14 @@ class GameManager(object):
             self.console_manager.main_console.clear()  # Blank the console
             self.scene_manager.render(player=self.game_context.player)
             # TODO We might want to GET the tdl key event here so we don't have to reimplement generic stuff.
-            self.scene_manager.handle_input(player=self.game_context.player)
+            all_key_events = list(tdl.event.get())
+            for key_event in all_key_events:
+                if key_event.type == 'QUIT':
+                    # Halt the script using SystemExit
+                    raise SystemExit('The window has been closed.')
+            key_events = [key_event for key_event in all_key_events if key_event.type == 'KEYDOWN']
+
+            self.scene_manager.handle_input(player=self.game_context.player, key_events=key_events)
             tdl.flush()
             # TODO When dead it should switch to a new scene for character dump.
 
@@ -66,10 +74,12 @@ class GameManager(object):
 
         self.game_context.factory_service = FactoryService(
             template_loader=json_template_loader,
-            body_factory=BodyFactory(json_template_loader.bodies_templates),
+            body_factory=BodyFactory(
+                json_template_loader.bodies_templates,
+                json_template_loader.bodyparts_templates
+            ),
         )
         factory_service = self.game_context.factory_service
-
         character_factory = CharacterFactory(
             character_templates=json_template_loader.monster_templates,
             factory_service=self.game_context.factory_service,
@@ -79,8 +89,15 @@ class GameManager(object):
         factory_service.character_factory = character_factory
         self.game_context.character_factory = character_factory
         self.game_context.body_factory = factory_service.body_factory
+        self.game_context.item_factory = ItemFactory(
+            item_templates=json_template_loader.item_templates,
+            material_templates=json_template_loader.material_templates
+        )
+        item_factory = self.game_context.item_factory
         # TODO Currently it builds the monsters one time, it does validate if the template is correct BUT
         # TODO Do we really want to hold an instance of each in memory?
         self.monsters = [character_factory.build(uid) for uid, monster in
                          json_template_loader.monster_templates.items()]
-        self.items = []
+
+        self.items = [item_factory.build(uid) for uid, item in
+                      json_template_loader.item_templates.items()]

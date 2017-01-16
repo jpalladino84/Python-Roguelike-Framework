@@ -81,7 +81,7 @@ class CharacterCreationScene(object):
 
     def handle_input(self, **kwargs):
         if self.active_control:
-            self.active_control.handle_input()
+            self.active_control.handle_input(**kwargs)
             if self.active_control.finished:
                 new_index = self.controls.index(self.active_control) + 1
                 if new_index < len(self.controls):
@@ -89,15 +89,20 @@ class CharacterCreationScene(object):
                 else:
                     self.active_control = None
         else:
-            key_event = tdl.event.keyWait()
-            if key_event.keychar.upper() == 'A':
-                self.game_context.player = self.character_factory.create(
-                    name=self.control_name.answer,
-                    class_uid=self.control_class.answer.uid,
-                    race_uid=self.control_race.answer.uid,
-                    stats=CharacterStats(
-                        health=16,
-                        **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
-                    body_uid="humanoid"
-                )
-                self.start_game_callback()
+            key_events = kwargs["key_events"]
+            for key_event in key_events:
+                if key_event.keychar.upper() == 'A':
+                    self.game_context.player = self.character_factory.create(
+                        name=self.control_name.answer,
+                        class_uid=self.control_class.answer.uid,
+                        race_uid=self.control_race.answer.uid,
+                        stats=CharacterStats(
+                            health=16,
+                            **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
+                        body_uid="humanoid"
+                    )
+                    # Give that poor guy a sword...
+                    self.game_context.player.inventory.add_item(self.game_context.item_factory.build("helmet"))
+                    self.game_context.player.equipment.wield(
+                        self.game_context.item_factory.build("short_sword"))
+                    self.start_game_callback()

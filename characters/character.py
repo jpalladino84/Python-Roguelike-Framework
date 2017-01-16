@@ -1,9 +1,10 @@
 from components.location import Location
+from components.equipment import Equipment
 
 
 class Character(object):
     def __init__(self, uid, name, character_class, character_race, stats, display,
-                 inventory, body, main_experience_pool, location=None):
+                 inventory, body, main_experience_pool, location=None, equipment=None):
         self.uid = uid
         self._name = name
         self.character_class = character_class
@@ -18,6 +19,7 @@ class Character(object):
         self.body = body
         self.main_experience_pool = main_experience_pool
         self.is_player = False
+        self.equipment = equipment if equipment else Equipment(self)
 
     @property
     def name(self):

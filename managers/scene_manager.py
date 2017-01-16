@@ -13,8 +13,8 @@ class SceneManager(object):
         self.console_manager = console_manager
         self.scenes = {
             CharacterCreationScene.ID: CharacterCreationScene(console_manager, game_context, self.start_game),
-            GameScene.ID: GameScene(self.console_manager),
-            InventoryScene.ID: InventoryScene(self.console_manager),
+            GameScene.ID: GameScene(self.console_manager, self),
+            InventoryScene.ID: InventoryScene(self.console_manager, game_context, self.exit_inventory_screen),
             MainMenuScene.ID: MainMenuScene(self.console_manager, self.enter_creation_screen)
         }
         self.current_scene = self.scenes[MainMenuScene.ID]
@@ -27,6 +27,13 @@ class SceneManager(object):
 
     def enter_creation_screen(self):
         self.current_scene = self.scenes[CharacterCreationScene.ID]
+
+    def enter_inventory_screen(self, **kwargs):
+        self.current_scene = self.scenes[InventoryScene.ID]
+        self.current_scene.on_switch(**kwargs)
+
+    def exit_inventory_screen(self):
+        self.current_scene = self.scenes[GameScene.ID]
 
     def render(self, **kwargs):
         self.current_scene.render(**kwargs)

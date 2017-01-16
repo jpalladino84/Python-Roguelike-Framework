@@ -10,3 +10,6 @@ class GameContext(object):
         self.body_factory = None
         self.character_factory = None
         self.json_template_loader = None
+        self.item_factory = None
+
+        # TODO That factory service up there should contain the needs to use the factories themselves..
