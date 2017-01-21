@@ -1,3 +1,51 @@
+import random
+
+
+def choose_attack(attacker):
+    # TODO These attacks should have a priority by effectiveness
+    attacks = attacker.get_attacks()
+    return random.choice(attacks)
+
+
+def prepare_attack(attack, attacker):
+    # This will prepare an instance and make necessary rolls for the attack
+    pass
+
+
+def choose_defense(attack, defender):
+    applicable_defenses = [defense for defense in defender.get_defenses()
+                           if defense.defend_attack_type == attack.attack_type
+                           and defense.defend_attack_sub_type == attack.attack_sub_type]
+
+    # TODO Defenses should be prioritized by effectiveness
+    return random.choice(applicable_defenses)
+
+
+def prepare_defense(defense, defender):
+    # From the chosen defense prepare the rolls for the current defender
+    pass
+
+
+def choose_counter(attack, defender):
+    applicable_counters = [counter for counter in defender.get_counters()
+                           if counter.defend_attack_type == attack.attack_type
+                           and counter.defend_attack_sub_type == attack.attack_sub_type]
+
+    # TODO Counters should be prioritized by effectiveness
+    return random.choice(applicable_counters)
+
+
+def prepare_counter(counter, defender):
+    # Make necessesary preparations
+    pass
+
+
+def execute_combat_round(attacker, defenders):
+    # Prepare attack
+    # For every defender prepare their defense, if critical execute counter
+    # Apply attack results to every defender that failed their defense
+    # Apply counters to attacker if any
+    pass
 
 
 # TODO This combat manager will need to handle multiple scenarios.
