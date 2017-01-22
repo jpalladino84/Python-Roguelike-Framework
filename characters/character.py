@@ -1,5 +1,6 @@
 from components.location import Location
 from components.equipment import Equipment
+from components.stats import Stats
 
 
 class Character(object):
@@ -39,21 +40,25 @@ class Character(object):
         # TODO Make this
         return int(self.stats.health) <= 0
 
-    def get_attack_total(self):
-        # TODO Figure out better ways to calculate this
-        return self.stats.strength.current + self.character_race.get_stat_modifier(self.stats.strength)
+    def get_stat_modifier(self, stat):
+        current_total = self.stats.get_stat(stat) + self.character_race.get_stat_modifier(stat)
+        return round((current_total - 8) / 2)
 
-    def get_defense_total(self):
+    def get_attack_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.stats.dexterity.current + self.character_race.get_stat_modifier(self.stats.dexterity)
+        return self.get_stat_modifier(Stats.Strength)
 
-    def get_health_total(self):
+    def get_defense_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.stats.health.current + self.character_race.get_stat_modifier(self.stats.health)
+        return self.get_stat_modifier(Stats.Dexterity)
 
-    def get_speed_total(self):
+    def get_health_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.stats.dexterity.current + self.character_race.get_stat_modifier(self.stats.dexterity)
+        return self.get_stat_modifier(Stats.Health)
+
+    def get_speed_modifier(self):
+        # TODO Figure out better ways to calculate this
+        return self.get_stat_modifier(Stats.Dexterity)
 
     @property
     def current_level(self):

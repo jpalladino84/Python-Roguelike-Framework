@@ -52,6 +52,9 @@ class CharacterStats(object):
         self.wisdom = Stat(Stats.Wisdom, int(wisdom), int(wisdom))
         self.size = size
 
+    def get_stat(self, stat):
+        return self.__dict__[stat]
+
 
 class ItemStats(object):
     def __init__(self, health=0, mana=0, sharpness=0, hardness=0, weight=0, size=0, potency=0, min_damage=0, max_damage=0):

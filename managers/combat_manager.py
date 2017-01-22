@@ -9,6 +9,7 @@ def choose_attack(attacker):
 
 def prepare_attack(attack, attacker):
     # This will prepare an instance and make necessary rolls for the attack
+
     pass
 
 

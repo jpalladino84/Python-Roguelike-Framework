@@ -102,10 +102,10 @@ class GameScene(object):
 
     def render_gui(self, player):
         status_console = self.consoles[GameConsoles.Status]
-        status_console.drawStr(0, 2, "Health: {}\n\n".format(int(player.get_health_total())))
-        status_console.drawStr(0, 5, "Attack Power: {}\n\n".format(player.get_attack_total()))
-        status_console.drawStr(0, 8, "Defense: {}\n\n".format(player.get_defense_total()))
-        status_console.drawStr(0, 11, "Speed: {}\n\n".format(player.get_speed_total()))
+        status_console.drawStr(0, 2, "Health: {}\n\n".format(int(player.get_health_modifier())))
+        status_console.drawStr(0, 5, "Attack Power: {}\n\n".format(player.get_attack_modifier()))
+        status_console.drawStr(0, 8, "Defense: {}\n\n".format(player.get_defense_modifier()))
+        status_console.drawStr(0, 11, "Speed: {}\n\n".format(player.get_speed_modifier()))
 
         self.console_manager.render_console(self.consoles[GameConsoles.ActionLog], 0, 45)
         self.console_manager.render_console(status_console, 41, 45)
