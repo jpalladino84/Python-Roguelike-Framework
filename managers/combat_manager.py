@@ -1,4 +1,7 @@
 import random
+from combat.attack import AttackInstance
+from combat.defense import DefenseInstance
+from combat.counter import CounterInstance
 
 
 def choose_attack(attacker):
@@ -7,10 +10,19 @@ def choose_attack(attacker):
     return random.choice(attacks)
 
 
-def prepare_attack(attack, attacker):
+def prepare_attack(attack, attacker, defender):
     # This will prepare an instance and make necessary rolls for the attack
+    hit_roll = (
+        random.randint(1, 20)
+        + attack.modifiers.get('hit_modifier', 0)
+        + attacker.get_stat_modifier(attack.hit_stat_used)
+    )
+    damage_roll = random.randint(
+        attack.modifiers.get('minimum_damage', 0),
+        attack.modifiers.get('maximum_damage', 0)
+    ) + attacker.get_stat_modifier(attack.damage_stat_used)
 
-    pass
+    return AttackInstance(attack, attacker, defender, hit_roll, damage_roll)
 
 
 def choose_defense(attack, defender):
@@ -22,9 +34,14 @@ def choose_defense(attack, defender):
     return random.choice(applicable_defenses)
 
 
-def prepare_defense(defense, defender):
+def prepare_defense(defense, attacker, defender):
     # From the chosen defense prepare the rolls for the current defender
-    pass
+    defense_roll = (
+        random.randint(1, 20)
+        + defense.modifiers.get('defense_modifier', 0)
+        + defender.get_stat_modifier(defense.stat_used)
+    )
+    return DefenseInstance(defense, attacker, defender, defense_roll)
 
 
 def choose_counter(attack, defender):
@@ -36,13 +53,24 @@ def choose_counter(attack, defender):
     return random.choice(applicable_counters)
 
 
-def prepare_counter(counter, defender):
-    # Make necessesary preparations
-    pass
+def prepare_counter(counter, attacker, defender):
+    hit_roll = (
+        random.randint(1, 20)
+        + counter.modifiers.get('hit_modifier', 0)
+        + defender.get_stat_modifier(counter.hit_stat_used)
+    )
+    damage_roll = random.randint(
+        counter.modifiers.get('minimum_damage', 0),
+        counter.modifiers.get('maximum_damage', 0)
+    ) + defender.get_stat_modifier(counter.damage_stat_used)
+
+    return CounterInstance(counter, attacker, defender, hit_roll, damage_roll)
 
 
-def execute_combat_round(attacker, defenders):
+def execute_combat_round(attacker):
     # Prepare attack
+    attack_template = choose_attack(attacker)
+    attack_instance = prepare_attack(attack_template, attacker )
     # For every defender prepare their defense, if critical execute counter
     # Apply attack results to every defender that failed their defense
     # Apply counters to attacker if any

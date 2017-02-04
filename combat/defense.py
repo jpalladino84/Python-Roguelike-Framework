@@ -11,7 +11,8 @@ class DefenseTemplate(object):
 
 
 class DefenseInstance(object):
-    def __init__(self, template, attacker, defender):
+    def __init__(self, template, attacker, defender, defense_roll):
         self.template = template
         self.attacker = attacker
         self.defender = defender
+        self.defense_roll = defense_roll

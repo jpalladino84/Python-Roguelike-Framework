@@ -14,7 +14,9 @@ class CounterTemplate(object):
 
 
 class CounterInstance(object):
-    def __init__(self, template, attacker, defender):
+    def __init__(self, template, attacker, defender, hit_roll, damage_roll):
         self.template = template
         self.attacker = attacker
         self.defender = defender
+        self.hit_roll = hit_roll
+        self.damage_roll = damage_roll

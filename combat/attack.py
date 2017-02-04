@@ -1,6 +1,6 @@
 class AttackTemplate(object):
     def __init__(self, name, description, message, attack_type,
-                 attack_sub_type, target_type, modifiers, stat_used):
+                 attack_sub_type, target_type, modifiers, hit_stat_used, damage_stat_used):
         self.name = name
         self.description = description
         self.message = message
@@ -8,7 +8,8 @@ class AttackTemplate(object):
         self.attack_sub_type = attack_sub_type
         self.target_type = target_type
         self.modifiers = modifiers
-        self.stat_used = stat_used
+        self.hit_stat_used = hit_stat_used
+        self.damage_stat_used = damage_stat_used
 
 
 class AttackInstance(object):
