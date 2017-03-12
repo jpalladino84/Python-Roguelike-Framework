@@ -1,3 +1,4 @@
+import math
 from components.location import Location
 from components.equipment import Equipment
 from components.stats import Stats
@@ -42,7 +43,7 @@ class Character(object):
 
     def get_stat_modifier(self, stat):
         current_total = self.stats.get_stat(stat) + self.character_race.get_stat_modifier(stat)
-        return round((current_total - 8) / 2)
+        return math.floor((current_total - 10) / 2)
 
     def get_attack_modifier(self):
         # TODO Figure out better ways to calculate this
