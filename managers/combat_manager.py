@@ -67,10 +67,29 @@ def prepare_counter(counter, attacker, defender):
     return CounterInstance(counter, attacker, defender, hit_roll, damage_roll)
 
 
-def execute_combat_round(attacker):
+def execute_combat_round(attacker, defender):
+    """
+    This is meant to be the "round" when you walk into someone.
+    """
     # Prepare attack
     attack_template = choose_attack(attacker)
-    attack_instance = prepare_attack(attack_template, attacker )
+    attack_instance = prepare_attack(attack_template, attacker, defender)
+    defense_template = choose_defense(attacker, defender)
+    defense_instance = prepare_defense(defense_template, attacker, defender)
+    if attack_instance.hit_roll > defense_instance.defense_roll:
+        # HIT!
+        pass
+    else:
+        # Defense Sucess
+        if defense_instance.defense_roll > attack_instance.hit_roll * 2:
+            # COUNTER!
+            counter_template = choose_attack(defender)
+            counter_instance = prepare_attack(attack_template, defender, attacker)
+            defense_template = choose_defense(counter_template, attacker)
+            defense_instance = prepare_defense(defense_template, defender, attacker)
+            if counter_instance.hit_roll > defense_instance.defense_roll:
+                # HIT!
+                pass
     # For every defender prepare their defense, if critical execute counter
     # Apply attack results to every defender that failed their defense
     # Apply counters to attacker if any
