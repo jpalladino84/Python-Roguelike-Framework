@@ -112,6 +112,7 @@ class Stats(Enum):
     Potency = 'potency'
     MaxDamage = 'max_damage'
     MinDamage = 'min_damage'
+    ArmorClass = 'armor_class'
 
 
 class Size:
