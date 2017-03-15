@@ -2,21 +2,28 @@ import random
 from combat.attack import AttackInstance
 from combat.defense import DefenseInstance
 from combat.counter import CounterInstance
+from util import check_roller
 
+# TODO We are going the D&D 5E SRD route.
+# TODO It still means we can have several attack flavors and defense flavors
+# TODO But we should streamline the actual attacks.
 
 def choose_attack(attacker):
     # TODO These attacks should have a priority by effectiveness
+    # TODO They should also apply their prereqs
     attacks = attacker.get_attacks()
     return random.choice(attacks)
 
 
-def prepare_attack(attack, attacker, defender):
+def make_attack(attack, attacker, defender):
     # This will prepare an instance and make necessary rolls for the attack
-    hit_roll = (
-        random.randint(1, 20)
-        + attack.modifiers.get('hit_modifier', 0)
-        + attacker.get_stat_modifier(attack.hit_stat_used)
+    # TODO This needs to grab modifiers depending on the attack types and equipment
+    success, critical = check_roller.d20_check_roll(
+        difficulty_class=defender.get_armor_class(),
+        modifiers=attack.modifiers.get('hit_modifier', 0) + attacker.get_stat_modifier(attack.hit_stat_used)
     )
+
+    total_damage = check_roller.roll_damage()
     damage_roll = random.randint(
         attack.modifiers.get('minimum_damage', 0),
         attack.modifiers.get('maximum_damage', 0)

@@ -19,3 +19,6 @@ class AttackInstance(object):
         self.defender = defender
         self.hit_roll = hit_roll
         self.damage_roll = damage_roll
+
+
+# TODO Attacks will need prerequisites so you can't slash with a hammer.
