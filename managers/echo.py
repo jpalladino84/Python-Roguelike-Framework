@@ -9,6 +9,8 @@ class MessageVariables(Enum):
     defender_his_her_it = "%Dhis"
     defender_him_her_it = "%Dhim"
     defender_or_you_name = "%D"
+    target_bodypart = "%BP"
+    weapon_used = "%WP"
 
 
 def his_her_it(target, **kwargs):

@@ -100,6 +100,10 @@ class Character(object):
     def current_level(self):
         return self.location.level
 
+    def get_attacks(self):
+        # TODO There are many things that can give an attack.
+        # Bodyparts can give unarmed melee attacks, weapons can give melee attacks
+
 
 class CharacterTemplate(object):
     def __init__(self, uid, name, class_uid, race_uid, base_stats, display, body_uid, cumulative_level):

@@ -9,9 +9,11 @@ from util import check_roller
 # TODO But we should streamline the actual attacks.
 
 def choose_attack(attacker):
+    attacks = attacker.get_attacks()
+
     # TODO These attacks should have a priority by effectiveness
     # TODO They should also apply their prereqs
-    attacks = attacker.get_attacks()
+
     return random.choice(attacks)
 
 

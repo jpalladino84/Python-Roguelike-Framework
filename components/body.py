@@ -1,4 +1,5 @@
 import logging
+import six
 
 from components.abilities.physical_abilities import PhysicalAbilities
 
@@ -34,6 +35,15 @@ class Body(object):
         return [node.instance for node in self.bodypart_tree.nodes
                 if PhysicalAbilities.GRASP in node.instance.physical_abilities]
 
+    def get_physical_abilities(self):
+        abilities = {}
+        for node in self.bodypart_tree.nodes:
+            for ability_name, ability_value in six.iteritems(node.instance.physical_abilities):
+                if ability_name not in abilities:
+                    abilities[ability_name] = ability_value
+                else:
+                    if abilities[ability_name] < ability_value:
+                        abilities[ability_name] = ability_value
 
 class BodyPart(object):
     def __init__(self, uid, physical_abilities=None, relative_size=1):
