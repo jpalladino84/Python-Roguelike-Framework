@@ -45,6 +45,7 @@ class Body(object):
                     if abilities[ability_name] < ability_value:
                         abilities[ability_name] = ability_value
 
+
 class BodyPart(object):
     def __init__(self, uid, physical_abilities=None, relative_size=1):
         """

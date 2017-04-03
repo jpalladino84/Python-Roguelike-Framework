@@ -2,6 +2,7 @@ import math
 from components.location import Location
 from components.equipment import Equipment
 from components.stats import Stats
+from combat.attack import base_attacks
 
 
 class Character(object):
@@ -101,8 +102,9 @@ class Character(object):
         return self.location.level
 
     def get_attacks(self):
-        # TODO There are many things that can give an attack.
-        # Bodyparts can give unarmed melee attacks, weapons can give melee attacks
+        # We'll need to distinguish innate racial attacks and learned attacks.
+        # This BaseAttack is just in the meantime.
+        return (attack for attack in base_attacks if attack.evaluate_requirements())
 
 
 class CharacterTemplate(object):

@@ -27,7 +27,7 @@ def d20_check_roll(difficulty_class, modifiers=0, advantage=None):
     if final_roll + modifiers >= difficulty_class:
         return True, False
 
-    return False, False
+    return False, False, final_roll
 
 
 def roll_damage(dice_stacks, modifiers, critical=False):
