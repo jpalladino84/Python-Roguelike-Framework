@@ -64,15 +64,21 @@ class Character(object):
 
     def get_armor_class(self):
         base_ac = self._get_base_armor_class()
-        max_dex_modifier = self._get_maximum_dex_bonus()
-        dex_modifier = self.get_stat_modifier(Stats.Dexterity)
-        if dex_modifier > max_dex_modifier:
-            dex_modifier = max_dex_modifier
-        armor_modifier = self._get_equipment_modifiers(Stats.ArmorClass)
+        effective_dex_modifier = self.get_effective_dex_modifier()
+
+        armor_modifier = self.get_armor_modifiers(Stats.ArmorClass)
         effect_modifier = self._get_effects_modifier(Stats.ArmorClass)
         level_tree_modifiers = self._get_level_tree_modifiers(Stats.ArmorClass)
 
-        return base_ac + dex_modifier + armor_modifier + effect_modifier + level_tree_modifiers
+        return base_ac + effective_dex_modifier + armor_modifier + effect_modifier + level_tree_modifiers
+
+    def get_effective_dex_modifier(self):
+        max_dex_modifier = self._get_maximum_dex_bonus()
+        effective_dex_modifier = self.get_stat_modifier(Stats.Dexterity)
+        if effective_dex_modifier > max_dex_modifier:
+            effective_dex_modifier = max_dex_modifier
+
+        return effective_dex_modifier
 
     def _get_base_armor_class(self):
         # TODO This can be affected by a few things.
@@ -83,9 +89,14 @@ class Character(object):
         # 20 Is just a magic number, dex bonus should never go past that anyway.
         return 20
 
-    def _get_equipment_modifiers(self, stat):
+    def get_armor_modifiers(self, stat):
         # TODO Check all equipment and return its bonus AC.
         # TODO This should be abstracted to any stats!
+        return 0
+
+    def get_shield_modifiers(self):
+        # TODO Check worn shields and return the bonus AC.
+        # TODO This could be abstracted? To any stats?
         return 0
 
     def _get_effects_modifier(self, stat):

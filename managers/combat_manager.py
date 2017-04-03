@@ -1,8 +1,4 @@
 import random
-from combat.attack import AttackInstance
-from combat.defense import DefenseInstance
-from combat.counter import CounterInstance
-from util import check_roller
 
 # TODO We are going the D&D 5E SRD route.
 # TODO It still means we can have several attack flavors and defense flavors

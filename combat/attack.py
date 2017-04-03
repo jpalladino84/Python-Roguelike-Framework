@@ -137,14 +137,6 @@ class RangedAttackTemplate(AttackTemplate):
     pass
 
 
-class AttackInstance(object):
-    def __init__(self, template, attacker, defender, hit_roll, damage_roll):
-        self.template = template
-        self.attacker = attacker
-        self.defender = defender
-        self.hit_roll = hit_roll
-        self.damage_roll = damage_roll
-
 # TODO Move this out of here to a proper place
 punch_template = UnarmedAttackTemplate(
     name="Punch",
