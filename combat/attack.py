@@ -44,15 +44,10 @@ class AttackTemplate(object):
         return DiceStack(1, 1)
 
     def make_attack(self, attacker, defender, **kwargs):
-        # This will prepare an instance and make necessary rolls for the attack
-        # TODO This needs to grab modifiers depending on the attack types and equipment
-        success, critical, roll = self.make_hit_roll(attacker, defender)
-        if success:
-            total_damage = self.make_damage_roll(attacker, critical)
-            # TODO We describe and apply damage here to the attacker
-        else:
-            # TODO We describe defense here.
-            pass
+        success, critical, roll = self.make_hit_roll(attacker, defender, **kwargs)
+        total_damage = 0 if not success else self.make_damage_roll(attacker, critical, **kwargs)
+
+        return success, critical, roll, total_damage
 
     def make_hit_roll(self, attacker, defender, **kwargs):
         success, critical, roll = check_roller.d20_check_roll(
@@ -67,7 +62,6 @@ class AttackTemplate(object):
             modifiers=self.get_damage_bonus(attacker),
             critical=critical
         )
-
         return total_damage
 
 
@@ -105,16 +99,8 @@ class MeleeAttackTemplate(AttackTemplate):
         self.required_item_melee_damage_type = required_item_melee_damage_type
 
     def make_attack(self, attacker, defender, **kwargs):
-        # This will prepare an instance and make necessary rolls for the attack
-        # TODO This needs to grab modifiers depending on the attack types and equipment
         weapon_used = self.get_used_weapon(attacker)
-        success, critical, roll = self.make_hit_roll(attacker, defender, weapon_used=weapon_used)
-        if success:
-            total_damage = self.make_damage_roll(attacker, critical, weapon_used=weapon_used)
-            # TODO We describe and apply damage here to the attacker
-        else:
-            # TODO We describe defense here.
-            pass
+        return super().make_attack(attacker, defender, weapon_used=weapon_used)
 
     def get_hit_bonus(self, attacker, **kwargs):
         # TODO Weapon could have bonuses to hit
@@ -141,7 +127,7 @@ class RangedAttackTemplate(AttackTemplate):
 punch_template = UnarmedAttackTemplate(
     name="Punch",
     description="The mighty fist is presented to the weak flesh.",
-    message="%A throws %Ahis fist into %D's %BP!",
+    message="{attacker} throws {attacker_his} fist into {defender}'s {defender_bodypart}!",
     requirements=[requirements.PhysicalAbilityRequirement(requirements.CompareType.GreaterOrEqual, 1, PhysicalAbilities.PUNCH)]
 )
 # TODO The melee damage type is repeated.. change that.
@@ -149,21 +135,21 @@ punch_template = UnarmedAttackTemplate(
 slash_template = MeleeAttackTemplate(
     name="Slash",
     description="The sharpened blade parts the flesh.",
-    message="%A slashes %WP across %D's %BP!",
+    message="{attacker} slashes {attacker_weapon} across {defender}'s {defender_bodypart}!",
     required_item_melee_damage_type=DamageType.Slash,
     requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Slash)]
 )
 smash_template = MeleeAttackTemplate(
     name="Smash",
     description="The hardened metal crushes the bone.",
-    message="%A smashes %WP on %D's %BP!",
+    message="{attacker} smashes {attacker_weapon} on {defender}'s {defender_bodypart}!",
     required_item_melee_damage_type=DamageType.Blunt,
     requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Blunt)]
 )
 stab_template = MeleeAttackTemplate(
     name="Stab",
     description="The point pierces the veil.",
-    message="%A stabs %WP through %D's %BP!",
+    message="{attacker} stabs {attacker_weapon} through {defender}'s {defender_weapon}!",
     required_item_melee_damage_type=DamageType.Pierce,
     requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Pierce)]
 )

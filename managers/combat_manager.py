@@ -14,11 +14,11 @@ def choose_attack(attacker):
     return random.choice(attacks)
 
 
-def make_defense(attack, defender, roll):
-    # TODO Here we'll need the total attack hit roll.
-    # TODO We will use this to determine which type of defense we should apply.
-    # TODO This is merely cosmetic.
-    pass
+def choose_defense(attacker, defender, hit_roll):
+    defenses = [defense for defense in defender.get_defenses()
+                if defense.evaluate(attacker, hit_roll)]
+
+    return random.choice(defenses)
 
 
 def execute_combat_round(attacker, defender):
@@ -27,7 +27,10 @@ def execute_combat_round(attacker, defender):
     """
     # Prepare attack
     attack_template = choose_attack(attacker)
-    attack_template.make_attack(attack_template, attacker, defender)
+    success, critical, hit_roll, total_damage = attack_template.make_attack(attack_template, attacker, defender)
+    if not success:
+        choose_defense(attacker, defender, hit_roll).make_defense()
+
 
 # TODO Implement Limb Damaging statuses.
 # TODO Implement prioritized defenses based on hitroll with flavor.
