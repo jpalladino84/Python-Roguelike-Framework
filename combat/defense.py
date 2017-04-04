@@ -19,7 +19,12 @@ class DefenseTemplate(object):
         return False
 
     def make_defense(self, attacker, defender, **kwargs):
-        echo.echo_service.combat_context_echo(message=self.message, attacker=attacker, defender=defender, **kwargs)
+        echo.echo_service.combat_context_echo(
+            message="..." + self.message,
+            attacker=attacker,
+            defender=defender,
+            **kwargs
+        )
 
     def get_used_weapon(self, defender):
         return next((weapon for weapon in defender.equipment.get_wielded_items()))
@@ -82,27 +87,27 @@ class ArmorAbsorbTemplate(DefenseTemplate):
 dodge = DodgeTemplate(
     name="Dodge",
     description="Standard move out of the way.",
-    message="{defender} dodges it.",
+    message="but {defender} dodges it.",
 )
 parry = ParryTemplate(
     name="Parry",
     description="Standard parry weapon with weapon.",
-    message="{defender} parries it with {defender_his} {defender_weapon} !"
+    message="but {defender} parries it with {defender_his} {defender_weapon} !"
 )
 block = BlockTemplate(
     name="Block",
     description="Standard block something with something.",
-    message="{defender} blocks it with {defender_his} {defender_weapon}"
+    message="but {defender} blocks it with {defender_his} {defender_weapon}"
 )
 armor_absorb = ArmorAbsorbTemplate(
     name="Armor Absorb",
     description="Standard armor saves your ass.",
-    message="The hit is absorbed by {defender_bodypart_armor}"
+    message="but the hit is absorbed by {defender_bodypart_armor}"
 )
 miss = MissTemplate(
     name="Miss",
     description="Action falls short of the will.",
-    message="{attacker} misses {defender}"
+    message="but {attacker_he} misses {defender}"
 )
 base_defenses = [
     dodge, parry, block, armor_absorb, miss

@@ -40,10 +40,12 @@ class MessageVariables(Enum):
     attacker = "{attacker}"
     attacker_weapon = "{attacker_weapon}"
     attacker_his = "{attacker_his}"
-    attacker_him = "{attacker_him"
+    attacker_him = "{attacker_him}"
+    attacker_he = "{attacker_he}"
     defender = "{defender}"
     defender_his = "{defender_his}"
     defender_him = "{defender_him}"
+    defender_he = "{defender_he}"
     defender_bodypart = "{defender_bodypart}"
     defender_armor = "{defender_armor}"
     defender_weapon = "{defender_weapon}"
@@ -65,6 +67,15 @@ def him_her_it(target, **kwargs):
         if target.sex == Sex.Female:
             return "her"
     return "its"
+
+
+def he_her_it(target, **kwargs):
+    if hasattr(target, 'sex'):
+        if target.sex == Sex.Male:
+            return "he"
+        if target.sex == Sex.Female:
+            return "her"
+    return "it"
 
 
 def name_or_you(target, **kwargs):

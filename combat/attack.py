@@ -48,7 +48,12 @@ class AttackTemplate(object):
         total_damage = 0 if not success else self.make_damage_roll(attacker, critical, **kwargs)
         body_part_hit = defender.body.get_random_body_part_by_relative_size()
         echo.echo_service.combat_context_echo(
-            message=self.message, attacker=attacker, defender=defender, defender_bodypart=body_part_hit, **kwargs)
+            message=self.message + "...",
+            attacker=attacker,
+            defender=defender,
+            defender_bodypart=body_part_hit,
+            **kwargs
+        )
 
         return success, critical, roll, total_damage
 
@@ -130,7 +135,7 @@ class RangedAttackTemplate(AttackTemplate):
 punch_template = UnarmedAttackTemplate(
     name="Punch",
     description="The mighty fist is presented to the weak flesh.",
-    message="{attacker} throws {attacker_his} fist into {defender}'s {defender_bodypart}!",
+    message="{attacker} throws {attacker_his} fist at {defender}'s {defender_bodypart}",
     requirements=[requirements.PhysicalAbilityRequirement(requirements.CompareType.GreaterOrEqual, 1, PhysicalAbilities.PUNCH)]
 )
 # TODO The melee damage type is repeated.. change that.
@@ -138,21 +143,21 @@ punch_template = UnarmedAttackTemplate(
 slash_template = MeleeAttackTemplate(
     name="Slash",
     description="The sharpened blade parts the flesh.",
-    message="{attacker} slashes {attacker_weapon} across {defender}'s {defender_bodypart}!",
+    message="{attacker} slashes {attacker_weapon} at {defender}'s {defender_bodypart}",
     required_item_melee_damage_type=DamageType.Slash,
     requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Slash)]
 )
 smash_template = MeleeAttackTemplate(
     name="Smash",
     description="The hardened metal crushes the bone.",
-    message="{attacker} smashes {attacker_weapon} on {defender}'s {defender_bodypart}!",
+    message="{attacker} smashes {attacker_weapon} at {defender}'s {defender_bodypart}",
     required_item_melee_damage_type=DamageType.Blunt,
     requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Blunt)]
 )
 stab_template = MeleeAttackTemplate(
     name="Stab",
     description="The point pierces the veil.",
-    message="{attacker} stabs {attacker_weapon} through {defender}'s {defender_weapon}!",
+    message="{attacker} stabs {attacker_weapon} at {defender}'s {defender_weapon}",
     required_item_melee_damage_type=DamageType.Pierce,
     requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Pierce)]
 )

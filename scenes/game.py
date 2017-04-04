@@ -29,8 +29,8 @@ class GameScene(object):
         # TODO Eventually we will want to map more than just movement keys
         self.movement_keys = settings.KEY_MAPPINGS
         self.consoles = {
-            GameConsoles.ActionLog: self.console_manager.create_new_console(40, 15),
-            GameConsoles.Status: self.console_manager.create_new_console(40, 15)
+            GameConsoles.ActionLog: self.console_manager.create_new_console(80, 15),
+            GameConsoles.Status: self.console_manager.create_new_console(20, 15)
         }
         self.action_manager = ActionManager(self.consoles[GameConsoles.ActionLog])
         logger.info("Initialized GameScene")
@@ -108,7 +108,7 @@ class GameScene(object):
         status_console.drawStr(0, 11, "Speed: {}\n\n".format(player.get_speed_modifier()))
 
         self.console_manager.render_console(self.consoles[GameConsoles.ActionLog], 0, 45)
-        self.console_manager.render_console(status_console, 41, 45)
+        self.console_manager.render_console(status_console, 80, 45)
 
     def render_map(self, current_level, viewer_fov):
         for x, y in viewer_fov:
