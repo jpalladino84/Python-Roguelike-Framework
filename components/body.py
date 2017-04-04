@@ -1,5 +1,6 @@
 import logging
 import six
+import random
 
 from components.abilities.physical_abilities import PhysicalAbilities
 
@@ -31,6 +32,20 @@ class Body(object):
             if node.instance.body_part.uid == uid:
                 return node.instance.body_part
 
+    def get_random_body_part_by_relative_size(self):
+        size_sorted_body_parts = sorted([node for node in self.bodypart_tree.nodes
+                                         if node.connection_type == BodypartTree.CONNECTION_TYPE_ATTACHED],
+                                        key=lambda node: node.instance.relative_size, reverse=True)
+        tries = 0
+        max_tries = 3
+        while tries < max_tries:
+            max_tries += 1
+            for node in size_sorted_body_parts:
+                if random.randrange(0, 100) <= node.instance.relative_size:
+                    return node
+
+        return random.choice(size_sorted_body_parts)
+
     def get_grasp_able_body_parts(self):
         return [node.instance for node in self.bodypart_tree.nodes
                 if PhysicalAbilities.GRASP in node.instance.physical_abilities]
@@ -44,6 +59,8 @@ class Body(object):
                 else:
                     if abilities[ability_name] < ability_value:
                         abilities[ability_name] = ability_value
+
+        return abilities
 
 
 class BodyPart(object):
@@ -120,7 +137,7 @@ def get_body_parts_sample():
         BodyPart('humanoid_heart', {PhysicalAbilities.LIVE: 1}, relative_size=25),
         BodyPart('humanoid_lungs', {PhysicalAbilities.BREATHE: 1}, relative_size=25),
         BodyPart('humanoid_arm', relative_size=25),
-        BodyPart('humanoid_hand', {PhysicalAbilities.GRASP: 1}, relative_size=10),
+        BodyPart('humanoid_hand', {PhysicalAbilities.GRASP: 1, PhysicalAbilities.PUNCH: 1}, relative_size=10),
         BodyPart('humanoid_leg', {PhysicalAbilities.STAND: 1,
                                   PhysicalAbilities.MOVE: 1}, relative_size=25),
         BodyPart('humanoid_foot', {PhysicalAbilities.STAND: 1,

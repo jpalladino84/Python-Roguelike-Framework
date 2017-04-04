@@ -69,7 +69,8 @@ class PhysicalAbilityRequirement(Requirement):
     def evaluate(self, game_object):
         if hasattr(game_object, 'body'):
             abilities = game_object.body.get_physical_abilities()
-            return self.compare(self.compare_type, self.value, abilities.get(self.key, 0))
+            if abilities:
+                return self.compare(self.compare_type, self.value, abilities.get(self.key, 0))
         return False
 
 

@@ -53,6 +53,12 @@ class CharacterStats(object):
         self.size = size
 
     def get_stat(self, stat):
+        if isinstance(stat, Stat):
+            return self.__dict__[stat.uid]
+
+        if isinstance(stat, Stats):
+            return self.__dict__[stat.value]
+
         return self.__dict__[stat]
 
 

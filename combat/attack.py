@@ -5,7 +5,7 @@ from managers import echo
 from components.stats import Stats
 from components import requirements
 from components.abilities.physical_abilities import PhysicalAbilities
-from util.dice import DiceStack
+from util.dice import DiceStack, Dice
 from util import check_roller
 from items.item import DamageType
 
@@ -23,7 +23,7 @@ class AttackTemplate(object):
         self.message = message
         self.target_type = target_type,
         self.attack_range = attack_range
-        self.modifiers = modifiers if modifiers else []
+        self.modifiers = modifiers if modifiers else {}
         self.hit_stat_used = hit_stat_used
         self.damage_stat_used = damage_stat_used
         self.requirements = requirements if requirements else []
@@ -41,11 +41,14 @@ class AttackTemplate(object):
         return self.modifiers.get('damage_modifier', 0) + attacker.get_stat_modifier(self.damage_stat_used)
 
     def get_damage_dice(self, **kwargs):
-        return DiceStack(1, 1)
+        return DiceStack(1, Dice(1))
 
     def make_attack(self, attacker, defender, **kwargs):
         success, critical, roll = self.make_hit_roll(attacker, defender, **kwargs)
         total_damage = 0 if not success else self.make_damage_roll(attacker, critical, **kwargs)
+        body_part_hit = defender.body.get_random_body_part_by_relative_size()
+        echo.echo_service.combat_context_echo(
+            message=self.message, attacker=attacker, defender=defender, defender_bodypart=body_part_hit, **kwargs)
 
         return success, critical, roll, total_damage
 
@@ -58,8 +61,8 @@ class AttackTemplate(object):
 
     def make_damage_roll(self, attacker, critical=False, **kwargs):
         total_damage = check_roller.roll_damage(
-            dice_stacks=self.get_damage_dice(),
-            modifiers=self.get_damage_bonus(attacker),
+            dice_stacks=[self.get_damage_dice(**kwargs)],
+            modifiers=self.get_damage_bonus(attacker, **kwargs),
             critical=critical
         )
         return total_damage
@@ -67,7 +70,7 @@ class AttackTemplate(object):
 
 class UnarmedAttackTemplate(AttackTemplate):
     # TODO I admit, this looks ugly.
-    def __init__(self, name, description, message, basic_damage_dice=DiceStack(1, 3), bodypart_id_needed="humanoid_hand",
+    def __init__(self, name, description, message, basic_damage_dice=DiceStack(1, Dice(3)), bodypart_id_needed="humanoid_hand",
                  target_type=enums.TargetType.Single, attack_range=0, modifiers=None, hit_stat_used=Stats.Strength,
                  damage_stat_used=Stats.Strength, requirements=None):
 
@@ -99,8 +102,8 @@ class MeleeAttackTemplate(AttackTemplate):
         self.required_item_melee_damage_type = required_item_melee_damage_type
 
     def make_attack(self, attacker, defender, **kwargs):
-        weapon_used = self.get_used_weapon(attacker)
-        return super().make_attack(attacker, defender, weapon_used=weapon_used)
+        attacker_weapon = self.get_used_weapon(attacker)
+        return super().make_attack(attacker, defender, attacker_weapon=attacker_weapon)
 
     def get_hit_bonus(self, attacker, **kwargs):
         # TODO Weapon could have bonuses to hit
@@ -111,11 +114,11 @@ class MeleeAttackTemplate(AttackTemplate):
         return super().get_damage_bonus(attacker, **kwargs)
 
     def get_damage_dice(self, **kwargs):
-        weapon_used = kwargs.get("weapon_used")
-        return DiceStack(weapon_used.damage_dice_amount, weapon_used.max_damage)
+        attacker_weapon = kwargs.get("attacker_weapon")
+        return DiceStack(int(attacker_weapon.stats.damage_dice_amount), Dice(int(attacker_weapon.stats.max_damage)))
 
     def get_used_weapon(self, attacker):
-        return next((weapon for weapon in attacker.get_wielded_items()
+        return next((weapon for weapon in attacker.equipment.get_wielded_items()
                      if weapon.melee_damage_type == self.required_item_melee_damage_type))
 
 

@@ -1,16 +1,52 @@
 from characters.enums import Sex
 from enum import Enum
+from collections import defaultdict
+
+
+class EchoService(object):
+    def __init__(self, console):
+        self.console = console
+
+    def combat_context_echo(self, message, attacker=None, defender=None,
+                            attacker_weapon=None, defender_weapon=None, defender_bodypart=None):
+        context_variables = defaultdict(lambda: "N/A")
+        if attacker:
+            context_variables["attacker"] = attacker
+        if defender:
+            context_variables["defender"] = defender
+        if attacker_weapon:
+            context_variables["attacker_weapon"] = attacker_weapon
+        if defender_weapon:
+            context_variables["defender_weapon"] = defender_weapon
+        if defender_bodypart:
+            context_variables["defender_bodypart"] = defender_bodypart
+
+        for context_variable in context_variables.keys():
+            if context_variable in message_router:
+                context_variables[context_variable] = message_router[context_variable](**context_variables)
+
+        for variable in MessageVariables:
+            if variable.value in message and not variable.name in context_variables and variable.name in message_router:
+                context_variables[variable.name] = message_router[variable.name](**context_variables)
+
+        formatted_message = message.format(**context_variables)
+        self.console.printStr(formatted_message + "\n")
+
+# TODO This is crappy, Do something better.
+echo_service = None
 
 
 class MessageVariables(Enum):
-    attacker_his_her_it = "%Ahis"
-    attacker_him_her_it = "%Ahim"
-    attacker_or_you_name = "%A"
-    defender_his_her_it = "%Dhis"
-    defender_him_her_it = "%Dhim"
-    defender_or_you_name = "%D"
-    target_bodypart = "%BP"
-    weapon_used = "%WP"
+    attacker = "{attacker}"
+    attacker_weapon = "{attacker_weapon}"
+    attacker_his = "{attacker_his}"
+    attacker_him = "{attacker_him"
+    defender = "{defender}"
+    defender_his = "{defender_his}"
+    defender_him = "{defender_him}"
+    defender_bodypart = "{defender_bodypart}"
+    defender_armor = "{defender_armor}"
+    defender_weapon = "{defender_weapon}"
 
 
 def his_her_it(target, **kwargs):
@@ -19,7 +55,7 @@ def his_her_it(target, **kwargs):
             return "his"
         if target.sex == Sex.Female:
             return "her"
-    return "it"
+    return "its"
 
 
 def him_her_it(target, **kwargs):
@@ -28,29 +64,25 @@ def him_her_it(target, **kwargs):
             return "him"
         if target.sex == Sex.Female:
             return "her"
-    return "it"
+    return "its"
 
 
-def name_or_you(target, player, **kwargs):
-    if target == player:
-        return "you"
+def name_or_you(target, **kwargs):
+    # TODO We'll figure out a way to get the current player.
+    # if target == player:
+    #     return "you"
+
     return target.name
 
 
 message_router = {
-    MessageVariables.attacker_his_her_it: lambda **kwargs: his_her_it(target=kwargs["attacker"], **kwargs),
-    MessageVariables.attacker_him_her_it: lambda **kwargs: him_her_it(target=kwargs["attacker"], **kwargs),
-    MessageVariables.attacker_or_you_name: lambda **kwargs: name_or_you(target=kwargs["attacker"], **kwargs),
-    MessageVariables.defender_his_her_it: lambda **kwargs: his_her_it(target=kwargs["defender"], **kwargs),
-    MessageVariables.defender_him_her_it: lambda **kwargs: him_her_it(target=kwargs["defender"], **kwargs),
-    MessageVariables.defender_or_you_name: lambda **kwargs: name_or_you(target=kwargs["defender"], **kwargs)
+    MessageVariables.attacker_his.name: lambda **kwargs: his_her_it(target=kwargs["attacker"], **kwargs),
+    MessageVariables.attacker_him.name: lambda **kwargs: him_her_it(target=kwargs["attacker"], **kwargs),
+    MessageVariables.attacker.name: lambda **kwargs: name_or_you(target=kwargs["attacker"], **kwargs),
+    MessageVariables.attacker_weapon.name: lambda **kwargs: kwargs.get("attacker_weapon").name,
+    MessageVariables.defender_his.name: lambda **kwargs: his_her_it(target=kwargs["defender"], **kwargs),
+    MessageVariables.defender_him.name: lambda **kwargs: him_her_it(target=kwargs["defender"], **kwargs),
+    MessageVariables.defender.name: lambda **kwargs: name_or_you(target=kwargs["defender"], **kwargs),
+    MessageVariables.defender_weapon.name: lambda **kwargs: kwargs.get("defender_weapon").name,
+    MessageVariables.defender_bodypart.name: lambda **kwargs: kwargs.get("defender_bodypart").name,
 }
-
-
-def apply_variables_to_attack_message(message, attacker, defender, player):
-    for variable in MessageVariables:
-        if variable.value in message:
-            message.replace(
-                variable.value,
-                message_router[variable.value](attacker, defender, player)
-            )

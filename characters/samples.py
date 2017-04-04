@@ -121,8 +121,8 @@ def get_sample_items():
         description="A short sword.",
         display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
         material_uid=material.Iron.uid,
-        base_stats=ItemStats(health=1, size=Size.Medium, min_damage=1, max_damage=6),
-        melee_damage_type=DamageType.Slash
+        base_stats=ItemStats(health=1, size=Size.Medium, damage_dice_amount=1, min_damage=1, max_damage=6),
+        melee_damage_type=DamageType.Pierce
     )
     helmet = ItemTemplate(
         uid="helmet",

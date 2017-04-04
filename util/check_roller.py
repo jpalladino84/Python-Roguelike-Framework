@@ -21,11 +21,12 @@ def d20_check_roll(difficulty_class, modifiers=0, advantage=None):
             final_roll = natural_roll if natural_roll < additional_roll else additional_roll
 
     if final_roll == 1:
-        return False, True
+        return False, True, final_roll
     if final_roll == 20:
-        return True, True
+        return True, True, final_roll
+
     if final_roll + modifiers >= difficulty_class:
-        return True, False
+        return True, False, final_roll + modifiers
 
     return False, False, final_roll
 
@@ -38,11 +39,12 @@ def roll_damage(dice_stacks, modifiers, critical=False):
     :return: Total damage to apply.
     """
     if critical:
-        dice_stacks = dice_stacks.extend(dice_stacks.copy())
+        for dice_stack in dice_stacks:
+            dice_stack.amount *= 2
 
     total_dice_result = 0
     for dice_stack in dice_stacks:
         for i in range(0, dice_stack.amount):
-            total_dice_result += random.randint(1, dice_stack.sides)
+            total_dice_result += random.randint(1, dice_stack.dice.sides)
 
     return total_dice_result + modifiers
