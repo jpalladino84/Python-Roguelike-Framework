@@ -9,7 +9,7 @@ def d20_check_roll(difficulty_class, modifiers=0, advantage=None):
     :param difficulty_class: Target for Success
     :param modifiers: Total amount of modifiers
     :param advantage: If is applicable, True if advantage, False if disadvantage.
-    :return: Bool Tuple Success, Critical
+    :return: Tuple Success, Critical, Natural Roll, Total Roll
     """
     natural_roll = random.randint(1, 20)
     additional_roll = random.randint(1, 20)
@@ -20,15 +20,15 @@ def d20_check_roll(difficulty_class, modifiers=0, advantage=None):
         else:
             final_roll = natural_roll if natural_roll < additional_roll else additional_roll
 
-    if final_roll == 1:
-        return False, True, final_roll
-    if final_roll == 20:
-        return True, True, final_roll
+    if natural_roll == 1:
+        return False, True, natural_roll, final_roll
+    if natural_roll == 20:
+        return True, True, natural_roll, final_roll
 
     if final_roll + modifiers >= difficulty_class:
-        return True, False, final_roll + modifiers
+        return True, False, natural_roll, final_roll + modifiers
 
-    return False, False, final_roll
+    return False, False, natural_roll, final_roll
 
 
 def roll_damage(dice_stacks, modifiers, critical=False):

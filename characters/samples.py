@@ -7,7 +7,8 @@ from components.display import Display
 from components.colors import Colors
 from characters.classes import CharacterClass
 from characters.character import CharacterTemplate
-from items.item import ItemTemplate, DamageType, WornLayer
+from items.item import ItemTemplate, WornLayer
+from combat.enums import DamageType
 from components.stats import ItemStats, Size
 from components import material
 

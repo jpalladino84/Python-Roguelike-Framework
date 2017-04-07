@@ -1,6 +1,7 @@
 import random
 from components.colors import Colors
 from combat.attack import MeleeAttackTemplate
+from combat import enums as combat_enums
 from managers import echo
 
 # TODO We are going the D&D 5E SRD route.
@@ -35,25 +36,39 @@ def execute_combat_round(attacker, defender):
     attack_template = choose_attack(attacker)
     if not attack_template:
         return
-    success, critical, hit_roll, total_damage = attack_template.make_attack(attacker, defender)
-    echo.echo_service.console.printStr("Hit Roll:{} vs AC:{}\n".format(hit_roll, defender.get_armor_class()))
-    if success:
+    attack_result = attack_template.make_attack(attacker, defender)
+
+    if attack_result.success:
+        threat_level = get_threat_level(attack_result.total_damage, defender.stats.health.current)
+        attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
         # TODO We might want to display info about actual rolls but that should be handled in the Echo manager/service
         # TODO I am still unsure on where its best to apply actual damage.
         # TODO Leaving it in the defender object could have them behave differently
         # TODO but at the same time having it centralized in one location will keep the other classes smaller.
         # TODO Maybe this should be extracted to a component?
-        take_damage(defender, total_damage, echo.echo_service.console)
+        take_damage(defender, attack_result, echo.echo_service.console)
     else:
-        choose_defense(attacker, defender, hit_roll).make_defense(attacker, defender)
+        choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender)
+    echo.echo_service.console.printStr(str(attack_result) + "\n")
 
 
-def take_damage(actor, damage, console):
-    # TODO This should not be here
-    # apply damage if possible
-    if damage > 0:
-        console.printStr('{} takes {} damage.\n\n'.format(actor.name, damage))
-        actor.stats.health.modify_current(-damage)
+def take_damage(actor, attack_result, console):
+    # TODO Here we take each damage dealt, apply resistance
+    # TODO Determine threat level for total damage
+    if attack_result.total_damage <= 0:
+        return
+    damage_string = "... "
+    wound_strings = []
+
+    for damage, damage_type in attack_result.separated_damage:
+        if damage > 0:
+            wound_strings.append(describe_wounds(damage_type))
+            actor.stats.health.modify_current(-damage)
+
+    damage_string += ",".join(wound_strings)
+    damage_string += " {} {} for {} damage!".format(
+        echo.his_her_it(actor), attack_result.body_part_hit.name, attack_result.total_damage)
+    console.printStr(damage_string + "\n")
 
     # check for death. if there's a death function, call it
     if actor.stats.health.current <= 0:
@@ -85,5 +100,30 @@ def monster_death(monster, console):
     monster.display.foreground_color = Colors.BLOOD_RED
     monster.blocks = False
     monster.name = 'remains of ' + monster.name
+
+
+def get_threat_level(total_damage, health):
+    minor = (float(health) / 5)
+    major = (float(health) / 2.5)
+    critical = (float(health) / 1.5)
+
+    if total_damage <= minor:
+        return combat_enums.ThreatLevel.Minor
+    elif minor < total_damage <= major:
+        return combat_enums.ThreatLevel.Major
+    elif major < total_damage <= critical:
+        return combat_enums.ThreatLevel.Critical
+    elif total_damage >= health:
+        return combat_enums.ThreatLevel.Fatal
+
+
+def describe_wounds(damage_type):
+    if damage_type == combat_enums.DamageType.Blunt:
+        return "bruising"
+    elif damage_type == combat_enums.DamageType.Slash:
+        return "cutting"
+    elif damage_type == combat_enums.DamageType.Pierce:
+        return "piercing"
+
 # TODO Implement Limb Damaging statuses.
-# TODO Implement all base attack types.
+

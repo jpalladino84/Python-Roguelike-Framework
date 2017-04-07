@@ -1,12 +1,7 @@
 import copy
 from enum import Enum
 
-
-# TODO Take this out
-class DamageType(Enum):
-    Blunt = 0
-    Slash = 1
-    Pierce = 2
+from combat.enums import DamageType
 
 
 class WornLayer(Enum):
