@@ -1,8 +1,10 @@
 import random
-from components.colors import Colors
-from combat.attack import MeleeAttackTemplate
+
 from combat import enums as combat_enums
+from combat.attack import MeleeAttackTemplate
 from managers import echo
+from util.colors import Colors
+
 
 # TODO We are going the D&D 5E SRD route.
 # TODO It still means we can have several attack flavors and defense flavors

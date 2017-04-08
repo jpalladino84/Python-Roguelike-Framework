@@ -6,9 +6,7 @@ This is where the main business logic lives.
 Any action that can be taken by the player or a npc (e.g. monster) is defined here.
 """
 import math
-import random
 
-from components.colors import Colors
 from managers import combat_manager, echo
 
 

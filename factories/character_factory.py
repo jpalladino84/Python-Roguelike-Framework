@@ -1,10 +1,10 @@
 from characters.character import Character
 from characters.classes import CharacterClassInstance
 from characters.race import RaceInstance
-from components.stats import CharacterStats
 from components.display import Display
 from components.experience_pool import ExperiencePool
 from components.inventory import Inventory
+from components.stats import CharacterStats
 
 
 class CharacterFactory(object):

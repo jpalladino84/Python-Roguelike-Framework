@@ -1,6 +1,9 @@
-class Equipment(object):
+from components.component import Component
+
+
+class Equipment(Component):
     """
-    This component attaches itself to anything with a body.
+    This component attaches itself to anything with a bodies.
     It represents equipment worn or wielded
     """
     def __init__(self, host):

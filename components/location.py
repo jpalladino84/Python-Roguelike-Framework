@@ -1,4 +1,7 @@
-class Location(object):
+from .component import Component
+
+
+class Location(Component):
     def __init__(self):
         # TODO THIS HOLDS ALL THE INFORMATION NEEDED TO LOCATE SOMETHING
         self.local_x = 0

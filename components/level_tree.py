@@ -1,7 +1,7 @@
-import math
+from .component import Component
 
 
-class LevelTree(object):
+class LevelTree(Component):
     """
     The goal of this Tree is to return advantages of a level recursively.
     """

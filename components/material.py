@@ -1,7 +1,7 @@
-from collections import OrderedDict
+from .component import Component
 
 
-class Material(object):
+class Material(Component):
     """
     This defines a material that is used in other compositions like items/tiles.
     """

@@ -1,13 +1,12 @@
-from . import enums
 import abc
-from managers import echo
 
-from components.stats import Stats
-from components import requirements
-from components.abilities.physical_abilities import PhysicalAbilities
-from util.dice import DiceStack, Dice
-from util import check_roller
+from abilities.physical_abilities import PhysicalAbilities
 from combat.enums import DamageType
+from components.stats import Stats
+from managers import echo
+from util import check_roller, requirements
+from util.dice import DiceStack, Dice
+from . import enums
 
 
 # TODO We'll separate data from this module
@@ -178,7 +177,8 @@ punch_template = UnarmedAttackTemplate(
     name="Punch",
     description="The mighty fist is presented to the weak flesh.",
     message="{attacker} throws {attacker_his} fist at {defender}",
-    requirements=[requirements.PhysicalAbilityRequirement(requirements.CompareType.GreaterOrEqual, 1, PhysicalAbilities.PUNCH)]
+    requirements=[
+        requirements.PhysicalAbilityRequirement(requirements.CompareType.GreaterOrEqual, 1, PhysicalAbilities.PUNCH)]
 )
 # TODO The melee damage type is repeated.. change that.
 # TODO Also use the requirements to fetch... requirements... like required bodypart.

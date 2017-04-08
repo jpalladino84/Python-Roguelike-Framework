@@ -1,6 +1,7 @@
 from copy import deepcopy
-from components.body import BodyPart
-from components.abilities.physical_abilities import PhysicalAbilities
+
+from abilities.physical_abilities import PhysicalAbilities
+from bodies.body_part import BodyPart
 
 
 class BodyFactory(object):
@@ -10,7 +11,7 @@ class BodyFactory(object):
 
     def build_body(self, uid):
         """
-        Builds a body instance from a template using the uid.
+        Builds a bodies instance from a template using the uid.
         :param uid: uid of the template to instantiate.
         :return: Built instance from template.
         """

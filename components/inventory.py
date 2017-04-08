@@ -1,7 +1,8 @@
+from components.component import Component
 from items.item import ItemStack
 
 
-class Inventory(object):
+class Inventory(Component):
     """
     The inventory object containing Items via ItemSlots.
     While getting an item from an item seems useless it's to be combined with another type of inventory.

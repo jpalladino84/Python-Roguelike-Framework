@@ -1,7 +1,8 @@
 from math import floor
+from .component import Component
 
 
-class ExperiencePool(object):
+class ExperiencePool(Component):
     """
     This pool will hold experience and a list of other pools it can trickle to.
     Example: A Character has a pool that holds all the experience he gains.
