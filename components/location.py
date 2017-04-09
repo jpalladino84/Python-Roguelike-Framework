@@ -2,7 +2,10 @@ from .component import Component
 
 
 class Location(Component):
+    NAME = "location"
+
     def __init__(self):
+        super().__init__()
         # TODO THIS HOLDS ALL THE INFORMATION NEEDED TO LOCATE SOMETHING
         self.local_x = 0
         self.local_y = 0

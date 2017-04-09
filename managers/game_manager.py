@@ -1,6 +1,5 @@
 import tdl
 from areas.level import Level
-from data.json_template_loader import JsonTemplateManager
 from factories.body_factory import BodyFactory
 from factories.character_factory import CharacterFactory
 from factories.factory_service import FactoryService
@@ -9,6 +8,8 @@ from generators.dungeon_generator import DungeonGenerator
 from managers.console_manager import ConsoleManager
 from managers.scene_manager import SceneManager
 from managers.game_context import GameContext
+from data.python_templates.characters import character_templates
+from data.python_templates.items import item_templates
 
 
 class GameManager(object):
@@ -69,35 +70,16 @@ class GameManager(object):
         """
         This is where the game templates / data is loaded.
         """
-        self.game_context.json_template_loader = JsonTemplateManager()
-        json_template_loader = self.game_context.json_template_loader
-
-        self.game_context.factory_service = FactoryService(
-            template_loader=json_template_loader,
-            body_factory=BodyFactory(
-                json_template_loader.bodies_templates,
-                json_template_loader.bodyparts_templates
-            ),
-        )
+        self.game_context.factory_service = FactoryService(body_factory=BodyFactory())
         factory_service = self.game_context.factory_service
-        character_factory = CharacterFactory(
-            character_templates=json_template_loader.monster_templates,
-            factory_service=self.game_context.factory_service,
-            race_templates=json_template_loader.race_templates,
-            class_templates=json_template_loader.class_templates
-        )
+        character_factory = CharacterFactory(factory_service=self.game_context.factory_service)
         factory_service.character_factory = character_factory
         self.game_context.character_factory = character_factory
         self.game_context.body_factory = factory_service.body_factory
-        self.game_context.item_factory = ItemFactory(
-            item_templates=json_template_loader.item_templates,
-            material_templates=json_template_loader.material_templates
-        )
+        self.game_context.item_factory = ItemFactory()
         item_factory = self.game_context.item_factory
         # TODO Currently it builds the monsters one time, it does validate if the template is correct BUT
         # TODO Do we really want to hold an instance of each in memory?
-        self.monsters = [character_factory.build(uid) for uid, monster in
-                         json_template_loader.monster_templates.items()]
+        self.monsters = [character_factory.build(uid) for uid, monster in character_templates.items()]
 
-        self.items = [item_factory.build(uid) for uid, item in
-                      json_template_loader.item_templates.items()]
+        self.items = [item_factory.build(uid) for uid, item in item_templates.items()]

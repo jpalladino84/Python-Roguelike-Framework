@@ -52,8 +52,8 @@ human_race = build_human_race()
 orc_race = build_orc_race()
 troll_race = build_troll_race()
 
-races = [
-    human_race,
-    orc_race,
-    troll_race
-]
+race_templates = {
+    human_race.uid: human_race,
+    orc_race.uid: orc_race,
+    troll_race.uid: troll_race
+}

@@ -2,13 +2,11 @@ from copy import deepcopy
 
 from abilities.physical_abilities import PhysicalAbilities
 from bodies.body_part import BodyPart
+from data.python_templates.body_parts import body_part_templates
+from data.python_templates.body import body_templates
 
 
 class BodyFactory(object):
-    def __init__(self, body_templates, bodyparts_templates):
-        self.body_templates = body_templates
-        self.bodyparts_templates = bodyparts_templates
-
     def build_body(self, uid):
         """
         Builds a bodies instance from a template using the uid.
@@ -16,7 +14,7 @@ class BodyFactory(object):
         :return: Built instance from template.
         """
 
-        body_template = self.body_templates[uid]
+        body_template = body_templates[uid]
         if body_template:
             body_instance = self._create_instance_of_template(body_template)
             self.assemble_body(body_instance)
@@ -25,15 +23,10 @@ class BodyFactory(object):
             raise Exception("Could not find template for UID " + uid)
 
     def build_bodypart(self, uid):
-        template = self.bodyparts_templates[uid]
-
-        # TODO This is a fix because of json pickle which turns an enum into a string...
-        def str_to_enum(string_key):
-            return PhysicalAbilities[string_key.split('.')[1].split(':')[0]]
-
+        template = body_part_templates[uid]
         instance = BodyPart(
             uid=template.uid,
-            physical_abilities={str_to_enum(key): value for key, value in template.physical_abilities.items()},
+            physical_abilities=template.physical_abilities,
             relative_size=template.relative_size,
             threat_level=template.threat_level
         )

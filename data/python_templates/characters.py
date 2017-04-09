@@ -57,10 +57,10 @@ human_thief = CharacterTemplate(
     )
 
 
-characters = [
-    weak_orc,
-    strong_orc,
-    weak_troll,
-    human_warrior,
-    human_thief
-]
+character_templates = {
+    weak_orc.uid: weak_orc,
+    strong_orc.uid: strong_orc,
+    weak_troll.uid: weak_troll,
+    human_warrior.uid: human_warrior,
+    human_thief.uid: human_thief
+}

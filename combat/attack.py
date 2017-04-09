@@ -132,8 +132,10 @@ class MeleeAttackTemplate(AttackTemplate):
         return DiceStack(int(attacker_weapon.stats.damage_dice_amount), Dice(int(attacker_weapon.stats.max_damage)))
 
     def get_used_weapon(self, attacker):
-        return next((weapon for weapon in attacker.equipment.get_wielded_items()
-                     if weapon.melee_damage_type == self.required_item_melee_damage_type))
+        for wielded_item in attacker.equipment.get_wielded_items():
+            weapon = wielded_item.get_component('weapon')
+            if weapon.melee_damage_type == self.required_item_melee_damage_type:
+                return wielded_item
 
     def get_damage_type(self, **kwargs):
         return kwargs.get("attacker_weapon").melee_damage_type

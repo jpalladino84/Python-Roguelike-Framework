@@ -1,5 +1,7 @@
 from components.stats import ItemStats
 from components.display import Display
+from data.python_templates.items import item_templates
+from data.python_templates.material import material_templates
 from items.item import Item
 
 
@@ -8,10 +10,8 @@ class ItemFactory(object):
     At first this will only instantiate templates but eventually it should be able
     to pump out variations of a template ex: Adjusted to match player level.
     """
-    def __init__(self, item_templates, material_templates):
-        self.item_templates = item_templates
+    def __init__(self):
         self.template_instance_count = {}
-        self.material_templates = material_templates
 
     def build(self, uid):
         """
@@ -20,13 +20,13 @@ class ItemFactory(object):
         :return: Built instance from template.
         """
 
-        item_instance = self.item_templates[uid]
+        item_instance = item_templates[uid]
         if item_instance:
             return self._create_instance_of_template(item_instance)
         else:
             raise Exception("Could not find template for UID " + uid)
 
-    def create(self, uid, name, description, display, material_uid, stats, melee_damage_type, wearable_bodyparts_uid):
+    def create(self, uid, name, description, display, material_uid, stats):
         """
         Creates a new item based on arguments
         :return:
@@ -46,8 +46,6 @@ class ItemFactory(object):
             display=display,
             material=self.get_material_template_by_uid(material_uid),
             stats=stats,
-            melee_damage_type=melee_damage_type,
-            wearable_bodyparts_uid=wearable_bodyparts_uid
         )
         return new_instance
 
@@ -64,19 +62,19 @@ class ItemFactory(object):
             uid=instance_uid,
             name=item_template.name,
             description=item_template.description,
-            display=Display(**item_template.display.__dict__),
+            display=item_template.display.copy(),
             material=self.get_material_template_by_uid(item_template.material_uid),
             stats=ItemStats(**item_template.base_stats.__dict__),
-            melee_damage_type=item_template.melee_damage_type,
-            wearable_bodyparts_uid=item_template.wearable_bodyparts_uid
         )
+        for component in item_template.components:
+            new_instance.register_component(component.copy())
 
         return new_instance
 
     def get_material_template_by_uid(self, uid):
-        if uid in self.material_templates:
-            return self.material_templates[uid]
+        if uid in material_templates:
+            return material_templates[uid]
 
     def get_item_template_by_uid(self, uid):
-        if uid in self.item_templates:
-            return self.item_templates[uid]
+        if uid in item_templates:
+            return item_templates[uid]

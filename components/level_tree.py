@@ -2,10 +2,12 @@ from .component import Component
 
 
 class LevelTree(Component):
+    NAME = "level_tree"
     """
     The goal of this Tree is to return advantages of a level recursively.
     """
     def __init__(self):
+        super().__init__()
         self.stats_modifiers = {}
         self.abilities_modifiers = {}
 

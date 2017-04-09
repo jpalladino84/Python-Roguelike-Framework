@@ -7,7 +7,10 @@ from .component import Component
 
 
 class Effects(Component):
+    NAME = "effects"
+
     def __init__(self, host_object):
+        super().__init__()
         self.host_object = host_object
         self.active_effects = []
 

@@ -12,12 +12,13 @@ logger_ = logging.getLogger()
 
 
 class Body(Component):
+    NAME = "body"
     """
     Height is in feet, Weight in pounds
     """
     def __init__(self, uid, bodypart_tree, name="", height=0, weight=0, outer_material_uid=None,
                  internal_material_uid=None, structural_material_uid=None, blood_uid=None):
-
+        super().__init__()
         self.uid = uid
         self.bodypart_tree = bodypart_tree
         self.name = name

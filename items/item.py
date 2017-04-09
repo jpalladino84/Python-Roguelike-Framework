@@ -1,16 +1,11 @@
 import copy
-from enum import Enum
 
 from combat.enums import DamageType
+from components.game_object import GameObject
 
 
-class WornLayer(Enum):
-    Inner = 0
-    Outer = 1
-    Extra = 2
-
-
-class Item(object):
+class Item(GameObject):
+    NAME = "item"
     """
     What is an item?
     It made out of a material, it has a type, it can be used.
@@ -21,7 +16,8 @@ class Item(object):
     A good loot system can go a long way in terms of extending play time.
     """
     def __init__(self, uid, name="", description="", location=None,
-                 display=None, material=None, stats=None, ):
+                 display=None, material=None, stats=None):
+        super().__init__()
         self.uid = uid
         self._name = name
         self._description = description
@@ -76,9 +72,13 @@ class Item(object):
         )
 
 
-class ItemTemplate(object):
+# TODO I think we no longer need two classes for item and item template
+class ItemTemplate(GameObject):
+    NAME = "item"
+
     def __init__(self, uid, name, description, display, material_uid, base_stats,
                  melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None, worn_layer=0):
+        super().__init__()
         self.uid = uid
         self.name = name
         self.description = description

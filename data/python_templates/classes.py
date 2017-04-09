@@ -26,7 +26,7 @@ def build_thief_class():
 warrior_class = build_warrior_class()
 thief_class = build_thief_class()
 
-character_classes = [
-    warrior_class,
-    thief_class
-]
+character_class_templates = {
+    warrior_class.uid: warrior_class,
+    thief_class.uid: thief_class
+}

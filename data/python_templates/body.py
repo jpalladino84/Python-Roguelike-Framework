@@ -31,6 +31,8 @@ def build_humanoid_body():
     return humanoid_body
 
 humanoid_body = build_humanoid_body()
-bodies = [
-humanoid_body
-]
+
+body_templates = {
+    humanoid_body.uid: humanoid_body
+}
+

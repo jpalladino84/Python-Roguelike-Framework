@@ -2,11 +2,13 @@ from components.component import Component
 
 
 class Equipment(Component):
+    NAME = "equipment"
     """
     This component attaches itself to anything with a bodies.
     It represents equipment worn or wielded
     """
     def __init__(self, host):
+        super().__init__()
         self.host = host
         self.host_body = host.body
         self.worn_equipment_map = {}

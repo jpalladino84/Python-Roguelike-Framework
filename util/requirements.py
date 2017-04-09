@@ -76,12 +76,15 @@ class PhysicalAbilityRequirement(Requirement):
 
 class ItemDamageTypeRequirement(Requirement):
     def __init__(self, compare_type, damage_type_enum):
-        super(ItemDamageTypeRequirement, self).__init__(RequirementType.StatRequirement, compare_type, key=damage_type_enum, value=damage_type_enum)
+        super(ItemDamageTypeRequirement, self).__init__(RequirementType.StatRequirement, compare_type,
+                                                        key=damage_type_enum, value=damage_type_enum)
 
     def evaluate(self, game_object):
         if hasattr(game_object, 'equipment'):
-            weapons = game_object.equipment.get_wielded_items()
-            for weapon in weapons:
-                if self.compare(self.compare_type, self.value, weapon.melee_damage_type):
-                    return True
+            wielded_items = game_object.equipment.get_wielded_items()
+            for wielded_item in wielded_items:
+                weapon = wielded_item.get_component('weapon')
+                if weapon:
+                    if self.compare(self.compare_type, self.value, wielded_item.weapon.melee_damage_type):
+                        return True
         return False
