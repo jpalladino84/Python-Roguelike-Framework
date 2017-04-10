@@ -7,7 +7,8 @@ from components.display import Display
 from components.colors import Colors
 from characters.classes import CharacterClass
 from characters.character import CharacterTemplate
-from items.item import ItemTemplate, DamageType, WornLayer
+from items.item import ItemTemplate, WornLayer
+from combat.enums import DamageType
 from components.stats import ItemStats, Size
 from components import material
 
@@ -121,8 +122,8 @@ def get_sample_items():
         description="A short sword.",
         display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
         material_uid=material.Iron.uid,
-        base_stats=ItemStats(health=1, size=Size.Medium, min_damage=1, max_damage=6),
-        melee_damage_type=DamageType.Slash
+        base_stats=ItemStats(health=1, size=Size.Medium, damage_dice_amount=1, min_damage=1, max_damage=6),
+        melee_damage_type=DamageType.Pierce
     )
     helmet = ItemTemplate(
         uid="helmet",

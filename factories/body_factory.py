@@ -33,7 +33,8 @@ class BodyFactory(object):
         instance = BodyPart(
             uid=template.uid,
             physical_abilities={str_to_enum(key): value for key, value in template.physical_abilities.items()},
-            relative_size=template.relative_size
+            relative_size=template.relative_size,
+            threat_level=template.threat_level
         )
 
         return instance

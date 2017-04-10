@@ -1,0 +1,3 @@
+
+class Effect(object):
+    pass

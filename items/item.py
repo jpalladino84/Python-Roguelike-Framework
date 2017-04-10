@@ -1,12 +1,7 @@
 import copy
 from enum import Enum
 
-
-# TODO Take this out
-class DamageType(Enum):
-    Blunt = 0
-    Slash = 1
-    Pierce = 2
+from combat.enums import DamageType
 
 
 class WornLayer(Enum):
@@ -38,6 +33,12 @@ class Item(object):
         self.melee_damage_type = melee_damage_type
         self.wearable_bodyparts_uid = wearable_bodyparts_uid if wearable_bodyparts_uid else []
         self.worn_layer = worn_layer
+
+        # TODO Items should have weapon stats AND armor stats of D&D
+        # TODO They should be affected by material, so you can have a base item of iron breastplate of +2 AC
+        # TODO that could be reforged to steel for a total of +4 AC that could then be enchanted for a +6
+        # TODO Having these materials affects may not be very D&D but lets talk about it again
+        # TODO Once you craft a breastplate out of bones.
 
     @property
     def description(self):

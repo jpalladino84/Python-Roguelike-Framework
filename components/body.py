@@ -1,6 +1,9 @@
 import logging
+import six
+import random
 
 from components.abilities.physical_abilities import PhysicalAbilities
+from combat.enums import ThreatLevel
 
 logger_ = logging.getLogger()
 
@@ -30,13 +33,54 @@ class Body(object):
             if node.instance.body_part.uid == uid:
                 return node.instance.body_part
 
+    def _random_roll_body_part(self, body_parts):
+        tries = 0
+        max_tries = 3
+        while tries < max_tries:
+            tries += 1
+            for node in body_parts:
+                if random.randrange(0, 100) <= node.instance.relative_size:
+                    return node
+
+        return random.choice(body_parts)
+
+    def get_random_body_part_for_threat_level(self, threat_level):
+        size_sorted_body_parts = [node for node in self.bodypart_tree.nodes
+                                  if node.instance.threat_level == threat_level]
+        if not size_sorted_body_parts:
+            if threat_level < ThreatLevel.Fatal:
+                return self.get_random_body_part_for_threat_level(ThreatLevel[threat_level.value + 1])
+            else:
+                return self.get_random_body_part_by_relative_size()
+
+        return self._random_roll_body_part(size_sorted_body_parts)
+
+    def get_random_body_part_by_relative_size(self):
+        size_sorted_body_parts = sorted([node for node in self.bodypart_tree.nodes
+                                         if node.connection_type == BodypartTree.CONNECTION_TYPE_ATTACHED],
+                                        key=lambda node: node.instance.relative_size, reverse=True)
+
+        return self._random_roll_body_part(size_sorted_body_parts)
+
     def get_grasp_able_body_parts(self):
         return [node.instance for node in self.bodypart_tree.nodes
                 if PhysicalAbilities.GRASP in node.instance.physical_abilities]
 
+    def get_physical_abilities(self):
+        abilities = {}
+        for node in self.bodypart_tree.nodes:
+            for ability_name, ability_value in six.iteritems(node.instance.physical_abilities):
+                if ability_name not in abilities:
+                    abilities[ability_name] = ability_value
+                else:
+                    if abilities[ability_name] < ability_value:
+                        abilities[ability_name] = ability_value
+
+        return abilities
+
 
 class BodyPart(object):
-    def __init__(self, uid, physical_abilities=None, relative_size=1):
+    def __init__(self, uid, physical_abilities=None, relative_size=1, threat_level=ThreatLevel.Minor):
         """
         :param uid: ID Name of the body part
         :param physical_abilities: Dictionary with abilities granted if any with its relative power as value
@@ -44,6 +88,7 @@ class BodyPart(object):
         """
         self.uid = uid
         self.relative_size = relative_size
+        self.threat_level = threat_level
         if physical_abilities:
             self.physical_abilities = physical_abilities
         else:
@@ -100,18 +145,18 @@ class Blood(object):
 
 def get_body_parts_sample():
     return [
-        BodyPart('humanoid_head', relative_size=25),
-        BodyPart('humanoid_eye', {PhysicalAbilities.SEE: 1}, relative_size=5),
+        BodyPart('humanoid_head', relative_size=25, threat_level=ThreatLevel.Major),
+        BodyPart('humanoid_eye', {PhysicalAbilities.SEE: 1}, relative_size=5, threat_level=ThreatLevel.Critical),
         BodyPart('humanoid_ear', {PhysicalAbilities.HEAR: 1}, relative_size=5),
         BodyPart('humanoid_mouth', {PhysicalAbilities.EAT: 1}, relative_size=5),
-        BodyPart('humanoid_brain', {PhysicalAbilities.THINK: 1}, relative_size=15),
-        BodyPart('humanoid_torso', relative_size=50),
-        BodyPart('humanoid_heart', {PhysicalAbilities.LIVE: 1}, relative_size=25),
-        BodyPart('humanoid_lungs', {PhysicalAbilities.BREATHE: 1}, relative_size=25),
-        BodyPart('humanoid_arm', relative_size=25),
-        BodyPart('humanoid_hand', {PhysicalAbilities.GRASP: 1}, relative_size=10),
+        BodyPart('humanoid_brain', {PhysicalAbilities.THINK: 1}, relative_size=15, threat_level=ThreatLevel.Fatal),
+        BodyPart('humanoid_torso', relative_size=50, threat_level=ThreatLevel.Major),
+        BodyPart('humanoid_heart', {PhysicalAbilities.LIVE: 1}, relative_size=25, threat_level=ThreatLevel.Fatal),
+        BodyPart('humanoid_lungs', {PhysicalAbilities.BREATHE: 1}, relative_size=25, threat_level=ThreatLevel.Fatal),
+        BodyPart('humanoid_arm', relative_size=25, threat_level=ThreatLevel.Major),
+        BodyPart('humanoid_hand', {PhysicalAbilities.GRASP: 1, PhysicalAbilities.PUNCH: 1}, relative_size=10),
         BodyPart('humanoid_leg', {PhysicalAbilities.STAND: 1,
-                                  PhysicalAbilities.MOVE: 1}, relative_size=25),
+                                  PhysicalAbilities.MOVE: 1}, relative_size=25, threat_level=ThreatLevel.Major),
         BodyPart('humanoid_foot', {PhysicalAbilities.STAND: 1,
                                    PhysicalAbilities.MOVE: 1}, relative_size=10)
     ]
