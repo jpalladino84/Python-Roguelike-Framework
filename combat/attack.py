@@ -1,15 +1,11 @@
 import abc
 
-from abilities.physical_abilities import PhysicalAbilities
 from combat.enums import DamageType
 from components.stats import Stats
 from managers import echo
-from util import check_roller, requirements
+from util import check_roller
 from util.dice import DiceStack, Dice
 from . import enums
-
-
-# TODO We'll separate data from this module
 
 
 class AttackTemplate(object):
@@ -160,12 +156,7 @@ class AttackResult(object):
 
     def __init__(self, success, critical, target_object, target_ac,
                  natural_roll=None, total_hit_roll=None, total_damage=None, separated_damage=None):
-        """
-        :param success: bool Relating to attack success
-        :param critical: bool Relating to a critical effect, either failure or success
-        :param hit_roll: int of the actual hit roll
-        :param total_damage: List of tuples int Damage, Enum DamageType
-        """
+
         self.success = success
         self.critical = critical
         self.natural_roll = natural_roll
@@ -178,36 +169,3 @@ class AttackResult(object):
 
     def __str__(self):
         return "Rolled {} vs AC:{}".format(self.total_hit_roll, self.target_ac)
-
-# TODO Move this out of here to a proper place
-punch_template = UnarmedAttackTemplate(
-    name="Punch",
-    description="The mighty fist is presented to the weak flesh.",
-    message="{attacker} throws {attacker_his} fist at {defender}",
-    requirements=[
-        requirements.PhysicalAbilityRequirement(requirements.CompareType.GreaterOrEqual, 1, PhysicalAbilities.PUNCH)]
-)
-# TODO The melee damage type is repeated.. change that.
-# TODO Also use the requirements to fetch... requirements... like required bodypart.
-slash_template = MeleeAttackTemplate(
-    name="Slash",
-    description="The sharpened blade parts the flesh.",
-    message="{attacker} slashes {attacker_weapon} at {defender}",
-    required_item_melee_damage_type=DamageType.Slash,
-    requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Slash)]
-)
-smash_template = MeleeAttackTemplate(
-    name="Smash",
-    description="The hardened metal crushes the bone.",
-    message="{attacker} smashes {attacker_weapon} at {defender}",
-    required_item_melee_damage_type=DamageType.Blunt,
-    requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Blunt)]
-)
-stab_template = MeleeAttackTemplate(
-    name="Stab",
-    description="The point pierces the veil.",
-    message="{attacker} stabs {attacker_weapon} at {defender}",
-    required_item_melee_damage_type=DamageType.Pierce,
-    requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Pierce)]
-)
-base_attacks = [punch_template, slash_template, smash_template, stab_template]

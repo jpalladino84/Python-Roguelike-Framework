@@ -1,8 +1,8 @@
 import math
 
 from characters.enums import Sex
-from combat.attack import base_attacks
-from combat.defense import base_defenses
+from data.python_templates.attacks import base_attacks
+from data.python_templates.defenses import base_defenses
 from components.equipment import Equipment
 from components.location import Location
 from components.stats import Stats
