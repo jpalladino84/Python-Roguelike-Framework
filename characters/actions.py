@@ -6,9 +6,8 @@ This is where the main business logic lives.
 Any action that can be taken by the player or a npc (e.g. monster) is defined here.
 """
 import math
-import random
 
-from components.colors import Colors
+from managers import combat_manager, echo
 
 
 # TODO One thing I want to change is the tile contains flag
@@ -20,55 +19,7 @@ from components.colors import Colors
 
 def attack(attacker, target, console):
     # a simple formula for attack damage
-    attack_modifier = math.floor((attacker.get_attack_total() - 8) / 2)
-    defense_modifier = math.floor((target.get_defense_total() - 8) / 2)
-    hit_roll = random.randint(1, 20)
-    damage_roll = random.randint(1, 4) + attack_modifier
-    hit_check = int(attack_modifier) + hit_roll - (10 + defense_modifier)
-    if hit_check > 0:
-        # make the target take some damage
-        take_damage(target, damage_roll, console)
-    else:
-        console.printStr('{} dodges the attack.\n\n'.format(target.name))
-
-
-def player_death(player, console):
-    # TODO This should not be here
-    # the game ended!
-    console.printStr('You have died... Game Over\n\n')
-
-    # for added effect, transform the player into a corpse!
-    player.display.ascii_character = '%'
-    player.display.foreground_color = Colors.BLOOD_RED
-
-
-def monster_death(monster, console):
-    # TODO This should not be here
-    # transform it into a nasty corpse! it doesn't block, can't be
-    # attacked and doesn't move
-    console.printStr('{} has died.\n\n'.format(monster.name))
-    monster.display.ascii_character = '%'
-    monster.display.foreground_color = Colors.BLOOD_RED
-    monster.blocks = False
-    monster.name = 'remains of ' + monster.name
-
-
-def take_damage(actor, damage, console):
-    # TODO This should not be here
-    # apply damage if possible
-    if damage > 0:
-        console.printStr('{} takes {} damage.\n\n'.format(actor.name, damage))
-        actor.stats.health.modify_current(-damage)
-
-    # check for death. if there's a death function, call it
-    if int(actor.get_health_total()) <= 0:
-        if actor.is_player:
-            player_death(actor, console)
-        else:
-            monster_death(actor, console)
-
-        x, y = actor.location.get_local_coords()
-        actor.current_level.maze[x][y].contains_object = False
+    combat_manager.execute_combat_round(attacker, target)
 
 
 def move(actor, dx, dy):
@@ -116,7 +67,6 @@ def move_or_attack(character, target_x, target_y, console):
         monster = next((monster for monster in character.current_level.spawned_monsters
                         if monster.location.get_local_coords() == tile_coords), None)
         if monster:
-            console.printStr('{} attacks {}...\n\n'.format(character.name, monster.name))
             attack(character, monster, console)
     else:
         move(character, target_x, target_y)
@@ -143,7 +93,7 @@ def move_towards(actor, target):
 def monster_take_turn(monster, player, console):
     # TODO This should not be here, it should be in an AI component which uses actions from here
     """
-    A basic monster takes its turn.
+    A basic monster takes its turn.9
     If you can see it, it can see you
     """
     if not monster.is_dead():
@@ -153,8 +103,7 @@ def monster_take_turn(monster, player, console):
             if distance_to(monster, player) >= 2:
                 move_towards(monster, player)
             # close enough, attack! (if the player is still alive.)
-            elif int(player.get_health_total()) > 0:
-                console.printStr('{} attacks {}..\n\n'.format(monster.name, player.name))
+            elif not player.is_dead():
                 attack(monster, player, console)
 
 

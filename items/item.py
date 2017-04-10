@@ -1,21 +1,11 @@
 import copy
-from enum import Enum
+
+from combat.enums import DamageType
+from components.game_object import GameObject
 
 
-# TODO Take this out
-class DamageType(Enum):
-    Blunt = 0
-    Slash = 1
-    Pierce = 2
-
-
-class WornLayer(Enum):
-    Inner = 0
-    Outer = 1
-    Extra = 2
-
-
-class Item(object):
+class Item(GameObject):
+    NAME = "item"
     """
     What is an item?
     It made out of a material, it has a type, it can be used.
@@ -26,8 +16,8 @@ class Item(object):
     A good loot system can go a long way in terms of extending play time.
     """
     def __init__(self, uid, name="", description="", location=None,
-                 display=None, material=None, stats=None, melee_damage_type=DamageType.Blunt,
-                 wearable_bodyparts_uid=None, worn_layer=0):
+                 display=None, material=None, stats=None):
+        super().__init__()
         self.uid = uid
         self._name = name
         self._description = description
@@ -35,9 +25,12 @@ class Item(object):
         self.display = display
         self.material = material
         self.stats = stats
-        self.melee_damage_type = melee_damage_type
-        self.wearable_bodyparts_uid = wearable_bodyparts_uid if wearable_bodyparts_uid else []
-        self.worn_layer = worn_layer
+
+        # TODO Items should have weapon stats AND armor stats of D&D
+        # TODO They should be affected by material, so you can have a base item of iron breastplate of +2 AC
+        # TODO that could be reforged to steel for a total of +4 AC that could then be enchanted for a +6
+        # TODO Having these materials affects may not be very D&D but lets talk about it again
+        # TODO Once you craft a breastplate out of bones.
 
     @property
     def description(self):
@@ -79,9 +72,13 @@ class Item(object):
         )
 
 
-class ItemTemplate(object):
+# TODO I think we no longer need two classes for item and item template
+class ItemTemplate(GameObject):
+    NAME = "item"
+
     def __init__(self, uid, name, description, display, material_uid, base_stats,
                  melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None, worn_layer=0):
+        super().__init__()
         self.uid = uid
         self.name = name
         self.description = description

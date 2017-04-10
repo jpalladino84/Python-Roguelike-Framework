@@ -1,7 +1,9 @@
 from math import floor
+from .component import Component
 
 
-class ExperiencePool(object):
+class ExperiencePool(Component):
+    NAME = "experience_pool"
     """
     This pool will hold experience and a list of other pools it can trickle to.
     Example: A Character has a pool that holds all the experience he gains.
@@ -12,6 +14,7 @@ class ExperiencePool(object):
     STARTING_LEVEL = 1
 
     def __init__(self):
+        super().__init__()
         self.experience = 0
         self.child_pools = []
 

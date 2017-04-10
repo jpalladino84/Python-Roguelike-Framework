@@ -1,5 +1,7 @@
 import tdl
 from components.stats import CharacterStats
+from data.python_templates.classes import character_class_templates
+from data.python_templates.races import race_templates
 from managers.console_manager import Menu
 from ui import controls
 
@@ -22,11 +24,11 @@ class CharacterCreationScene(object):
         self.control_name = controls.InputControl("Name:")
         self.control_class = controls.ListChoiceControl(
             "Class:", root_console=self.main_console,
-            options=self.game_context.character_factory.class_templates.values()
+            options=character_class_templates.values()
         )
         self.control_race = controls.ListChoiceControl(
             question="Race:", root_console=self.main_console,
-            options=self.game_context.character_factory.race_templates.values()
+            options=race_templates.values()
         )
         self.control_stats = controls.PointDistributionControl(
             question="Stats:",

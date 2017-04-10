@@ -4,8 +4,7 @@ class FactoryService(object):
     This is rudimentary for now but it could be nice to have each factory provide a list of
     types it handles and dispatch each request to the factory that handles it.
     """
-    def __init__(self, template_loader, body_factory, character_factory=None):
-        self.template_loader = template_loader
+    def __init__(self, body_factory, character_factory=None):
         self.body_factory = body_factory
         self.character_factory = character_factory
 
@@ -14,4 +13,4 @@ class FactoryService(object):
 
     def build_character_instance_by_uid(self, character_uid):
         if self.character_factory:
-            return self.character_factory.build_body(character_uid)
+            return self.character_factory.build(character_uid)
