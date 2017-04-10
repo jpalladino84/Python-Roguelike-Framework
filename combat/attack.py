@@ -1,16 +1,11 @@
-from . import enums
 import abc
-from managers import echo
 
-from components.stats import Stats
-from components import requirements
-from components.abilities.physical_abilities import PhysicalAbilities
-from util.dice import DiceStack, Dice
-from util import check_roller
 from combat.enums import DamageType
-
-
-# TODO We'll separate data from this module
+from components.stats import Stats
+from managers import echo
+from util import check_roller
+from util.dice import DiceStack, Dice
+from . import enums
 
 
 class AttackTemplate(object):
@@ -54,7 +49,7 @@ class AttackTemplate(object):
             self.make_damage_roll(attacker, attack_result, **kwargs)
 
         # TODO Probably a good idea to remove this from the attack and into the manager.
-        echo.echo_service.combat_context_echo(
+        echo.EchoService.singleton.combat_context_echo(
             message=self.message + "...",
             attacker=attacker,
             defender=defender,
@@ -133,11 +128,18 @@ class MeleeAttackTemplate(AttackTemplate):
         return DiceStack(int(attacker_weapon.stats.damage_dice_amount), Dice(int(attacker_weapon.stats.max_damage)))
 
     def get_used_weapon(self, attacker):
-        return next((weapon for weapon in attacker.equipment.get_wielded_items()
-                     if weapon.melee_damage_type == self.required_item_melee_damage_type))
+        for wielded_item in attacker.equipment.get_wielded_items():
+            weapon = wielded_item.get_component('weapon')
+            if weapon.melee_damage_type == self.required_item_melee_damage_type:
+                return wielded_item
 
     def get_damage_type(self, **kwargs):
-        return kwargs.get("attacker_weapon").melee_damage_type
+        item = kwargs.get("attacker_weapon")
+        if item.weapon:
+            return item.weapon.melee_damage_type
+        else:
+            # TODO This indicates an improvised weapon. We'll need to get a better way to handle this.
+            return DamageType.Blunt
 
 
 class RangedAttackTemplate(AttackTemplate):
@@ -154,12 +156,7 @@ class AttackResult(object):
 
     def __init__(self, success, critical, target_object, target_ac,
                  natural_roll=None, total_hit_roll=None, total_damage=None, separated_damage=None):
-        """
-        :param success: bool Relating to attack success
-        :param critical: bool Relating to a critical effect, either failure or success
-        :param hit_roll: int of the actual hit roll
-        :param total_damage: List of tuples int Damage, Enum DamageType
-        """
+
         self.success = success
         self.critical = critical
         self.natural_roll = natural_roll
@@ -172,35 +169,3 @@ class AttackResult(object):
 
     def __str__(self):
         return "Rolled {} vs AC:{}".format(self.total_hit_roll, self.target_ac)
-
-# TODO Move this out of here to a proper place
-punch_template = UnarmedAttackTemplate(
-    name="Punch",
-    description="The mighty fist is presented to the weak flesh.",
-    message="{attacker} throws {attacker_his} fist at {defender}",
-    requirements=[requirements.PhysicalAbilityRequirement(requirements.CompareType.GreaterOrEqual, 1, PhysicalAbilities.PUNCH)]
-)
-# TODO The melee damage type is repeated.. change that.
-# TODO Also use the requirements to fetch... requirements... like required bodypart.
-slash_template = MeleeAttackTemplate(
-    name="Slash",
-    description="The sharpened blade parts the flesh.",
-    message="{attacker} slashes {attacker_weapon} at {defender}",
-    required_item_melee_damage_type=DamageType.Slash,
-    requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Slash)]
-)
-smash_template = MeleeAttackTemplate(
-    name="Smash",
-    description="The hardened metal crushes the bone.",
-    message="{attacker} smashes {attacker_weapon} at {defender}",
-    required_item_melee_damage_type=DamageType.Blunt,
-    requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Blunt)]
-)
-stab_template = MeleeAttackTemplate(
-    name="Stab",
-    description="The point pierces the veil.",
-    message="{attacker} stabs {attacker_weapon} at {defender}",
-    required_item_melee_damage_type=DamageType.Pierce,
-    requirements=[requirements.ItemDamageTypeRequirement(requirements.CompareType.Equal, DamageType.Pierce)]
-)
-base_attacks = [punch_template, slash_template, smash_template, stab_template]

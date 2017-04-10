@@ -1,16 +1,18 @@
 import math
 
 from characters.enums import Sex
-from components.location import Location
+from data.python_templates.attacks import base_attacks
+from data.python_templates.defenses import base_defenses
 from components.equipment import Equipment
+from components.location import Location
 from components.stats import Stats
-from combat.attack import base_attacks
-from combat.defense import base_defenses
+from components.game_object import GameObject
 
 
-class Character(object):
+class Character(GameObject):
     def __init__(self, uid, name, character_class, character_race, stats, display,
                  inventory, body, main_experience_pool, location=None, equipment=None, sex=None):
+        super().__init__()
         self.uid = uid
         self._name = name
         self.character_class = character_class

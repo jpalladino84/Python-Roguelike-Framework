@@ -13,7 +13,7 @@ class SceneManager(object):
         self.console_manager = console_manager
         self.scenes = {
             CharacterCreationScene.ID: CharacterCreationScene(console_manager, game_context, self.start_game),
-            GameScene.ID: GameScene(self.console_manager, self),
+            GameScene.ID: GameScene(self.console_manager, self, game_context),
             InventoryScene.ID: InventoryScene(self.console_manager, game_context, self.exit_inventory_screen),
             MainMenuScene.ID: MainMenuScene(self.console_manager, self.enter_creation_screen)
         }

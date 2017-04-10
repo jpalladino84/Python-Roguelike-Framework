@@ -1,10 +1,13 @@
 from characters.character import Character
 from characters.classes import CharacterClassInstance
 from characters.race import RaceInstance
-from components.stats import CharacterStats
 from components.display import Display
 from components.experience_pool import ExperiencePool
 from components.inventory import Inventory
+from components.stats import CharacterStats
+from data.python_templates.characters import character_templates
+from data.python_templates.classes import character_class_templates
+from data.python_templates.races import race_templates
 
 
 class CharacterFactory(object):
@@ -12,12 +15,9 @@ class CharacterFactory(object):
     At first this will only instantiate templates but eventually it should be able
     to pump out variations of a template ex: Adjusted to match player level.
     """
-    def __init__(self, character_templates, factory_service, race_templates, class_templates):
-        self.character_templates = character_templates
+    def __init__(self, factory_service):
         self.template_instance_count = {}
         self.factory_service = factory_service
-        self.race_templates = race_templates
-        self.class_templates = class_templates
 
     def build(self, uid):
         """
@@ -26,7 +26,7 @@ class CharacterFactory(object):
         :return: Built instance from template.
         """
 
-        character_template = self.character_templates[uid]
+        character_template = character_templates[uid]
         if character_template:
             return self._create_instance_of_template(character_template)
         else:
@@ -85,7 +85,7 @@ class CharacterFactory(object):
                 experience_pool=race_experience_pool
             ),
             stats=CharacterStats(**character_template.base_stats.__dict__),
-            display=Display(**character_template.display.__dict__),
+            display=character_template.display.copy(),
             body=self.factory_service.build_body_instance_by_uid(character_template.body_uid),
             main_experience_pool=race_experience_pool,
             inventory=Inventory()
@@ -94,9 +94,10 @@ class CharacterFactory(object):
         return new_instance
 
     def get_class_template_by_uid(self, uid):
-        if uid in self.class_templates:
-            return self.class_templates[uid]
+        if uid in character_class_templates:
+            return character_class_templates[uid]
 
     def get_race_template_by_uid(self, uid):
-        if uid in self.race_templates:
-            return self.race_templates[uid]
+        if uid in race_templates:
+            return race_templates[uid]
+

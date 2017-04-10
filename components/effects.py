@@ -1,11 +1,16 @@
+from .component import Component
+
 # TODO Anything could have an EFFECTS component
 # TODO This component would keep active effects and respond to queries about modifiers.
 # TODO It could also apply effects itself, like damage or healing.
 # TODO It should be called in a sort of update loop.
 
 
-class Effects(object):
+class Effects(Component):
+    NAME = "effects"
+
     def __init__(self, host_object):
+        super().__init__()
         self.host_object = host_object
         self.active_effects = []
 

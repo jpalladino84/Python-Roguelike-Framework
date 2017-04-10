@@ -1,8 +1,9 @@
-from components.level_tree import LevelTree
-from components.stats import Stats, StatModifier
 from components.abilities.ability import Ability
 from components.abilities.power_abilities import PowerAbilities
-from components.abilities.physical_abilities import PhysicalAbilities
+
+from abilities.physical_abilities import PhysicalAbilities
+from components.level_tree import LevelTree
+from components.stats import Stats, StatModifier
 
 
 def test_stats_modifiers():

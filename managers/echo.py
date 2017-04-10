@@ -4,12 +4,20 @@ from collections import defaultdict
 
 
 class EchoService(object):
-    def __init__(self, console):
+    # TODO This makes me cry, lets refactor this.
+    singleton = None
+
+    def __init__(self, console, game_context):
         self.console = console
+        self.game_context = game_context
+        if not EchoService.singleton:
+            EchoService.singleton = self
 
     def combat_context_echo(self, message, attacker=None, defender=None,
                             attacker_weapon=None, defender_weapon=None, defender_bodypart=None):
         context_variables = defaultdict(lambda: "N/A")
+        context_variables["player"] = self.game_context.player
+
         if attacker:
             context_variables["attacker"] = attacker
         if defender:
@@ -32,9 +40,6 @@ class EchoService(object):
         formatted_message = message.format(**context_variables)
         self.console.printStr(formatted_message + "\n")
 
-# TODO This is crappy, Do something better.
-echo_service = None
-
 
 class MessageVariables(Enum):
     attacker = "{attacker}"
@@ -52,6 +57,9 @@ class MessageVariables(Enum):
 
 
 def his_her_it(target, **kwargs):
+    if 'player' in kwargs and kwargs['player'] == target:
+        return "your"
+
     if hasattr(target, 'sex'):
         if target.sex == Sex.Male:
             return "his"
@@ -61,6 +69,9 @@ def his_her_it(target, **kwargs):
 
 
 def him_her_it(target, **kwargs):
+    if 'player' in kwargs and kwargs['player'] == target:
+        return "your"
+
     if hasattr(target, 'sex'):
         if target.sex == Sex.Male:
             return "him"
@@ -70,6 +81,9 @@ def him_her_it(target, **kwargs):
 
 
 def he_her_it(target, **kwargs):
+    if 'player' in kwargs and kwargs['player'] == target:
+        return "You"
+
     if hasattr(target, 'sex'):
         if target.sex == Sex.Male:
             return "he"
@@ -79,9 +93,8 @@ def he_her_it(target, **kwargs):
 
 
 def name_or_you(target, **kwargs):
-    # TODO We'll figure out a way to get the current player.
-    # if target == player:
-    #     return "you"
+    if 'player' in kwargs and kwargs['player'] == target:
+        return "You"
 
     return target.name
 

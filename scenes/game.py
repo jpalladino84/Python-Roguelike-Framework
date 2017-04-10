@@ -4,6 +4,7 @@ from enum import Enum
 import settings
 import tdl
 from managers.action_manager import ActionManager
+from managers.echo import EchoService
 from settings import DUNGEON_COLORS as COLORS
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ class GameScene(object):
     """
     ID = "Game"
 
-    def __init__(self, console_manager, scene_manager):
+    def __init__(self, console_manager, scene_manager, game_context):
         self.console_manager = console_manager
         self.scene_manager = scene_manager
         self.main_console = console_manager.main_console
@@ -33,6 +34,8 @@ class GameScene(object):
             GameConsoles.Status: self.console_manager.create_new_console(20, 15)
         }
         self.action_manager = ActionManager(self.consoles[GameConsoles.ActionLog])
+        self.echo_service = EchoService(self.consoles[GameConsoles.ActionLog], game_context)
+        game_context.echo_service = self.echo_service
         logger.info("Initialized GameScene")
 
     def render(self, **kwargs):

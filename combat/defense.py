@@ -1,4 +1,5 @@
 import abc
+
 from managers import echo
 
 
@@ -19,7 +20,7 @@ class DefenseTemplate(object):
         return False
 
     def make_defense(self, attacker, defender, **kwargs):
-        echo.echo_service.combat_context_echo(
+        echo.EchoService.singleton.combat_context_echo(
             message="..." + self.message,
             attacker=attacker,
             defender=defender,
@@ -81,34 +82,3 @@ class ArmorAbsorbTemplate(DefenseTemplate):
         minimum_ac = 10 + attacker.get_effective_dex_modifier() + attacker.get_shield_modifiers()
         maximum_ac = minimum_ac + attacker.get_armor_modifiers()
         return self._evaluate(hit_roll, minimum_ac, maximum_ac)
-
-
-# TODO Move this out
-dodge = DodgeTemplate(
-    name="Dodge",
-    description="Standard move out of the way.",
-    message="but {defender} dodges it.",
-)
-parry = ParryTemplate(
-    name="Parry",
-    description="Standard parry weapon with weapon.",
-    message="but {defender} parries it with {defender_his} {defender_weapon} !"
-)
-block = BlockTemplate(
-    name="Block",
-    description="Standard block something with something.",
-    message="but {defender} blocks it with {defender_his} {defender_weapon}"
-)
-armor_absorb = ArmorAbsorbTemplate(
-    name="Armor Absorb",
-    description="Standard armor saves your ass.",
-    message="but the hit is absorbed by {defender_bodypart_armor}"
-)
-miss = MissTemplate(
-    name="Miss",
-    description="Action falls short of the will.",
-    message="but {attacker_he} misses {defender}"
-)
-base_defenses = [
-    dodge, parry, block, armor_absorb, miss
-]

@@ -6,9 +6,7 @@ This is where the main business logic lives.
 Any action that can be taken by the player or a npc (e.g. monster) is defined here.
 """
 import math
-import random
 
-from components.colors import Colors
 from managers import combat_manager, echo
 
 
@@ -21,10 +19,6 @@ from managers import combat_manager, echo
 
 def attack(attacker, target, console):
     # a simple formula for attack damage
-
-    # TODO This is REALLY bad, find a better way.
-    if not echo.echo_service:
-        echo.echo_service = echo.EchoService(console)
     combat_manager.execute_combat_round(attacker, target)
 
 
