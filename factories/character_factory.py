@@ -4,7 +4,8 @@ from characters.race import RaceInstance
 from components.display import Display
 from components.experience_pool import ExperiencePool
 from components.inventory import Inventory
-from components.stats import CharacterStats
+from components.stats import make_character_stats
+from stats.enums import StatsEnum
 from data.python_templates.characters import character_templates
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
@@ -59,6 +60,11 @@ class CharacterFactory(object):
             inventory=Inventory()
         )
 
+        # Adjust health based on what they should be.
+        health_value = new_instance.stats.get_current_value(StatsEnum.Health)
+        new_instance.stats.set_core_current_value(StatsEnum.Health, health_value)
+        new_instance.stats.set_core_maximum_value(StatsEnum.Health, health_value)
+
         return new_instance
 
     def _create_instance_of_template(self, character_template):
@@ -84,7 +90,7 @@ class CharacterFactory(object):
                 template=self.get_race_template_by_uid(character_template.race_uid),
                 experience_pool=race_experience_pool
             ),
-            stats=CharacterStats(**character_template.base_stats.__dict__),
+            stats=make_character_stats(**character_template.base_stats.__dict__),
             display=character_template.display.copy(),
             body=self.factory_service.build_body_instance_by_uid(character_template.body_uid),
             main_experience_pool=race_experience_pool,

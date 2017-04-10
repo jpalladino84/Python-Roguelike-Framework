@@ -1,5 +1,3 @@
-from components.stats import ItemStats
-from components.display import Display
 from data.python_templates.items import item_templates
 from data.python_templates.material import material_templates
 from items.item import Item
@@ -26,29 +24,6 @@ class ItemFactory(object):
         else:
             raise Exception("Could not find template for UID " + uid)
 
-    def create(self, uid, name, description, display, material_uid, stats):
-        """
-        Creates a new item based on arguments
-        :return:
-        """
-        instance_id = 0
-        if uid in self.template_instance_count:
-            instance_id = self.template_instance_count[uid]
-            self.template_instance_count[uid] += 1
-        else:
-            self.template_instance_count[uid] = 1
-
-        instance_uid = uid + "_" + str(instance_id)
-        new_instance = Item(
-            uid=instance_uid,
-            name=name,
-            description=description,
-            display=display,
-            material=self.get_material_template_by_uid(material_uid),
-            stats=stats,
-        )
-        return new_instance
-
     def _create_instance_of_template(self, item_template):
         instance_id = 0
         if item_template.uid in self.template_instance_count:
@@ -63,8 +38,6 @@ class ItemFactory(object):
             name=item_template.name,
             description=item_template.description,
             display=item_template.display.copy(),
-            material=self.get_material_template_by_uid(item_template.material_uid),
-            stats=ItemStats(**item_template.base_stats.__dict__),
         )
         for component in item_template.components:
             new_instance.register_component(component.copy())

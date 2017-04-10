@@ -5,7 +5,7 @@ from data.python_templates.attacks import base_attacks
 from data.python_templates.defenses import base_defenses
 from components.equipment import Equipment
 from components.location import Location
-from components.stats import Stats
+from stats.enums import StatsEnum
 from components.game_object import GameObject
 
 
@@ -15,9 +15,9 @@ class Character(GameObject):
         super().__init__()
         self.uid = uid
         self._name = name
-        self.character_class = character_class
-        self.character_race = character_race
-        self.stats = stats
+        self.register_component(character_class)
+        self.register_component(character_race)
+        self.register_component(stats)
         self.display = display
         if not location:
             self.location = Location()
@@ -46,37 +46,37 @@ class Character(GameObject):
         :return: bool
         """
         # TODO Make this
-        return self.stats.health.current <= 0
+        return self.stats.get_current_value(StatsEnum.Health) <= 0
 
     def get_stat_modifier(self, stat):
-        current_total = self.stats.get_stat(stat).current + self.character_race.get_stat_modifier(stat)
+        current_total = self.stats.get_current_value(stat)
         return math.floor((current_total - 10) / 2)
 
     def get_attack_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(Stats.Strength)
+        return self.get_stat_modifier(StatsEnum.Strength)
 
     def get_health_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(Stats.Health)
+        return self.get_stat_modifier(StatsEnum.Health)
 
     def get_speed_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(Stats.Dexterity)
+        return self.get_stat_modifier(StatsEnum.Dexterity)
 
     def get_armor_class(self):
         base_ac = self._get_base_armor_class()
         effective_dex_modifier = self.get_effective_dex_modifier()
 
         armor_modifier = self.get_armor_modifiers()
-        effect_modifier = self._get_effects_modifier(Stats.ArmorClass)
-        level_tree_modifiers = self._get_level_tree_modifiers(Stats.ArmorClass)
+        effect_modifier = self._get_effects_modifier(StatsEnum.ArmorClass)
+        level_tree_modifiers = self._get_level_tree_modifiers(StatsEnum.ArmorClass)
 
         return base_ac + effective_dex_modifier + armor_modifier + effect_modifier + level_tree_modifiers
 
     def get_effective_dex_modifier(self):
         max_dex_modifier = self._get_maximum_dex_bonus()
-        effective_dex_modifier = self.get_stat_modifier(Stats.Dexterity)
+        effective_dex_modifier = self.get_stat_modifier(StatsEnum.Dexterity)
         if effective_dex_modifier > max_dex_modifier:
             effective_dex_modifier = max_dex_modifier
 

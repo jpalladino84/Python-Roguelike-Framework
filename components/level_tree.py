@@ -1,7 +1,4 @@
-from .component import Component
-
-
-class LevelTree(Component):
+class LevelTree(object):
     NAME = "level_tree"
     """
     The goal of this Tree is to return advantages of a level recursively.
@@ -47,3 +44,8 @@ class LevelTree(Component):
         if level not in self.abilities_modifiers:
             self.abilities_modifiers[level] = {}
         self.abilities_modifiers[level][ability_modifier.uid] = ability_modifier.power
+
+
+
+
+

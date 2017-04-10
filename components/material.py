@@ -1,6 +1,6 @@
 from .component import Component
 
-
+# TODO Material needs a serious overhaul to fit in D&D system.
 class Material(Component):
     NAME = "material"
     """
@@ -18,3 +18,7 @@ class Material(Component):
 
     def __str__(self):
         return "Material({})".format(self.name)
+
+    def copy(self):
+        return Material(uid=self.uid, name=self.name, hardness=self.hardness, sharpness=self.sharpness,
+                        potency=self.potency, weight=self.weight, value=self.value)

@@ -16,6 +16,9 @@ class Component(object):
     def update(self):
         pass
 
+    def handle_message(self, message):
+        pass
+
 
 # TODO If a component is never initialized, is it truly invalid?
 valid_components = {}

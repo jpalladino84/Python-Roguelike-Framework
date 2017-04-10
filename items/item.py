@@ -16,7 +16,7 @@ class Item(GameObject):
     A good loot system can go a long way in terms of extending play time.
     """
     def __init__(self, uid, name="", description="", location=None,
-                 display=None, material=None, stats=None):
+                 display=None, material=None):
         super().__init__()
         self.uid = uid
         self._name = name
@@ -24,7 +24,6 @@ class Item(GameObject):
         self.location = location
         self.display = display
         self.material = material
-        self.stats = stats
 
         # TODO Items should have weapon stats AND armor stats of D&D
         # TODO They should be affected by material, so you can have a base item of iron breastplate of +2 AC
@@ -70,24 +69,6 @@ class Item(GameObject):
                 self.stats
             )
         )
-
-
-# TODO I think we no longer need two classes for item and item template
-class ItemTemplate(GameObject):
-    NAME = "item"
-
-    def __init__(self, uid, name, description, display, material_uid, base_stats,
-                 melee_damage_type=DamageType.Blunt, wearable_bodyparts_uid=None, worn_layer=0):
-        super().__init__()
-        self.uid = uid
-        self.name = name
-        self.description = description
-        self.display = display
-        self.material_uid = material_uid
-        self.base_stats = base_stats
-        self.melee_damage_type = melee_damage_type
-        self.wearable_bodyparts_uid = wearable_bodyparts_uid if wearable_bodyparts_uid else []
-        self.worn_layer = worn_layer
 
 
 class ItemStack(object):

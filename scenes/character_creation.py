@@ -1,5 +1,5 @@
 import tdl
-from components.stats import CharacterStats
+from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
 from managers.console_manager import Menu
@@ -98,8 +98,7 @@ class CharacterCreationScene(object):
                         name=self.control_name.answer,
                         class_uid=self.control_class.answer.uid,
                         race_uid=self.control_race.answer.uid,
-                        stats=CharacterStats(
-                            health=16,
+                        stats=make_character_stats(
                             **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
                         body_uid="humanoid"
                     )
