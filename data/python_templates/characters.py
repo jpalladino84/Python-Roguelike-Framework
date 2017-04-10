@@ -48,8 +48,8 @@ human_warrior = CharacterTemplate(
 
 human_thief = CharacterTemplate(
         uid="human_thief", name="Human Thief",
-        class_uid=human_race.uid,
-        race_uid=thief_class.uid,
+        class_uid=thief_class.uid,
+        race_uid=human_race.uid,
         base_stats=CharacterStats(health=6, constitution=10, dexterity=16),
         display=Display(Colors.WHITE_COLOR, Colors.BLACK_COLOR, "O"),
         body_uid="humanoid",

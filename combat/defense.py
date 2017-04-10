@@ -19,7 +19,7 @@ class DefenseTemplate(object):
         return False
 
     def make_defense(self, attacker, defender, **kwargs):
-        echo.echo_service.combat_context_echo(
+        echo.EchoService.singleton.combat_context_echo(
             message="..." + self.message,
             attacker=attacker,
             defender=defender,

@@ -4,6 +4,8 @@ class Component(object):
 
     def __init__(self):
         self.host = None
+        if self.NAME not in valid_components:
+            valid_components[self.NAME] = self
 
     def on_register(self, host):
         self.host = host
@@ -13,3 +15,7 @@ class Component(object):
 
     def update(self):
         pass
+
+
+# TODO If a component is never initialized, is it truly invalid?
+valid_components = {}

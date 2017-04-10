@@ -1,3 +1,6 @@
+from components.component import valid_components
+
+
 class GameObject(object):
     def __init__(self):
         self.components = []
@@ -20,8 +23,21 @@ class GameObject(object):
             self.components.remove(component)
 
     def __getattr__(self, item):
-        component = self.get_component(item)
-        if component:
-            return component
+        if item in valid_components:
+            component = self.get_component(item)
+            if component:
+                return component
+            else:
+                if not hasattr(self, item):
+                    return NoneVoid()
 
         return super().__getattribute__(item)
+
+
+class NoneVoid(object):
+    """
+    This class's only purpose is to Falsify any other calls make to get attributes from it.
+    It allows us to duck type into components a little easier.
+    """
+    def __getattr__(self, item):
+        return None

@@ -48,13 +48,13 @@ def execute_combat_round(attacker, defender):
         # TODO Leaving it in the defender object could have them behave differently
         # TODO but at the same time having it centralized in one location will keep the other classes smaller.
         # TODO Maybe this should be extracted to a component?
-        take_damage(defender, attack_result, echo.echo_service.console)
+        take_damage(defender, attack_result)
     else:
         choose_defense(attacker, defender, attack_result.total_hit_roll).make_defense(attacker, defender)
-    echo.echo_service.console.printStr(str(attack_result) + "\n")
+    echo.EchoService.singleton.console.printStr(str(attack_result) + "\n")
 
 
-def take_damage(actor, attack_result, console):
+def take_damage(actor, attack_result):
     # TODO Here we take each damage dealt, apply resistance
     # TODO Determine threat level for total damage
     if attack_result.total_damage <= 0:
@@ -70,14 +70,14 @@ def take_damage(actor, attack_result, console):
     damage_string += ",".join(wound_strings)
     damage_string += " {} {} for {} damage!".format(
         echo.his_her_it(actor), attack_result.body_part_hit.name, attack_result.total_damage)
-    console.printStr(damage_string + "\n")
+    echo.EchoService.singleton.console.printStr(damage_string + "\n")
 
     # check for death. if there's a death function, call it
     if actor.stats.health.current <= 0:
         if actor.is_player:
-            player_death(actor, console)
+            player_death(actor, echo.EchoService.singleton.console)
         else:
-            monster_death(actor, console)
+            monster_death(actor, echo.EchoService.singleton.console)
 
         x, y = actor.location.get_local_coords()
         actor.current_level.maze[x][y].contains_object = False
@@ -113,7 +113,7 @@ def get_threat_level(total_damage, health):
         return combat_enums.ThreatLevel.Minor
     elif minor < total_damage <= major:
         return combat_enums.ThreatLevel.Major
-    elif major < total_damage <= critical:
+    elif major < total_damage <= health:
         return combat_enums.ThreatLevel.Critical
     elif total_damage >= health:
         return combat_enums.ThreatLevel.Fatal

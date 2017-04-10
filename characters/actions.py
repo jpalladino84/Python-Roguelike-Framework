@@ -19,10 +19,6 @@ from managers import combat_manager, echo
 
 def attack(attacker, target, console):
     # a simple formula for attack damage
-
-    # TODO This is REALLY bad, find a better way.
-    if not echo.echo_service:
-        echo.echo_service = echo.EchoService(console)
     combat_manager.execute_combat_round(attacker, target)
 
 

@@ -67,7 +67,7 @@ class PhysicalAbilityRequirement(Requirement):
         super(PhysicalAbilityRequirement, self).__init__(RequirementType.StatRequirement, compare_type, key=ability_enum, value=value)
 
     def evaluate(self, game_object):
-        if hasattr(game_object, 'bodies'):
+        if hasattr(game_object, 'body'):
             abilities = game_object.body.get_physical_abilities()
             if abilities:
                 return self.compare(self.compare_type, self.value, abilities.get(self.key, 0))

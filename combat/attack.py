@@ -53,7 +53,7 @@ class AttackTemplate(object):
             self.make_damage_roll(attacker, attack_result, **kwargs)
 
         # TODO Probably a good idea to remove this from the attack and into the manager.
-        echo.echo_service.combat_context_echo(
+        echo.EchoService.singleton.combat_context_echo(
             message=self.message + "...",
             attacker=attacker,
             defender=defender,
@@ -138,7 +138,12 @@ class MeleeAttackTemplate(AttackTemplate):
                 return wielded_item
 
     def get_damage_type(self, **kwargs):
-        return kwargs.get("attacker_weapon").melee_damage_type
+        item = kwargs.get("attacker_weapon")
+        if item.weapon:
+            return item.weapon.melee_damage_type
+        else:
+            # TODO This indicates an improvised weapon. We'll need to get a better way to handle this.
+            return DamageType.Blunt
 
 
 class RangedAttackTemplate(AttackTemplate):
