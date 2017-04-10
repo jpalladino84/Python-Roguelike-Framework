@@ -1,5 +1,5 @@
-from components.abilities.ability import Ability
-from components.abilities.power_abilities import PowerAbilities
+from abilities.ability import Ability
+from abilities.power_abilities import PowerAbilities
 
 from abilities.physical_abilities import PhysicalAbilities
 from components.level_tree import LevelTree

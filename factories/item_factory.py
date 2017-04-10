@@ -1,5 +1,4 @@
 from components.stats import ItemStats
-from components.display import Display
 from data.python_templates.items import item_templates
 from data.python_templates.material import material_templates
 from items.item import Item
@@ -72,9 +71,7 @@ class ItemFactory(object):
         return new_instance
 
     def get_material_template_by_uid(self, uid):
-        if uid in material_templates:
-            return material_templates[uid]
+        return material_templates[uid]
 
     def get_item_template_by_uid(self, uid):
-        if uid in item_templates:
-            return item_templates[uid]
+        return item_templates[uid]
