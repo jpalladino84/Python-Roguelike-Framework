@@ -24,11 +24,11 @@ class CharacterCreationScene(object):
         self.control_name = controls.InputControl("Name:")
         self.control_class = controls.ListChoiceControl(
             "Class:", root_console=self.main_console,
-            options=character_class_templates.values()
+            options=sorted(character_class_templates.values(), key=lambda c_class: c_class.name)
         )
         self.control_race = controls.ListChoiceControl(
             question="Race:", root_console=self.main_console,
-            options=race_templates.values()
+            options=sorted(race_templates.values(), key=lambda race: race.name)
         )
         self.control_stats = controls.PointDistributionControl(
             question="Stats:",
