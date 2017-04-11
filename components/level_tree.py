@@ -14,8 +14,9 @@ class LevelTree(object):
         for level in ordered_modifiers:
             if int(level) > int(current_level):
                 continue
+
             for stat_modifier in self.stats_modifiers[level]:
-                if stat_modifier.uid in final_modifiers:
+                if stat_modifier in final_modifiers:
                     final_modifiers[stat_modifier.uid] += stat_modifier.get_leveled_value(current_level, level)
                 else:
                     final_modifiers[stat_modifier.uid] = stat_modifier.get_leveled_value(current_level, level)
@@ -37,13 +38,13 @@ class LevelTree(object):
 
     def add_stat_modifier(self, level, stat_modifier):
         if level not in self.stats_modifiers:
-            self.stats_modifiers[level] = {}
-        self.stats_modifiers[level][stat_modifier.uid] = stat_modifier
+            self.stats_modifiers[level] = []
+        self.stats_modifiers[level].append(stat_modifier)
 
     def add_ability_modifier(self, level, ability_modifier):
         if level not in self.abilities_modifiers:
-            self.abilities_modifiers[level] = {}
-        self.abilities_modifiers[level][ability_modifier.uid] = ability_modifier.power
+            self.abilities_modifiers[level] = []
+        self.abilities_modifiers[level].append(ability_modifier.power)
 
 
 

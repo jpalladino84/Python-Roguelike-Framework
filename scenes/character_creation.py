@@ -1,4 +1,5 @@
 import tdl
+
 from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
@@ -34,9 +35,10 @@ class CharacterCreationScene(object):
             question="Stats:",
             options=["Strength", "Dexterity", "Constitution", "Intelligence", "Charisma", "Wisdom"],
             root_console=self.main_console,
-            total_points=20,
+            total_points=27,
             initial_value=8,
-            max_value=18
+            max_value=15,
+            cost_calculator=lambda current: 1 if current < 13 else 2
         )
 
         self.controls = [

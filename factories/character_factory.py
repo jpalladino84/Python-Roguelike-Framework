@@ -60,11 +60,6 @@ class CharacterFactory(object):
             inventory=Inventory()
         )
 
-        # Adjust health based on what they should be.
-        health_value = new_instance.stats.get_current_value(StatsEnum.Health)
-        new_instance.stats.set_core_current_value(StatsEnum.Health, health_value)
-        new_instance.stats.set_core_maximum_value(StatsEnum.Health, health_value)
-
         return new_instance
 
     def _create_instance_of_template(self, character_template):
