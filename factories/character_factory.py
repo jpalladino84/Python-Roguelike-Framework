@@ -59,6 +59,9 @@ class CharacterFactory(object):
             main_experience_pool=race_experience_pool,
             inventory=Inventory()
         )
+        constitution_bonus = new_instance.get_stat_modifier(StatsEnum.Constitution)
+        new_instance.stats.set_core_current_value(StatsEnum.Health, constitution_bonus)
+        new_instance.stats.set_core_maximum_value(StatsEnum.Health, constitution_bonus)
 
         return new_instance
 
