@@ -17,8 +17,8 @@ class Equipment(Component):
 
     def wear(self, item):
         # Wearing requires the bodypart to be compatible with the item
-        if item.stats.size == self.host.stats.size:
-            for compatible_bodypart_uid in item.wearable_bodyparts_uid:
+        if item.stats.get_current_value(StatsEnum.Size) == self.host.stats.get_current_value(StatsEnum.Size):
+            for compatible_bodypart_uid in item.armor.wearable_body_parts_uid:
                 host_body_part = self.host_body.get_body_part(compatible_bodypart_uid)
                 if host_body_part:
                     if host_body_part in self.worn_equipment_map:

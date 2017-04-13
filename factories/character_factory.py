@@ -104,4 +104,3 @@ class CharacterFactory(object):
     def get_race_template_by_uid(self, uid):
         if uid in race_templates:
             return race_templates[uid]
-

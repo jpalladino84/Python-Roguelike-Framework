@@ -48,10 +48,35 @@ def build_helmet():
 
     return _helmet
 
+
+def build_breastplate():
+    _breastplate = Item(
+        uid="breastplate",
+        name="Breastplate",
+        description="An iron breastplate..",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+    )
+    _breastplate.register_component(data.python_templates.material.Iron.copy())
+    _breastplate.register_component(Stats(health=10, size=Size.Medium))
+    _breastplate.register_component(
+        Armor(
+            base_armor_class=4,
+            armor_category=item_enums.ArmorCategory.Medium,
+            wearable_body_parts_uid=["humanoid_torso"],
+            worn_layer=item_enums.WornLayer.Outer,
+            maximum_dexterity_bonus=2
+        )
+    )
+
+    return _breastplate
+
+
 short_sword = build_short_sword()
 helmet = build_helmet()
+breastplate = build_breastplate()
 
 item_templates = {
     short_sword.uid: short_sword,
     helmet.uid: helmet,
+    breastplate.uid: breastplate
 }

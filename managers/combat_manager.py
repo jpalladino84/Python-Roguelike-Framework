@@ -26,7 +26,7 @@ def choose_attack(attacker):
 
 def choose_defense(attacker, defender, hit_roll):
     defenses = [defense for defense in defender.get_defenses()
-                if defense.evaluate(attacker, hit_roll)]
+                if defense.evaluate(defender, hit_roll)]
 
     return random.choice(defenses)
 
@@ -40,7 +40,7 @@ def execute_combat_round(attacker, defender):
     if not attack_template:
         return
     attack_result = attack_template.make_attack(attacker, defender)
-
+    print(attack_result.target_ac)
     if attack_result.success:
         threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
         attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)

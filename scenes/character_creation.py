@@ -3,6 +3,7 @@ import tdl
 from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
+from stats.enums import StatsEnum
 from managers.console_manager import Menu
 from ui import controls
 
@@ -105,7 +106,21 @@ class CharacterCreationScene(object):
                         body_uid="humanoid"
                     )
                     # Give that poor guy a sword...
-                    self.game_context.player.inventory.add_item(self.game_context.item_factory.build("helmet"))
-                    self.game_context.player.equipment.wield(
-                        self.game_context.item_factory.build("short_sword"))
+                    player = self.game_context.player
+                    player_size = player.stats.get_current_value(StatsEnum.Size)
+                    short_sword = self.game_context.item_factory.build("short_sword")
+                    short_sword.stats.set_core_current_value(StatsEnum.Size, player_size)
+                    short_sword.stats.set_core_maximum_value(StatsEnum.Size, player_size)
+
+                    helmet = self.game_context.item_factory.build("helmet")
+                    helmet.stats.set_core_current_value(StatsEnum.Size, player_size)
+                    helmet.stats.set_core_maximum_value(StatsEnum.Size, player_size)
+
+                    breastplate = self.game_context.item_factory.build("breastplate")
+                    breastplate.stats.set_core_current_value(StatsEnum.Size, player_size)
+                    breastplate.stats.set_core_maximum_value(StatsEnum.Size, player_size)
+
+                    player.equipment.wield(short_sword)
+                    player.equipment.wear(helmet)
+                    player.equipment.wear(breastplate)
                     self.start_game_callback()

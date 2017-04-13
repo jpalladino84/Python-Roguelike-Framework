@@ -87,14 +87,26 @@ class Character(GameObject):
         return 10
 
     def _get_maximum_dex_bonus(self):
-        # TODO This is affected by armor
-        # 20 Is just a magic number, dex bonus should never go past that anyway.
-        return 20
+        # TODO We will need to cache worn items to avoid unnecessary looping.
+        # TODO This cache will be invalidated on wearing/removing things.
+        max_bonus = 20
+        for item in self.equipment.get_worn_items():
+            armor = item.armor
+            if (armor.maximum_dexterity_bonus is not None
+                    and armor.maximum_dexterity_bonus < max_bonus):
+                max_bonus = armor.maximum_dexterity_bonus
+
+        return max_bonus
 
     def get_armor_modifiers(self):
-        # TODO Check all equipment and return its bonus AC.
-        # TODO This should be abstracted to any stats!
-        return 0
+        # TODO We will need to cache worn items to avoid unnecessary looping.
+        # TODO This cache will be invalidated on wearing/removing things.
+        total_armor_ac = 0
+        for item in self.equipment.get_worn_items():
+            armor = item.armor
+            total_armor_ac += armor.base_armor_class
+
+        return total_armor_ac
 
     def get_shield_modifiers(self):
         # TODO Check worn shields and return the bonus AC.
