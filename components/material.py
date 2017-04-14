@@ -1,10 +1,14 @@
 from .component import Component
 
-# TODO Material needs a serious overhaul to fit in D&D system.
+
 class Material(Component):
     NAME = "material"
     """
     This defines a material that is used in other compositions like items/tiles.
+    Hardness is the modifier to AC
+    Sharpness modifies damage
+    Potency modifies enchantment chance/max value
+    Value is the modifier for gold worth.
     """
     def __init__(self, uid, name="", hardness=0.0, sharpness=0.0, potency=0.0, weight=0.0, value=0.0):
         super().__init__()
