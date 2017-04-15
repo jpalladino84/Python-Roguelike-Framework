@@ -33,6 +33,10 @@ class Stats(Component):
         if stat in self._core_stats:
             self._core_stats[stat].maximum = int(maximum_value)
 
+    def set_total_core_value(self, stat, value):
+        self.set_core_current_value(stat, value)
+        self.set_core_maximum_value(stat, value)
+
     def remove(self, stat):
         if stat in self._core_stats:
             del self._core_stats[stat]
