@@ -1,4 +1,8 @@
+import logging
 from components.component import Component
+
+
+logger = logging.getLogger()
 
 
 class Armor(Component):
@@ -16,6 +20,14 @@ class Armor(Component):
         self.worn_layer = worn_layer
         self.wearable_body_parts_uid = wearable_body_parts_uid
         self.armor_category = armor_category
+
+    def get_real_armor_class(self):
+        if self.host.material:
+            hardness_modifier = self.host.material.hardness
+            return int(self.base_armor_class * hardness_modifier)
+        else:
+            logger.error("Object uid {} has no material set.".format(self.host.uid))
+            return 0
 
     def copy(self):
         return Armor(

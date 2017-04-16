@@ -2,8 +2,8 @@ from characters.outfit import Outfit
 from data.python_templates import items
 
 
-def starter_warrior():
-    outfit = Outfit(
+def build_starter_warrior():
+    return Outfit(
         "starter_warrior",
         items_worn=[
             items.helmet,
@@ -21,3 +21,6 @@ def starter_warrior():
             items.longsword
         ]
     )
+
+starter_warrior = build_starter_warrior()
+outfits = [starter_warrior]

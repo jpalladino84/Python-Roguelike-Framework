@@ -1,5 +1,6 @@
 from components.component import Component
 from stats.enums import StatsEnum
+from util.decorators import cached, invalidate_cache
 
 
 class Equipment(Component):
@@ -15,21 +16,26 @@ class Equipment(Component):
         self.worn_equipment_map = {}
         self.wielded_equipment_map = {}
 
+    @invalidate_cache
     def wear(self, item):
         # Wearing requires the bodypart to be compatible with the item
-        if item.stats.get_current_value(StatsEnum.Size) == self.host.stats.get_current_value(StatsEnum.Size):
-            for compatible_bodypart_uid in item.armor.wearable_body_parts_uid:
-                host_body_part = self.host_body.get_body_part(compatible_bodypart_uid)
-                if host_body_part:
-                    if host_body_part in self.worn_equipment_map:
-                        if item.worn_layer not in [item.worn_layer for item in self.worn_equipment_map[host_body_part]]:
-                            self.worn_equipment_map[host_body_part].append(item)
+        if item.armor:
+            armor = item.armor
+            if item.stats.get_current_value(StatsEnum.Size) == self.host.stats.get_current_value(StatsEnum.Size):
+                for compatible_bodypart_uid in armor.wearable_body_parts_uid:
+                    host_body_part = self.host_body.get_body_part(compatible_bodypart_uid)
+                    if host_body_part:
+                        if host_body_part in self.worn_equipment_map:
+                            if armor.worn_layer not in [item.armor.worn_layer for item in
+                                                        self.worn_equipment_map[host_body_part]]:
+                                self.worn_equipment_map[host_body_part].append(item)
+                                return True
+                        else:
+                            self.worn_equipment_map[host_body_part] = [item]
                             return True
-                    else:
-                        self.worn_equipment_map[host_body_part] = [item]
-                        return True
         return False
 
+    @invalidate_cache
     def wield(self, item):
         # Wielding requires bodyparts with GRASP
         grasp_able_body_parts = self.host_body.get_grasp_able_body_parts()
@@ -61,8 +67,10 @@ class Equipment(Component):
 
         return False
 
+    @cached
     def get_worn_items(self):
         return [item for item_list in self.worn_equipment_map.values() for item in item_list]
 
+    @cached
     def get_wielded_items(self):
         return [item for item in self.wielded_equipment_map.values()]

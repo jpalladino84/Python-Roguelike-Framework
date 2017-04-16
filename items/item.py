@@ -15,15 +15,13 @@ class Item(GameObject):
     Painted, customized, engraved.
     A good loot system can go a long way in terms of extending play time.
     """
-    def __init__(self, uid, name="", description="", location=None,
-                 display=None, material=None):
+    def __init__(self, uid, name="", description="", location=None, display=None):
         super().__init__()
         self.uid = uid
         self._name = name
         self._description = description
         self.location = location
         self.display = display
-        self.material = material
 
         # TODO Items should have weapon stats AND armor stats of D&D
         # TODO They should be affected by material, so you can have a base item of iron breastplate of +2 AC

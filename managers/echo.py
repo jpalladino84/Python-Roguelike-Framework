@@ -1,6 +1,7 @@
 from characters.enums import Sex
 from enum import Enum
 from collections import defaultdict
+from components.game_object import NoneVoid
 
 
 class EchoService(object):
@@ -34,7 +35,7 @@ class EchoService(object):
                 context_variables[context_variable] = message_router[context_variable](**context_variables)
 
         for variable in MessageVariables:
-            if variable.value in message and not variable.name in context_variables and variable.name in message_router:
+            if variable.value in message and variable.name not in context_variables and variable.name in message_router:
                 context_variables[variable.name] = message_router[variable.name](**context_variables)
 
         formatted_message = message.format(**context_variables)
@@ -98,17 +99,17 @@ def name_or_you(target, **kwargs):
 
     return target.name
 
-
+none_void = NoneVoid()
 message_router = {
     MessageVariables.attacker_his.name: lambda **kwargs: his_her_it(target=kwargs["attacker"], **kwargs),
     MessageVariables.attacker_him.name: lambda **kwargs: him_her_it(target=kwargs["attacker"], **kwargs),
     MessageVariables.attacker.name: lambda **kwargs: name_or_you(target=kwargs["attacker"], **kwargs),
-    MessageVariables.attacker_weapon.name: lambda **kwargs: kwargs.get("attacker_weapon").name,
+    MessageVariables.attacker_weapon.name: lambda **kwargs: kwargs.get("attacker_weapon", none_void).name,
     MessageVariables.attacker_he.name: lambda **kwargs: he_her_it(target=kwargs.get("attacker")),
     MessageVariables.defender_his.name: lambda **kwargs: his_her_it(target=kwargs["defender"], **kwargs),
     MessageVariables.defender_him.name: lambda **kwargs: him_her_it(target=kwargs["defender"], **kwargs),
     MessageVariables.defender_he.name: lambda **kwargs: he_her_it(target=kwargs.get("defender")),
     MessageVariables.defender.name: lambda **kwargs: name_or_you(target=kwargs["defender"], **kwargs),
-    MessageVariables.defender_weapon.name: lambda **kwargs: kwargs.get("defender_weapon").name,
-    MessageVariables.defender_bodypart.name: lambda **kwargs: kwargs.get("defender_bodypart").name,
+    MessageVariables.defender_weapon.name: lambda **kwargs: kwargs.get("defender_weapon", none_void).name,
+    MessageVariables.defender_bodypart.name: lambda **kwargs: kwargs.get("defender_bodypart", none_void).name,
 }

@@ -102,9 +102,10 @@ class Character(GameObject):
         # TODO We will need to cache worn items to avoid unnecessary looping.
         # TODO This cache will be invalidated on wearing/removing things.
         total_armor_ac = 0
-        for item in self.equipment.get_worn_items():
+        worn_items = self.equipment.get_worn_items()
+        for item in worn_items:
             armor = item.armor
-            total_armor_ac += armor.base_armor_class
+            total_armor_ac += armor.get_real_armor_class()
 
         return total_armor_ac
 
