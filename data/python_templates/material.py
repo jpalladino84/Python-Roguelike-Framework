@@ -17,7 +17,7 @@ Silver = Material('silver', 'Silver', hardness=0.5, sharpness=0.5, potency=1, we
 Gold = Material('gold', 'Gold', hardness=0.5, sharpness=0.5, potency=2, weight=6, value=250)
 Chain = Material('chain', 'Chain', hardness=0.6, sharpness=0.3, potency=0.5, weight=5.5, value=7.5)
 Bronze = Material('bronze', 'Bronze', hardness=0.6, sharpness=0.8, potency=0.6, weight=7, value=8)
-Iron = Material('iron', 'Iron', hardness=0.7, sharpness=1, potency=0.6, weight=6, value=20)
+Iron = Material('iron', 'Iron', hardness=0.7, sharpness=1, potency=0.6, weight=5.85, value=20)
 Steel = Material('steel', 'Steel', hardness=0.8, sharpness=1.2, potency=0.8, weight=6.5, value=150)
 
 material_templates = {

@@ -23,16 +23,17 @@ class Equipment(Component):
             armor = item.armor
             if item.stats.get_current_value(StatsEnum.Size) == self.host.stats.get_current_value(StatsEnum.Size):
                 for compatible_bodypart_uid in armor.wearable_body_parts_uid:
-                    host_body_part = self.host_body.get_body_part(compatible_bodypart_uid)
-                    if host_body_part:
-                        if host_body_part in self.worn_equipment_map:
-                            if armor.worn_layer not in [item.armor.worn_layer for item in
-                                                        self.worn_equipment_map[host_body_part]]:
-                                self.worn_equipment_map[host_body_part].append(item)
+                    host_body_parts = self.host_body.get_body_parts(compatible_bodypart_uid)
+                    for host_body_part in host_body_parts:
+                        if host_body_part:
+                            if host_body_part in self.worn_equipment_map:
+                                if armor.worn_layer not in [item.armor.worn_layer for item in
+                                                            self.worn_equipment_map[host_body_part]]:
+                                    self.worn_equipment_map[host_body_part].append(item)
+                                    return True
+                            else:
+                                self.worn_equipment_map[host_body_part] = [item]
                                 return True
-                        else:
-                            self.worn_equipment_map[host_body_part] = [item]
-                            return True
         return False
 
     @invalidate_cache
@@ -70,6 +71,17 @@ class Equipment(Component):
     @cached
     def get_worn_items(self):
         return [item for item_list in self.worn_equipment_map.values() for item in item_list]
+
+    @cached
+    def get_load_of_worn_items(self):
+        worn_items = self.get_worn_items()
+        total_weight = 0.0
+        for item in worn_items:
+            item_weight = item.stats.get_current_value(StatsEnum.Weight)
+            material_modifier = item.material.weight
+            total_weight += item_weight * material_modifier
+
+        return total_weight
 
     @cached
     def get_wielded_items(self):

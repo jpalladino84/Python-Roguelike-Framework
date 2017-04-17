@@ -37,6 +37,11 @@ class Body(Component):
             if node.instance.uid == uid:
                 return node.instance
 
+    def get_body_parts(self, uid):
+        return [node.instance for node in
+                self.bodypart_tree.nodes
+                if node.instance.uid == uid]
+
     @staticmethod
     def _random_roll_body_part(body_parts):
         tries = 0

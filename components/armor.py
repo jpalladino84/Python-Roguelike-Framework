@@ -24,7 +24,7 @@ class Armor(Component):
     def get_real_armor_class(self):
         if self.host.material:
             hardness_modifier = self.host.material.hardness
-            return int(self.base_armor_class * hardness_modifier)
+            return self.base_armor_class * hardness_modifier
         else:
             logger.error("Object uid {} has no material set.".format(self.host.uid))
             return 0

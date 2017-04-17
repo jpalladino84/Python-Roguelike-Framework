@@ -1,6 +1,6 @@
 import math
 
-from characters.enums import Sex
+from characters.enums import Sex, EncumberanceLevel
 from data.python_templates.attacks import base_attacks
 from data.python_templates.defenses import base_defenses
 from components.equipment import Equipment
@@ -87,27 +87,37 @@ class Character(GameObject):
         return 10
 
     def _get_maximum_dex_bonus(self):
-        # TODO We will need to cache worn items to avoid unnecessary looping.
-        # TODO This cache will be invalidated on wearing/removing things.
-        max_bonus = 20
-        for item in self.equipment.get_worn_items():
-            armor = item.armor
-            if (armor.maximum_dexterity_bonus is not None
-                    and armor.maximum_dexterity_bonus < max_bonus):
-                max_bonus = armor.maximum_dexterity_bonus
+        # This deviates from normal D&D rules but the benefit
+        # of handling multiple armor pieces is worth it.
+        # This should still be close enough to the rules.
+        total_weight = self.equipment.get_load_of_worn_items()
+        load_level = self.get_encumberance_level(total_weight)
+        if load_level == EncumberanceLevel.LIGHT:
+            return 100
+        elif load_level == EncumberanceLevel.MEDIUM:
+            return 2
+        else:
+            return 0
 
-        return max_bonus
+    def get_encumberance_level(self, weight):
+        light = 13
+        medium = 40
+
+        if weight <= light:
+            return EncumberanceLevel.LIGHT
+        elif weight <= medium:
+            return EncumberanceLevel.MEDIUM
+        else:
+            return EncumberanceLevel.HEAVY
 
     def get_armor_modifiers(self):
-        # TODO We will need to cache worn items to avoid unnecessary looping.
-        # TODO This cache will be invalidated on wearing/removing things.
         total_armor_ac = 0
         worn_items = self.equipment.get_worn_items()
         for item in worn_items:
             armor = item.armor
             total_armor_ac += armor.get_real_armor_class()
 
-        return total_armor_ac
+        return int(total_armor_ac)
 
     def get_shield_modifiers(self):
         # TODO Check worn shields and return the bonus AC.

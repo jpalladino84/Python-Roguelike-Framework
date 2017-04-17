@@ -19,19 +19,19 @@ class Stats(Component):
 
     def add_core_stat(self, stat, current_value, maximum_value):
         if stat in StatsEnum:
-            self._core_stats[stat] = Stat(stat, int(current_value), int(maximum_value))
+            self._core_stats[stat] = Stat(stat, current_value, maximum_value)
 
     def modify_core_current_value(self, stat, modifier):
         if stat in self._core_stats:
-            self._core_stats[stat].current += int(modifier)
+            self._core_stats[stat].current += modifier
 
     def set_core_current_value(self, stat, current_value):
         if stat in self._core_stats:
-            self._core_stats[stat].current = int(current_value)
+            self._core_stats[stat].current = current_value
 
     def set_core_maximum_value(self, stat, maximum_value):
         if stat in self._core_stats:
-            self._core_stats[stat].maximum = int(maximum_value)
+            self._core_stats[stat].maximum = maximum_value
 
     def set_total_core_value(self, stat, value):
         self.set_core_current_value(stat, value)
