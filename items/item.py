@@ -45,6 +45,13 @@ class Item(GameObject):
         """
         return self._name
 
+    def copy(self):
+        new_item = Item(self.uid, self._name, self._description, self.location, self.display)
+        for component in self.components:
+            new_item.register_component(component.copy())
+
+        return new_item
+
     def __eq__(self, other):
         return (
             self.uid == other.uid,

@@ -66,6 +66,27 @@ def build_helmet():
     return _helmet
 
 
+def build_leather_hood():
+    _item = Item(
+        uid="hood",
+        name="hood",
+        description="A leather hood.",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+    )
+    _item.register_component(data.python_templates.material.Leather.copy())
+    _item.register_component(Stats(health=10, size=Size.Medium, weight=2))
+    _item.register_component(
+        Armor(
+            base_armor_class=2,
+            armor_category=item_enums.ArmorCategory.Medium,
+            wearable_body_parts_uid=["humanoid_head"],
+            worn_layer=item_enums.WornLayer.Outer
+        )
+    )
+
+    return _item
+
+
 def build_breastplate():
     _breastplate = Item(
         uid="breastplate",
@@ -86,6 +107,28 @@ def build_breastplate():
     )
 
     return _breastplate
+
+
+def build_leather_cuirass():
+    _item = Item(
+        uid="cuirass",
+        name="Cuirass",
+        description="A leather cuirass",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+    )
+    _item.register_component(data.python_templates.material.Leather.copy())
+    _item.register_component(Stats(health=10, size=Size.Medium, weight=4))
+    _item.register_component(
+        Armor(
+            base_armor_class=4,
+            armor_category=item_enums.ArmorCategory.Medium,
+            wearable_body_parts_uid=["humanoid_torso"],
+            worn_layer=item_enums.WornLayer.Outer,
+            maximum_dexterity_bonus=2
+        )
+    )
+
+    return _item
 
 
 def build_bracer():
@@ -154,6 +197,29 @@ def build_greave():
     return _greave
 
 
+def build_leather_pants():
+    # TODO Some items need to take two slots rather than one.
+    item = Item(
+        uid="pants",
+        name="pants",
+        description="Leather pants",
+        display=Display(Colors.DARK_GRAY, Colors.BLACK_COLOR, "!"),
+    )
+    item.register_component(data.python_templates.material.Leather.copy())
+    item.register_component(Stats(health=10, size=Size.Medium, weight=0.5))
+    item.register_component(
+        Armor(
+            base_armor_class=1,
+            armor_category=item_enums.ArmorCategory.Medium,
+            wearable_body_parts_uid=["humanoid_leg"],
+            worn_layer=item_enums.WornLayer.Outer,
+            maximum_dexterity_bonus=2
+        )
+    )
+
+    return item
+
+
 def build_boot():
     _boot = Item(
         uid="boot",
@@ -185,6 +251,9 @@ breastplate = build_breastplate()
 gauntlet = build_gauntlet()
 greave = build_greave()
 helmet = build_helmet()
+leather_hood = build_leather_hood()
+leather_cuirass = build_leather_cuirass()
+leather_pants = build_leather_pants()
 
 item_templates = {
     short_sword.uid: short_sword,

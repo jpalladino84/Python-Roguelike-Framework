@@ -3,7 +3,7 @@ import tdl
 from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
-from data.python_templates.outfits import starter_warrior
+from data.python_templates.outfits import starter_warrior, starter_thief
 from stats.enums import StatsEnum
 from managers.console_manager import Menu
 from ui import controls
@@ -107,5 +107,9 @@ class CharacterCreationScene(object):
                         body_uid="humanoid"
                     )
                     player = self.game_context.player
-                    starter_warrior.apply(player)
+                    # TODO We will need a much better way to assign outfits.
+                    if self.control_class.answer.uid.lower() == "thief":
+                        starter_thief.apply(player)
+                    else:
+                        starter_warrior.apply(player)
                     self.start_game_callback()
