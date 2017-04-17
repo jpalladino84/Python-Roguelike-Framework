@@ -16,6 +16,7 @@ class Armor(Component):
         self.base_armor_class = base_armor_class
         self.required_strength = required_strength
         self.dexterity_disadvantage = dexterity_disadvantage
+        # TODO MAX DEX BONUS NO LONDER HAS ANY USES BECAUSE OF LOAD SYSTEM.
         self.maximum_dexterity_bonus = maximum_dexterity_bonus
         self.worn_layer = worn_layer
         self.wearable_body_parts_uid = wearable_body_parts_uid
