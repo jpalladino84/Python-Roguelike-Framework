@@ -118,7 +118,7 @@ class ListChoiceControl(object):
 
 class PointDistributionControl(object):
     # TODO This works well for a point system, but modifiers aren't shown
-    def __init__(self, question, options, root_console, initial_value, max_value, total_points):
+    def __init__(self, question, options, root_console, initial_value, max_value, total_points, cost_calculator):
         self.question = question
         self.options = options
         self.initial_value = initial_value
@@ -131,6 +131,7 @@ class PointDistributionControl(object):
         self.finished = False
         self._formatted_options = ""
         self.list_formatted_options = []
+        self.cost_calculator = cost_calculator
 
     @property
     def text(self):
@@ -179,6 +180,7 @@ class PointDistributionControl(object):
                         self.__cycle_next_option()
 
     def render(self, console, active, **kwargs):
+        console.printStr("Points Left {}\n".format(self.total_points - self.used_points))
         self._get_formatted_options()
         for option, text in self.list_formatted_options:
             if active and option == self.active_option:
@@ -188,14 +190,18 @@ class PointDistributionControl(object):
             console.printStr(text)
 
     def __increase_value(self):
-        if (self.used_points < self.total_points
+        point_cost = self.cost_calculator(self.assigned_points[self.active_option])
+
+        if ((self.total_points - (self.used_points + point_cost) >= 0)
                 and self.assigned_points[self.active_option] < self.max_value):
-            self.used_points += 1
+            self.used_points += point_cost
             self.assigned_points[self.active_option] += 1
 
     def __decrease_value(self):
+        point_cost = self.cost_calculator(self.assigned_points[self.active_option])
+
         if self.assigned_points[self.active_option] > self.initial_value:
-            self.used_points -= 1
+            self.used_points -= point_cost
             self.assigned_points[self.active_option] -= 1
 
     def __cycle_next_option(self):

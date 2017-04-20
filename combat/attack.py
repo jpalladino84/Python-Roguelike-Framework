@@ -1,7 +1,7 @@
 import abc
 
 from combat.enums import DamageType
-from components.stats import Stats
+from stats.enums import StatsEnum
 from managers import echo
 from util import check_roller
 from util.dice import DiceStack, Dice
@@ -80,8 +80,8 @@ class AttackTemplate(object):
 class UnarmedAttackTemplate(AttackTemplate):
     # TODO I admit, this looks ugly.
     def __init__(self, name, description, message, basic_damage_dice=DiceStack(1, Dice(3)), bodypart_id_needed="humanoid_hand",
-                 target_type=enums.TargetType.Single, attack_range=0, modifiers=None, hit_stat_used=Stats.Strength,
-                 damage_stat_used=Stats.Strength, damage_type=enums.DamageType.Blunt, requirements=None):
+                 target_type=enums.TargetType.Single, attack_range=0, modifiers=None, hit_stat_used=StatsEnum.Strength,
+                 damage_stat_used=StatsEnum.Strength, damage_type=enums.DamageType.Blunt, requirements=None):
 
         super().__init__(name=name, description=description, message=message, target_type=target_type,
                          attack_range=attack_range, modifiers=modifiers, hit_stat_used=hit_stat_used,
@@ -102,8 +102,8 @@ class UnarmedAttackTemplate(AttackTemplate):
 
 class MeleeAttackTemplate(AttackTemplate):
     def __init__(self, name, description, message, required_item_melee_damage_type,
-                 target_type=enums.TargetType.Single, attack_range=0, modifiers=None, hit_stat_used=Stats.Strength,
-                 damage_stat_used=Stats.Strength, requirements=None):
+                 target_type=enums.TargetType.Single, attack_range=0, modifiers=None, hit_stat_used=StatsEnum.Strength,
+                 damage_stat_used=StatsEnum.Strength, requirements=None):
 
         super().__init__(name=name, description=description, message=message, target_type=target_type,
                          attack_range=attack_range, modifiers=modifiers, hit_stat_used=hit_stat_used,
@@ -125,7 +125,7 @@ class MeleeAttackTemplate(AttackTemplate):
 
     def get_damage_dice(self, **kwargs):
         attacker_weapon = kwargs.get("attacker_weapon")
-        return DiceStack(int(attacker_weapon.stats.damage_dice_amount), Dice(int(attacker_weapon.stats.max_damage)))
+        return attacker_weapon.weapon.damage_dice
 
     def get_used_weapon(self, attacker):
         for wielded_item in attacker.equipment.get_wielded_items():

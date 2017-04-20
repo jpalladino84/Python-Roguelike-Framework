@@ -12,6 +12,16 @@ class GameObject(object):
         for component in self.components:
             component.update()
 
+    def transmit_message(self, message):
+        responses = []
+        for component in self.components:
+            if component != message.sender:
+                response = component.handle_message(message)
+                if response:
+                    responses.append(response)
+
+        return responses
+
     def register_component(self, component):
         if component not in self.components:
             component.on_register(self)

@@ -1,11 +1,11 @@
 import math
 
-from characters.enums import Sex
+from characters.enums import Sex, EncumberanceLevel
 from data.python_templates.attacks import base_attacks
 from data.python_templates.defenses import base_defenses
 from components.equipment import Equipment
 from components.location import Location
-from components.stats import Stats
+from stats.enums import StatsEnum
 from components.game_object import GameObject
 
 
@@ -15,9 +15,9 @@ class Character(GameObject):
         super().__init__()
         self.uid = uid
         self._name = name
-        self.character_class = character_class
-        self.character_race = character_race
-        self.stats = stats
+        self.register_component(character_class)
+        self.register_component(character_race)
+        self.register_component(stats)
         self.display = display
         if not location:
             self.location = Location()
@@ -46,37 +46,37 @@ class Character(GameObject):
         :return: bool
         """
         # TODO Make this
-        return self.stats.health.current <= 0
+        return self.stats.get_current_value(StatsEnum.Health) <= 0
 
     def get_stat_modifier(self, stat):
-        current_total = self.stats.get_stat(stat).current + self.character_race.get_stat_modifier(stat)
+        current_total = self.stats.get_current_value(stat)
         return math.floor((current_total - 10) / 2)
 
     def get_attack_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(Stats.Strength)
+        return self.get_stat_modifier(StatsEnum.Strength)
 
     def get_health_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(Stats.Health)
+        return self.get_stat_modifier(StatsEnum.Health)
 
     def get_speed_modifier(self):
         # TODO Figure out better ways to calculate this
-        return self.get_stat_modifier(Stats.Dexterity)
+        return self.get_stat_modifier(StatsEnum.Dexterity)
 
     def get_armor_class(self):
         base_ac = self._get_base_armor_class()
         effective_dex_modifier = self.get_effective_dex_modifier()
 
         armor_modifier = self.get_armor_modifiers()
-        effect_modifier = self._get_effects_modifier(Stats.ArmorClass)
-        level_tree_modifiers = self._get_level_tree_modifiers(Stats.ArmorClass)
+        effect_modifier = self._get_effects_modifier(StatsEnum.ArmorClass)
+        level_tree_modifiers = self._get_level_tree_modifiers(StatsEnum.ArmorClass)
 
         return base_ac + effective_dex_modifier + armor_modifier + effect_modifier + level_tree_modifiers
 
     def get_effective_dex_modifier(self):
         max_dex_modifier = self._get_maximum_dex_bonus()
-        effective_dex_modifier = self.get_stat_modifier(Stats.Dexterity)
+        effective_dex_modifier = self.get_stat_modifier(StatsEnum.Dexterity)
         if effective_dex_modifier > max_dex_modifier:
             effective_dex_modifier = max_dex_modifier
 
@@ -87,14 +87,37 @@ class Character(GameObject):
         return 10
 
     def _get_maximum_dex_bonus(self):
-        # TODO This is affected by armor
-        # 20 Is just a magic number, dex bonus should never go past that anyway.
-        return 20
+        # This deviates from normal D&D rules but the benefit
+        # of handling multiple armor pieces is worth it.
+        # This should still be close enough to the rules.
+        total_weight = self.equipment.get_load_of_worn_items()
+        load_level = self.get_encumberance_level(total_weight)
+        if load_level == EncumberanceLevel.LIGHT:
+            return 100
+        elif load_level == EncumberanceLevel.MEDIUM:
+            return 2
+        else:
+            return 0
+
+    def get_encumberance_level(self, weight):
+        light = 13
+        medium = 40
+
+        if weight <= light:
+            return EncumberanceLevel.LIGHT
+        elif weight <= medium:
+            return EncumberanceLevel.MEDIUM
+        else:
+            return EncumberanceLevel.HEAVY
 
     def get_armor_modifiers(self):
-        # TODO Check all equipment and return its bonus AC.
-        # TODO This should be abstracted to any stats!
-        return 0
+        total_armor_ac = 0
+        worn_items = self.equipment.get_worn_items()
+        for item in worn_items:
+            armor = item.armor
+            total_armor_ac += armor.get_real_armor_class()
+
+        return int(total_armor_ac)
 
     def get_shield_modifiers(self):
         # TODO Check worn shields and return the bonus AC.

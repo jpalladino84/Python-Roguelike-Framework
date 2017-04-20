@@ -44,4 +44,5 @@ class ExperiencePool(Component):
         return levels + self.STARTING_LEVEL
 
     def get_pool_level(self):
+        # TODO The maths concerning pool levels must be adjusted to d20 system
         return floor(self.experience / 5000) + self.STARTING_LEVEL

@@ -1,7 +1,10 @@
 import tdl
-from components.stats import CharacterStats
+
+from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
+from data.python_templates.outfits import starter_warrior, starter_thief
+from stats.enums import StatsEnum
 from managers.console_manager import Menu
 from ui import controls
 
@@ -24,19 +27,20 @@ class CharacterCreationScene(object):
         self.control_name = controls.InputControl("Name:")
         self.control_class = controls.ListChoiceControl(
             "Class:", root_console=self.main_console,
-            options=character_class_templates.values()
+            options=sorted(character_class_templates.values(), key=lambda c_class: c_class.name)
         )
         self.control_race = controls.ListChoiceControl(
             question="Race:", root_console=self.main_console,
-            options=race_templates.values()
+            options=sorted(race_templates.values(), key=lambda race: race.name)
         )
         self.control_stats = controls.PointDistributionControl(
             question="Stats:",
             options=["Strength", "Dexterity", "Constitution", "Intelligence", "Charisma", "Wisdom"],
             root_console=self.main_console,
-            total_points=20,
+            total_points=27,
             initial_value=8,
-            max_value=18
+            max_value=15,
+            cost_calculator=lambda current: 1 if current < 13 else 2
         )
 
         self.controls = [
@@ -98,13 +102,14 @@ class CharacterCreationScene(object):
                         name=self.control_name.answer,
                         class_uid=self.control_class.answer.uid,
                         race_uid=self.control_race.answer.uid,
-                        stats=CharacterStats(
-                            health=16,
+                        stats=make_character_stats(
                             **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
                         body_uid="humanoid"
                     )
-                    # Give that poor guy a sword...
-                    self.game_context.player.inventory.add_item(self.game_context.item_factory.build("helmet"))
-                    self.game_context.player.equipment.wield(
-                        self.game_context.item_factory.build("short_sword"))
+                    player = self.game_context.player
+                    # TODO We will need a much better way to assign outfits.
+                    if self.control_class.answer.uid.lower() == "thief":
+                        starter_thief.apply(player)
+                    else:
+                        starter_warrior.apply(player)
                     self.start_game_callback()

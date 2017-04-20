@@ -2,6 +2,7 @@ import random
 
 from combat import enums as combat_enums
 from combat.attack import MeleeAttackTemplate
+from stats.enums import StatsEnum
 from managers import echo
 from util.colors import Colors
 
@@ -25,7 +26,7 @@ def choose_attack(attacker):
 
 def choose_defense(attacker, defender, hit_roll):
     defenses = [defense for defense in defender.get_defenses()
-                if defense.evaluate(attacker, hit_roll)]
+                if defense.evaluate(defender, hit_roll)]
 
     return random.choice(defenses)
 
@@ -39,9 +40,9 @@ def execute_combat_round(attacker, defender):
     if not attack_template:
         return
     attack_result = attack_template.make_attack(attacker, defender)
-
+    print(attack_result.target_ac)
     if attack_result.success:
-        threat_level = get_threat_level(attack_result.total_damage, defender.stats.health.current)
+        threat_level = get_threat_level(attack_result.total_damage, defender.stats.get_current_value(StatsEnum.Health))
         attack_result.body_part_hit = defender.body.get_random_body_part_for_threat_level(threat_level)
         # TODO We might want to display info about actual rolls but that should be handled in the Echo manager/service
         # TODO I am still unsure on where its best to apply actual damage.
@@ -65,15 +66,16 @@ def take_damage(actor, attack_result):
     for damage, damage_type in attack_result.separated_damage:
         if damage > 0:
             wound_strings.append(describe_wounds(damage_type))
-            actor.stats.health.modify_current(-damage)
+            actor.stats.modify_core_current_value(StatsEnum.Health, -damage)
 
     damage_string += ",".join(wound_strings)
     damage_string += " {} {} for {} damage!".format(
         echo.his_her_it(actor), attack_result.body_part_hit.name, attack_result.total_damage)
     echo.EchoService.singleton.console.printStr(damage_string + "\n")
 
+    # TODO THIS MUST BE EXTRACTED
     # check for death. if there's a death function, call it
-    if actor.stats.health.current <= 0:
+    if actor.stats.get_current_value(StatsEnum.Health) <= 0:
         if actor.is_player:
             player_death(actor, echo.EchoService.singleton.console)
         else:

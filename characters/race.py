@@ -1,4 +1,10 @@
+from components.component import Component
+from components.component_messages import QueryStatModifierMessage
+
+
+# TODO We need to fix the Class Instance Whatever here
 class Race(object):
+    NAME = 'character_race'
     """
     Racial characteristics and bonuses
     """
@@ -19,8 +25,9 @@ class MetaRace(Race):
         self.body_modifier_template_uid = body_modifier_template_uid
 
 
-class RaceInstance(object):
+class RaceInstance(Component):
     def __init__(self, template, experience_pool):
+        super().__init__()
         self.template = template
         self.experience_pool = experience_pool
 
@@ -42,3 +49,16 @@ class RaceInstance(object):
             if stat in modifiers:
                 return modifiers[stat]
         return 0
+
+    def handle_message(self, message):
+        if isinstance(message, QueryStatModifierMessage):
+            return self.handle_stat_modifier_query(message)
+
+    def handle_stat_modifier_query(self, message):
+        if self.template.level_tree:
+            modifiers = self.template.level_tree.get_stat_modifiers(self.experience_pool.get_pool_level())
+            if message.stat in modifiers:
+                response = message.create_response(self)
+                response.stat_modifier_value = modifiers[message.stat]
+
+                return response

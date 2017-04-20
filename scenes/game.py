@@ -3,6 +3,7 @@ from enum import Enum
 
 import settings
 import tdl
+from stats.enums import StatsEnum
 from managers.action_manager import ActionManager
 from managers.echo import EchoService
 from settings import DUNGEON_COLORS as COLORS
@@ -55,6 +56,8 @@ class GameScene(object):
         player_y = player.location.local_y
 
         def is_transparent_callback(x, y):
+            if x <= 0 or y <= 0:
+                return False
             return self.is_transparent(current_level, x, y)
 
         player.fov = tdl.map.quickFOV(player_x, player_y, is_transparent_callback, 'basic')
@@ -105,7 +108,7 @@ class GameScene(object):
 
     def render_gui(self, player):
         status_console = self.consoles[GameConsoles.Status]
-        status_console.drawStr(0, 2, "Health: {}\n\n".format(int(player.stats.health.current)))
+        status_console.drawStr(0, 2, "Health: {}\n\n".format(int(player.stats.get_current_value(StatsEnum.Health))))
         status_console.drawStr(0, 5, "Attack Power: {}\n\n".format(player.get_attack_modifier()))
         status_console.drawStr(0, 8, "Defense: {}\n\n".format(player.get_armor_class()))
         status_console.drawStr(0, 11, "Speed: {}\n\n".format(player.get_speed_modifier()))
@@ -116,15 +119,12 @@ class GameScene(object):
     def render_map(self, current_level, viewer_fov):
         for x, y in viewer_fov:
             if not x >= len(current_level.maze) and not y >= len(current_level.maze[x]):
-                try:
-                    if current_level.maze[x][y].is_blocked:
-                        self.main_console.drawChar(x, y, '#', fgcolor=COLORS['light_wall'])
-                        current_level.maze[x][y].is_explored = True
-                    if current_level.maze[x][y].is_ground is True:
-                        self.main_console.drawChar(x, y, '.', fgcolor=COLORS['light_ground'])
-                        current_level.maze[x][y].is_explored = True
-                except IndexError:
-                    raise
+                if current_level.maze[x][y].is_blocked:
+                    self.main_console.drawChar(x, y, '#', fgcolor=COLORS['light_wall'])
+                    current_level.maze[x][y].is_explored = True
+                if current_level.maze[x][y].is_ground is True:
+                    self.main_console.drawChar(x, y, '.', fgcolor=COLORS['light_ground'])
+                    current_level.maze[x][y].is_explored = True
 
     def render_items(self, player, level):
         for item in level.spawned_items:
@@ -175,4 +175,4 @@ class GameScene(object):
             else:
                 return True
         except IndexError:
-            pass
+            return False
