@@ -1,6 +1,7 @@
 """
 Console Manager: handles the creation and rendering of all consoles.
 """
+import textwrap
 
 import tdl
 import os
@@ -39,11 +40,7 @@ class Menu(Console):
     """
     Create console for displaying choices to the player
     """
-    MENU_TEMPLATE = """
-        {menu_name}
-        {menu_text}
-        {options}
-    """
+    MENU_TEMPLATE = "{menu_text}\n\n{options}"
 
     OPTION_TEMPLATE = "({option_char:}) {option_description}"
 
@@ -58,7 +55,6 @@ class Menu(Console):
     def create_menu(self, pos_x, pos_y):
         self.move(pos_x, pos_y)
         self.printStr(self.MENU_TEMPLATE.format(
-            menu_name=self.name,
             menu_text=self.text,
             options=self._build_options()
         ))
@@ -72,7 +68,7 @@ class Menu(Console):
             )
             option_msg.append(option)
             self.letter_index += 1
-        return "\n".join(option_msg)
+        return textwrap.indent("\n\n".join(option_msg), "             ")  # TODO: this could be nicer...
 
     def print_str(self, text, pos_x, pos_y):
         self.move(pos_x, pos_y)
