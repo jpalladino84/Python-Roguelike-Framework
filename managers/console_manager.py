@@ -36,12 +36,43 @@ class ConsoleManager:
 
 
 class Menu(Console):
-    def __init__(self, name, options, width, height):
+    """
+    Create console for displaying choices to the player
+    """
+    MENU_TEMPLATE = """
+        {menu_name}
+        {menu_text}
+        {options}
+    """
+
+    OPTION_TEMPLATE = "({option_char:}) {option_description}"
+
+    def __init__(self, name, text, options, width, height):
         Console.__init__(self, width, height)
         self.name = name
-        self.max_options_len = 26
+        self.text = text
         self.options = options
+        self.max_options_len = 26
         self.letter_index = ord('a')
+
+    def create_menu(self, pos_x, pos_y):
+        self.move(pos_x, pos_y)
+        self.printStr(self.MENU_TEMPLATE.format(
+            menu_name=self.name,
+            menu_text=self.text,
+            options=self._build_options()
+        ))
+
+    def _build_options(self):
+        option_msg = []
+        for option_text in self.options:
+            option = self.OPTION_TEMPLATE.format(
+                option_char=chr(self.letter_index),
+                option_description=option_text
+            )
+            option_msg.append(option)
+            self.letter_index += 1
+        return "\n".join(option_msg)
 
     def print_str(self, text, pos_x, pos_y):
         self.move(pos_x, pos_y)

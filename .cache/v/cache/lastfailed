@@ -1,0 +1,7 @@
+{
+  "tests/components/test_experience_pool.py::ExperiencePool::test_experience_pools_split": true,
+  "tests/components/test_inventory.py::InventoryTestCase::test_inventory_add": true,
+  "tests/components/test_inventory.py::InventoryTestCase::test_inventory_keybound": true,
+  "tests/components/test_level_tree.py::LevelTreeTestCase::test_ability_modifiers": true,
+  "tests/components/test_level_tree.py::LevelTreeTestCase::test_stats_modifiers": true
+}

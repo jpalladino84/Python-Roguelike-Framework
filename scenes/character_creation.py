@@ -1,5 +1,7 @@
 import tdl
 
+from base.scene import BaseScene
+
 from components.stats import make_character_stats
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
@@ -9,19 +11,17 @@ from managers.console_manager import Menu
 from ui import controls
 
 
-class CharacterCreationScene(object):
+class CharacterCreationScene(BaseScene):
     ID = "CharacterCreation"
 
     # TODO We need a sort of cursor to print every control in its place.
     # TODO For that we need to have a render func passing the cursor
     # TODO and each control needs a menu to render on.
     
-    def __init__(self, console_manager, game_context, start_game_callback):
-        self.game_context = game_context
+    def __init__(self, console_manager, scene_manager, game_context):
+        super().__init__(console_manager, scene_manager, game_context)
         self.character_factory = self.game_context.character_factory
         self.body_factory = self.game_context.body_factory
-        self.console_manager = console_manager
-        self.main_console = console_manager.main_console
         self.options = ["Finish"]
 
         self.control_name = controls.InputControl("Name:")
@@ -49,13 +49,17 @@ class CharacterCreationScene(object):
             self.control_race,
             self.control_stats
         ]
-        self.menu = Menu('Main Menu', self.options, self.main_console.width,
+        self.menu = Menu('Character Creation',
+                         """
+                         Create your adventure!
+                         """,
+                         self.options,
+                         self.main_console.width,
                          self.main_console.height)
         self.active_control = self.control_name
 
         # TODO THIS should be in the menu itself.
         self.menu_draws = []
-        self.start_game_callback = start_game_callback
         self.create_menu()
 
     def create_menu(self):
@@ -112,4 +116,4 @@ class CharacterCreationScene(object):
                         starter_thief.apply(player)
                     else:
                         starter_warrior.apply(player)
-                    self.start_game_callback()
+                    self.transition_to("GameScene")

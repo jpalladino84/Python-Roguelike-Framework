@@ -13,8 +13,8 @@ class Level(object):
 
         # Generated variables
         self.num_rooms = 0
-        self.monster_rooms = []
         self.tiles = []
+        self.rooms = []
         self.spawned_monsters = []
         self.spawned_items = []
 
