@@ -16,11 +16,14 @@ class BaseScene(object):
 
     @abc.abstractmethod
     def render(self):
+        """This will be called by the scene_manager."""
         pass
 
     @abc.abstractmethod
     def handle_input(self):
+        """Handle any player expected input here."""
         pass
 
     def transition_to(self, scene_name):
+        """Tells the scene_manager to move to the provided scene."""
         self.scene_manager.transition_to(scene_name)

@@ -56,6 +56,7 @@ class CharacterCreationScene(BaseScene):
                          self.options,
                          self.main_console.width,
                          self.main_console.height)
+        # self.menu.create_menu(20, 20)
         self.active_control = self.control_name
 
         # TODO THIS should be in the menu itself.
@@ -74,7 +75,7 @@ class CharacterCreationScene(BaseScene):
 
     def render(self, **kwargs):
         self.menu.clear()
-        self.menu.move(0, 0)
+        self.menu.move(20, 20)
         for control in self.controls:
             if self.active_control is None \
                     or self.controls.index(self.active_control) >= self.controls.index(control):

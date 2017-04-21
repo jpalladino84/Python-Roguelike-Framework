@@ -40,7 +40,7 @@ class Menu(Console):
     """
     Create console for displaying choices to the player
     """
-    MENU_TEMPLATE = "{menu_text}\n\n{options}"
+    MENU_TEMPLATE = "{menu_name}\n\n{menu_text}\n\n{options}"
 
     OPTION_TEMPLATE = "({option_char:}) {option_description}"
 
@@ -55,6 +55,7 @@ class Menu(Console):
     def create_menu(self, pos_x, pos_y):
         self.move(pos_x, pos_y)
         self.printStr(self.MENU_TEMPLATE.format(
+            menu_name=self.name,
             menu_text=self.text,
             options=self._build_options()
         ))
