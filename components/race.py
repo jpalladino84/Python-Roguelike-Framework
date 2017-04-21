@@ -1,5 +1,5 @@
 from components.component import Component
-from components.component_messages import QueryStatModifierMessage
+from components.messages import QueryStatModifierMessage
 
 
 # TODO We need to fix the Class Instance Whatever here

@@ -5,13 +5,14 @@ from data.python_templates.attacks import base_attacks
 from data.python_templates.defenses import base_defenses
 from components.equipment import Equipment
 from components.location import Location
+from components.inventory import Inventory
 from stats.enums import StatsEnum
 from components.game_object import GameObject
 
 
 class Character(GameObject):
-    def __init__(self, uid, name, character_class, character_race, stats, display,
-                 inventory, body, main_experience_pool, location=None, equipment=None, sex=None):
+    def __init__(self, uid, name, character_class, character_race, stats, display, body,
+                 inventory=None, main_experience_pool=None, location=None, equipment=None, sex=None):
         super().__init__()
         self.uid = uid
         self._name = name
@@ -23,12 +24,34 @@ class Character(GameObject):
             self.location = Location()
         else:
             self.location = location
-        self.inventory = inventory
+        self.inventory = inventory if inventory else Inventory()
         self.body = body
         self.main_experience_pool = main_experience_pool
+        if not self.main_experience_pool:
+            if character_race and character_race.experience_pool:
+                self.main_experience_pool = character_race.experience_pool
         self.is_player = False
         self.equipment = equipment if equipment else Equipment(self)
         self.sex = sex if sex else Sex.Male
+
+    def copy(self):
+        # TODO Eventually pretty much everything in here will be components
+        # TODO Which means we will only have to loop on components and call copy()
+        new_instance = Character(
+            uid=self.uid,
+            name=self.name,
+            character_class=None,
+            character_race=None,
+            stats=None,
+            display=self.display.copy(),
+            body=self.body.copy(),
+            inventory=self.inventory.copy(),
+            main_experience_pool=self.main_experience_pool.copy(),
+            location=None,
+            equipment=self.equipment.copy(),
+            sex=self.sex
+        )
+        return super().copy(new_instance)
 
     @property
     def name(self):
@@ -145,14 +168,3 @@ class Character(GameObject):
     def get_defenses(self):
         return base_defenses
 
-
-class CharacterTemplate(object):
-    def __init__(self, uid, name, class_uid, race_uid, base_stats, display, body_uid, cumulative_level):
-        self.uid = uid
-        self.name = name
-        self.class_uid = class_uid
-        self.race_uid = race_uid
-        self.base_stats = base_stats
-        self.display = display
-        self.body_uid = body_uid
-        self.cumulative_level = cumulative_level

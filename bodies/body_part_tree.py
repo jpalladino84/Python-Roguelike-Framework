@@ -1,4 +1,5 @@
 import logging
+import copy
 
 
 logger_ = logging.getLogger()
@@ -11,6 +12,9 @@ class BodypartTree(object):
 
     def __init__(self, central_node_name, central_body_part_uid):
         self.nodes = [BodypartTreeNode(central_node_name, central_body_part_uid, self.CONNECTION_TYPE_CENTER)]
+
+    def copy(self):
+        return copy.deepcopy(self)
 
     def attach(self, parent_node_name, children_node_name, children_body_part_uid):
         self._bind_new_child_to_parent(

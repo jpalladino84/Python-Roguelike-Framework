@@ -1,6 +1,6 @@
 from abilities.ability import Ability
 from abilities.power_abilities import PowerAbilities
-from characters.classes import CharacterClass
+from components.character_class import CharacterClass
 from components.level_tree import LevelTree
 from stats.enums import StatsEnum
 from stats.stat import StatModifier

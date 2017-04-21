@@ -1,7 +1,7 @@
 from abilities.ability import Ability
 from abilities.power_abilities import PowerAbilities
-from characters.race import Race
 from components.level_tree import LevelTree
+from components.race import Race
 from stats.enums import StatsEnum
 from stats.stat import StatModifier
 
