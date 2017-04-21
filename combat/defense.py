@@ -15,7 +15,6 @@ class DefenseTemplate(object):
         pass
 
     def _evaluate(self, hit_roll, minimum_ac, maximum_ac):
-        print("Evaluating {} for {}, {}-{}".format(type(self), hit_roll, minimum_ac, maximum_ac))
         if minimum_ac <= hit_roll <= maximum_ac:
             return True
         return False
