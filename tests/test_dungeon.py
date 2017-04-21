@@ -2,12 +2,10 @@
 Run with:
 python2.7 -m unittest discover tests
 """
-import json
 import unittest
 
 from areas.level import Level
 from managers.game_manager import GameManager
-from characters.character import Character
 from components.stats import Stats
 
 
