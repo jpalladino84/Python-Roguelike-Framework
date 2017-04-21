@@ -218,7 +218,12 @@ class GameScene(BaseScene):
 class Forerunner(object):
     """ 
     The Forerunner will traverse the dungeon and place dungeon objects such as monsters and items
+    
+    Usage:
+        forerunner = Forefunner(level, player)
+        forerunner.run()
     """
+    # TODO: figure out someplace besides game.py where this should live
 
     def __init__(self, level, player):
         self.level = level
@@ -229,13 +234,13 @@ class Forerunner(object):
         first_room = self.level.rooms[0]
         x, y = first_room.center()
         tile = self.level.maze[x][y]
-        self.place_player(self.level, tile, self.player)
+        self._place_player(self.level, tile, self.player)
 
-        self.place_monsters_in_rooms()
+        self._place_monsters_in_rooms()
         # self.place_items_in_rooms()  # TODO
         # self.place_stairs(self.level.rooms)  # TODO
 
-    def get_random_room_tile(self, level, room, depth=0):
+    def _get_random_room_tile(self, level, room, depth=0):
         """
         Get a random ground tile that does not already contain a object
         @param level: Level being generated.
@@ -263,9 +268,9 @@ class Forerunner(object):
             return tile
 
         # if we didn't find an empty tile, try again
-        return self.get_random_room_tile(level, room, depth=depth + 1)
+        return self._get_random_room_tile(level, room, depth=depth + 1)
 
-    def place_monsters_in_rooms(self):
+    def _place_monsters_in_rooms(self):
         """
         Go through each room (thats not the first one) and drop a monster in it. Keep
         going until there are no more monsters to place.
@@ -273,21 +278,21 @@ class Forerunner(object):
         for room in self.level.rooms[1:]:
             if not self.level.monster_spawn_list:
                 break
-            tile = self.get_random_room_tile(self.level, room)
-            self.place_monster(self.level, tile)
+            tile = self._get_random_room_tile(self.level, room)
+            self._place_monster(self.level, tile)
 
-    def place_items_in_rooms(self):
+    def _place_items_in_rooms(self):
         """
         Go through each room (thats not the first one) and drop an items in it. Keep
         going until there are no more items to place.
         """
         for item in self.level.item_spawn_list:
             random_room = random.choice(self.level.rooms[1:])
-            tile = self.get_random_room_tile(self.level, random_room)
-            self.place_item(self.level, tile, item)
+            tile = self._get_random_room_tile(self.level, random_room)
+            self._place_item(self.level, tile, item)
 
     @staticmethod
-    def place_monster(level, tile):
+    def _place_monster(level, tile):
         # TODO This kind of spawning has a few issues, it should use a service to spawn monsters.
         monster = level.monster_spawn_list.pop(0)
         monster.location.local_x = tile.x
@@ -297,7 +302,7 @@ class Forerunner(object):
         tile.contains_object = True
 
     @staticmethod
-    def place_player(level, tile, player):
+    def _place_player(level, tile, player):
         """
         Place the player in the maze.
         """
@@ -307,13 +312,13 @@ class Forerunner(object):
         tile.contains_object = True
 
     @staticmethod
-    def place_item(level, tile, item):
+    def _place_item(level, tile, item):
         # TODO This sort of assignment should use a method and set all required things like global x, area, etc
         item.location.local_x = tile.x
         item.location.local_y = tile.y
         item.level = level
 
-    def place_stairs(self, tile):
+    def _place_stairs(self, tile):
         # TODO Stairs should not be an item but a passable tile.
         pass
 
