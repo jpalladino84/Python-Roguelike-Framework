@@ -1,5 +1,6 @@
 from components.component import Component
 from stats.enums import StatsEnum
+from itertools import chain
 from util.decorators import cached, invalidate_cache
 
 
@@ -9,12 +10,35 @@ class Equipment(Component):
     This component attaches itself to anything with a bodies.
     It represents equipment worn or wielded
     """
-    def __init__(self, host):
+    def __init__(self):
         super().__init__()
-        self.host = host
-        self.host_body = host.body
+        self.host_body = None
         self.worn_equipment_map = {}
         self.wielded_equipment_map = {}
+
+    def copy(self):
+        # TODO Copying an equipment to another type of body would require some sort of validation.
+        # TODO Removing or dropping invalid mappings.
+        new_equipment = Equipment()
+        new_equipment.host_body = self.host_body
+        new_equipment.worn_equipment_map = self.__copy_all_items(self.worn_equipment_map)
+        new_equipment.wielded_equipment_map = self.__copy_all_items(self.wielded_equipment_map)
+
+        return new_equipment
+
+    @staticmethod
+    def __copy_all_items(collection):
+        collection_copy = collection.copy()
+        for index, item_list in enumerate(collection):
+            collection_copy[index].clear()
+            for item in item_list:
+                collection_copy[index].append(item.copy())
+
+        return collection_copy
+
+    def on_register(self, host):
+        super().on_register(host)
+        self.host_body = host.body
 
     @invalidate_cache
     def wear(self, item):

@@ -2,7 +2,7 @@ from characters.character import Character
 from components.display import Display
 from components.experience_pool import ExperiencePool
 from components.inventory import Inventory
-from components.race import RaceInstance
+from components.race import Race
 from data.python_templates.characters import character_templates
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
@@ -37,21 +37,14 @@ class CharacterFactory(object):
         :return:
         """
         uid = "player"
-        # TODO Registering experience pools like this is dumb.
-        # TODO It should be made into a proper component.
-        race_experience_pool = ExperiencePool()
         new_instance = Character(
             uid=uid,
             name=name,
-            character_class=self.get_class_template_by_uid(class_uid),
-            character_race=RaceInstance(
-                template=self.get_race_template_by_uid(race_uid),
-                experience_pool=race_experience_pool
-            ),
+            character_class=self.get_class_template_by_uid(class_uid).copy(),
+            character_race=self.get_race_template_by_uid(race_uid).copy(),
             stats=stats,
             display=Display((255, 255, 255), (0, 0, 0), "@"),
             body=self.factory_service.build_body_instance_by_uid(body_uid),
-            main_experience_pool=race_experience_pool,
             inventory=Inventory()
         )
         constitution_bonus = new_instance.get_stat_modifier(StatsEnum.Constitution)

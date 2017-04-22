@@ -1,5 +1,6 @@
 from components.component import Component
 from items.item import ItemStack
+from copy import deepcopy
 
 
 class Inventory(Component):
@@ -12,6 +13,14 @@ class Inventory(Component):
     def __init__(self):
         super().__init__()
         self._item_stacks = dict()
+
+    def copy(self):
+        new_copy = Inventory()
+        new_copy._item_stacks = self._item_stacks.copy()
+        for item_stack in new_copy._item_stacks:
+            item_stack.item = item_stack.item.copy()
+
+        return new_copy
 
     def add_item(self, item):
         if item in self._item_stacks:

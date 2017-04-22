@@ -3,6 +3,7 @@ import math
 from characters.enums import Sex, EncumberanceLevel
 from data.python_templates.attacks import base_attacks
 from data.python_templates.defenses import base_defenses
+from components.experience_pool import ExperiencePool
 from components.equipment import Equipment
 from components.location import Location
 from components.inventory import Inventory
@@ -16,9 +17,15 @@ class Character(GameObject):
         super().__init__()
         self.uid = uid
         self._name = name
+        if not main_experience_pool:
+            self.register_component(ExperiencePool())
         self.register_component(character_class)
         self.register_component(character_race)
         self.register_component(stats)
+        if not equipment:
+            equipment = Equipment()
+        self.register_component(equipment)
+
         self.display = display
         if not location:
             self.location = Location()
@@ -26,12 +33,7 @@ class Character(GameObject):
             self.location = location
         self.inventory = inventory if inventory else Inventory()
         self.body = body
-        self.main_experience_pool = main_experience_pool
-        if not self.main_experience_pool:
-            if character_race and character_race.experience_pool:
-                self.main_experience_pool = character_race.experience_pool
         self.is_player = False
-        self.equipment = equipment if equipment else Equipment(self)
         self.sex = sex if sex else Sex.Male
 
     def copy(self):
@@ -45,13 +47,10 @@ class Character(GameObject):
             stats=None,
             display=self.display.copy(),
             body=self.body.copy(),
-            inventory=self.inventory.copy(),
-            main_experience_pool=self.main_experience_pool.copy(),
             location=None,
-            equipment=self.equipment.copy(),
             sex=self.sex
         )
-        return super().copy(new_instance)
+        return super().copy_to(new_instance)
 
     @property
     def name(self):

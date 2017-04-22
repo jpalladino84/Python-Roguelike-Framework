@@ -14,6 +14,13 @@ class CharacterClass(Component):
         self.level_tree = level_tree
         self.get_level = lambda: 0
 
+    def copy(self):
+        return CharacterClass(
+            uid=self.uid,
+            name=self.name,
+            level_tree=self.level_tree
+        )
+
     def on_register(self, host):
         super().on_register(host)
         host.register_query_responder(self, QueryType.StatModifier, self.respond_stat_modifier_query)
@@ -22,6 +29,6 @@ class CharacterClass(Component):
 
     def respond_stat_modifier_query(self, stat):
         if self.level_tree:
-            modifiers = self.level_tree.get_stat_modifiers(self.experience_pool.get_pool_level())
+            modifiers = self.level_tree.get_stat_modifiers(self.get_level())
             if stat in modifiers:
                 return modifiers[stat]

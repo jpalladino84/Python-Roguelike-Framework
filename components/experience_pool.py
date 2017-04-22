@@ -1,4 +1,3 @@
-from math import floor
 from .component import Component
 from .messages import QueryType
 
@@ -43,7 +42,7 @@ class ExperiencePool(Component):
 
     def on_register(self, host):
         super().on_register(host)
-        self.host.register_query_responder(QueryType)
+        self.host.register_query_responder(self, QueryType.ExperiencePool, self.respond_experience_pool)
 
     def respond_experience_pool(self, name):
         if name not in self.child_pools:

@@ -7,7 +7,7 @@ class GameObject(object):
         self.observers = {}
         self.responders = {}
 
-    def copy(self, new_game_object):
+    def copy_to(self, new_game_object):
         for component in self.components.values():
             new_game_object.register_component(component.copy())
 
@@ -22,14 +22,14 @@ class GameObject(object):
 
     def transmit_message(self, sender, message_type, **kwargs):
         if message_type in self.observers:
-            for observer, func in self.observers[message_type].values():
+            for observer, func in self.observers[message_type]:
                 if observer != sender:
                     func(**kwargs)
 
     def transmit_query(self, sender, query_type, **kwargs):
         responses = []
         if query_type in self.responders:
-            for responder, func in self.responders[query_type].values():
+            for responder, func in self.responders[query_type]:
                 if responder != sender:
                     responses.append(func(**kwargs))
 
@@ -48,25 +48,25 @@ class GameObject(object):
             self.responders[query_type].append((responder, func))
 
     def register_component(self, component):
-        if component not in self.components:
-            component.on_register(self)
-            self.components[component.NAME] = component
+        if component.NAME in self.components:
+            self.unregister_component(component)
+            print("DEBUG unregistering already registered component.")
+
+        self.components[component.NAME] = component
+        component.on_register(self)
 
     def unregister_component(self, component):
-        if component in self.components:
+        if component.NAME in self.components:
             component.on_unregister()
-            del self.components[component]
+            del self.components[component.NAME]
 
     def __getattr__(self, item):
         if item in valid_components:
             component = self.get_component(item)
             if component:
                 return component
-            else:
-                if not hasattr(self, item):
-                    return NoneVoid()
-
-        return super().__getattribute__(item)
+            return NoneVoid()
+        raise AttributeError()
 
 
 class NoneVoid(object):
