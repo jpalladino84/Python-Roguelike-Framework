@@ -47,7 +47,7 @@ class Stats(Component):
             if stat in self._core_stats:
                 stat_value += self._core_stats[stat].current
 
-            responses = self.host.transmit_query(self, QueryType, stat=stat)
+            responses = self.host.transmit_query(self, QueryType.StatModifier, stat=stat)
             for response in responses:
                 stat_value += response.stat_modifier_value
 

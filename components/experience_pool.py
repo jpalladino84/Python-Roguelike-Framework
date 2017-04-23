@@ -40,6 +40,15 @@ class ExperiencePool(Component):
         self.experience = 0
         self.child_pools = {}
 
+    def copy(self):
+        new_copy = ExperiencePool()
+        new_copy.total_level = self.total_level
+        new_copy.unspent_levels = self.unspent_levels
+        new_copy.experience = self.experience
+        new_copy.child_pools = self.child_pools.copy()
+
+        return new_copy
+
     def on_register(self, host):
         super().on_register(host)
         self.host.register_query_responder(self, QueryType.ExperiencePool, self.respond_experience_pool)
@@ -47,6 +56,7 @@ class ExperiencePool(Component):
     def respond_experience_pool(self, name):
         if name not in self.child_pools:
             self.child_pools[name] = 0
+
         return lambda: self.child_pools[name]
 
     def assign_level(self, pool_name):

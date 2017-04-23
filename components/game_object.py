@@ -50,7 +50,6 @@ class GameObject(object):
     def register_component(self, component):
         if component.NAME in self.components:
             self.unregister_component(component)
-            print("DEBUG unregistering already registered component.")
 
         self.components[component.NAME] = component
         component.on_register(self)
@@ -76,3 +75,7 @@ class NoneVoid(object):
     """
     def __getattr__(self, item):
         return None
+
+    def __bool__(self):
+        return False
+

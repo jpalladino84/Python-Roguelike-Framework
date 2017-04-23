@@ -43,6 +43,9 @@ class Equipment(Component):
     @invalidate_cache
     def wear(self, item):
         # Wearing requires the bodypart to be compatible with the item
+        if not self.host_body:
+            self.host_body = self.host.body
+
         if item.armor:
             armor = item.armor
             if item.stats.get_current_value(StatsEnum.Size) == self.host.stats.get_current_value(StatsEnum.Size):
@@ -62,6 +65,9 @@ class Equipment(Component):
 
     @invalidate_cache
     def wield(self, item):
+        if not self.host_body:
+            self.host_body = self.host.body
+
         # Wielding requires bodyparts with GRASP
         grasp_able_body_parts = self.host_body.get_grasp_able_body_parts()
         # Wielding with one hand gets priority

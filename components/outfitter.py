@@ -18,6 +18,6 @@ class Outfitter(Component):
     def on_register(self, host):
         if not self.is_on_template:
             random_outfit = random.choice([outfit for outfit in outfits if outfit.uid in self.outfit_uids])
-            random_outfit.apply(self.host)
-            self.host.unregister_component(self)
+            random_outfit.apply(host)
+            host.unregister_component(self)
 

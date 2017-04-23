@@ -11,6 +11,9 @@ class FactoryService(object):
     def build_body_instance_by_uid(self, body_uid):
         return self.body_factory.build_body(body_uid)
 
+    def assemble_body(self, body):
+        return self.body_factory.assemble_body(body)
+
     def build_character_instance_by_uid(self, character_uid):
         if self.character_factory:
             return self.character_factory.build(character_uid)

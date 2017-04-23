@@ -19,20 +19,36 @@ class Character(GameObject):
         self._name = name
         if not main_experience_pool:
             self.register_component(ExperiencePool())
-        self.register_component(character_class)
-        self.register_component(character_race)
-        self.register_component(stats)
-        if not equipment:
-            equipment = Equipment()
-        self.register_component(equipment)
+        else:
+            self.register_component(main_experience_pool)
+
+        if character_class:
+            self.register_component(character_class)
+
+        if character_race:
+            self.register_component(character_race)
+
+        if stats:
+            self.register_component(stats)
+
+        if equipment:
+            self.register_component(equipment)
+        else:
+            self.register_component(Equipment())
 
         self.display = display
         if not location:
             self.location = Location()
         else:
             self.location = location
-        self.inventory = inventory if inventory else Inventory()
-        self.body = body
+
+        if inventory:
+            self.register_component(inventory)
+        else:
+            self.register_component(Inventory())
+
+        if body:
+            self.register_component(body)
         self.is_player = False
         self.sex = sex if sex else Sex.Male
 

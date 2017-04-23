@@ -34,14 +34,11 @@ class Race(Component):
             results = host.transmit_query(self, QueryType.ExperiencePool, name=self.name)
             self.get_level = results[0]
 
-    def respond_stat_modifier_query(self, message):
+    def respond_stat_modifier_query(self, stat):
         if self.level_tree:
             modifiers = self.level_tree.get_stat_modifiers(self.get_level())
-            if message.stat in modifiers:
-                response = message.create_response(self)
-                response.stat_modifier_value = modifiers[message.stat]
-
-                return response
+            if stat in modifiers:
+                return modifiers[stat]
 
 
 class MetaRace(Race):

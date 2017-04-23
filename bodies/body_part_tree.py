@@ -1,5 +1,6 @@
 import logging
 import copy
+from data.python_templates.body_parts import body_part_templates
 
 
 logger_ = logging.getLogger()
@@ -39,7 +40,7 @@ class BodypartTreeNode(object):
     def __init__(self, name, body_part_uid, connection_type):
         self.name = name
         self.body_part_uid = body_part_uid
-        self.instance = None
+        self.instance = body_part_templates[body_part_uid]
         self.connection_type = connection_type
         self.children_nodes = []
 
