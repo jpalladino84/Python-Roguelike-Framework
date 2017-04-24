@@ -47,9 +47,11 @@ class CharacterFactory(object):
             body=self.factory_service.build_body_instance_by_uid(body_uid),
             inventory=Inventory()
         )
+        health_base = new_instance.character_class.hit_die
         constitution_bonus = new_instance.get_stat_modifier(StatsEnum.Constitution)
-        new_instance.stats.set_core_current_value(StatsEnum.Health, constitution_bonus)
-        new_instance.stats.set_core_maximum_value(StatsEnum.Health, constitution_bonus)
+        total_health = health_base + constitution_bonus
+        new_instance.stats.set_core_current_value(StatsEnum.Health, total_health)
+        new_instance.stats.set_core_maximum_value(StatsEnum.Health, total_health)
 
         return new_instance
 

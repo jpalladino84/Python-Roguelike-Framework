@@ -49,7 +49,8 @@ class Stats(Component):
 
             responses = self.host.transmit_query(self, QueryType.StatModifier, stat=stat)
             for response in responses:
-                stat_value += response.stat_modifier_value
+                if response:
+                    stat_value += response.stat_modifier_value
 
             return stat_value
 

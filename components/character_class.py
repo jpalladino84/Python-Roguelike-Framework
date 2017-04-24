@@ -7,18 +7,20 @@ class CharacterClass(Component):
 
     # TODO ExperiencePool should itself be a component and be stripped off here.
     # TODO This component should instead MESSAGE the experience pool to register one.
-    def __init__(self, uid, name, level_tree):
+    def __init__(self, uid, name, level_tree, hit_die):
         super().__init__()
         self.uid = uid
         self.name = name
         self.level_tree = level_tree
         self.get_level = lambda: 0
+        self.hit_die = hit_die
 
     def copy(self):
         return CharacterClass(
             uid=self.uid,
             name=self.name,
-            level_tree=self.level_tree
+            level_tree=self.level_tree,
+            hit_die=self.hit_die
         )
 
     def on_register(self, host):
