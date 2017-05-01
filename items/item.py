@@ -47,10 +47,7 @@ class Item(GameObject):
 
     def copy(self):
         new_item = Item(self.uid, self._name, self._description, self.location, self.display)
-        for component in self.components:
-            new_item.register_component(component.copy())
-
-        return new_item
+        return super().copy_to(new_item)
 
     def __eq__(self, other):
         return (

@@ -3,32 +3,70 @@ import math
 from characters.enums import Sex, EncumberanceLevel
 from data.python_templates.attacks import base_attacks
 from data.python_templates.defenses import base_defenses
+from components.experience_pool import ExperiencePool
 from components.equipment import Equipment
 from components.location import Location
+from components.inventory import Inventory
 from stats.enums import StatsEnum
 from components.game_object import GameObject
 
 
 class Character(GameObject):
-    def __init__(self, uid, name, character_class, character_race, stats, display,
-                 inventory, body, main_experience_pool, location=None, equipment=None, sex=None):
+    def __init__(self, uid, name, character_class, character_race, stats, display, body,
+                 inventory=None, main_experience_pool=None, location=None, equipment=None, sex=None):
         super().__init__()
         self.uid = uid
         self._name = name
-        self.register_component(character_class)
-        self.register_component(character_race)
-        self.register_component(stats)
+        if not main_experience_pool:
+            self.register_component(ExperiencePool())
+        else:
+            self.register_component(main_experience_pool)
+
+        if character_class:
+            self.register_component(character_class)
+
+        if character_race:
+            self.register_component(character_race)
+
+        if stats:
+            self.register_component(stats)
+
+        if equipment:
+            self.register_component(equipment)
+        else:
+            self.register_component(Equipment())
+
         self.display = display
         if not location:
             self.location = Location()
         else:
             self.location = location
-        self.inventory = inventory
-        self.body = body
-        self.main_experience_pool = main_experience_pool
+
+        if inventory:
+            self.register_component(inventory)
+        else:
+            self.register_component(Inventory())
+
+        if body:
+            self.register_component(body)
         self.is_player = False
-        self.equipment = equipment if equipment else Equipment(self)
         self.sex = sex if sex else Sex.Male
+
+    def copy(self):
+        # TODO Eventually pretty much everything in here will be components
+        # TODO Which means we will only have to loop on components and call copy()
+        new_instance = Character(
+            uid=self.uid,
+            name=self.name,
+            character_class=None,
+            character_race=None,
+            stats=None,
+            display=self.display.copy(),
+            body=self.body.copy(),
+            location=None,
+            sex=self.sex
+        )
+        return super().copy_to(new_instance)
 
     @property
     def name(self):
@@ -145,14 +183,3 @@ class Character(GameObject):
     def get_defenses(self):
         return base_defenses
 
-
-class CharacterTemplate(object):
-    def __init__(self, uid, name, class_uid, race_uid, base_stats, display, body_uid, cumulative_level):
-        self.uid = uid
-        self.name = name
-        self.class_uid = class_uid
-        self.race_uid = race_uid
-        self.base_stats = base_stats
-        self.display = display
-        self.body_uid = body_uid
-        self.cumulative_level = cumulative_level

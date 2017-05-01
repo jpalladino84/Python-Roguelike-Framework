@@ -17,7 +17,7 @@ class Body(Component):
     Height is in feet, Weight in pounds
     """
     def __init__(self, uid, bodypart_tree, name="", height=0, weight=0, outer_material_uid=None,
-                 internal_material_uid=None, structural_material_uid=None, blood_uid=None):
+                 inner_material_uid=None, structural_material_uid=None, blood_uid=None):
         super().__init__()
         self.uid = uid
         self.bodypart_tree = bodypart_tree
@@ -25,9 +25,22 @@ class Body(Component):
         self.height = height
         self.weight = weight
         self.outer_material_uid = outer_material_uid
-        self.inner_material_uid = internal_material_uid
+        self.inner_material_uid = inner_material_uid
         self.structural_material_uid = structural_material_uid
         self.blood_uid = blood_uid
+
+    def copy(self):
+        return Body(
+            uid=self.uid,
+            name=self.name,
+            bodypart_tree=self.bodypart_tree.copy(),
+            height=self.height,
+            weight=self.weight,
+            outer_material_uid=self.outer_material_uid,
+            inner_material_uid=self.inner_material_uid,
+            structural_material_uid=self.structural_material_uid,
+            blood_uid=self.blood_uid,
+        )
 
     def __str__(self):
         return "Body({})".format(self.name)
@@ -38,9 +51,15 @@ class Body(Component):
                 return node.instance
 
     def get_body_parts(self, uid):
-        return [node.instance for node in
-                self.bodypart_tree.nodes
-                if node.instance.uid == uid]
+        body_parts = []
+        for node in self.bodypart_tree.nodes:
+            if not node.instance:
+                print("WTF")
+            else:
+                if node.instance.uid == uid:
+                    body_parts.append(node.instance)
+
+        return body_parts
 
     @staticmethod
     def _random_roll_body_part(body_parts):

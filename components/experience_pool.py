@@ -1,48 +1,87 @@
-from math import floor
 from .component import Component
+from .messages import QueryType
+
+advancement_table = {
+    1: 0,
+    2: 300,
+    3: 900,
+    4: 2700,
+    5: 6500,
+    6: 14000,
+    7: 23000,
+    8: 34000,
+    9: 48000,
+    10: 64000,
+    11: 85000,
+    12: 100000,
+    13: 120000,
+    14: 140000,
+    15: 165000,
+    16: 195000,
+    17: 225000,
+    18: 265000,
+    19: 305000,
+    20: 355000
+}
 
 
 class ExperiencePool(Component):
     NAME = "experience_pool"
     """
-    This pool will hold experience and a list of other pools it can trickle to.
-    Example: A Character has a pool that holds all the experience he gains.
-    He has a race Orc, a class Warrior and a subclass Berserker.
-    When he gains 500 xp, 250 goes to orc, 250 goes to warrior and 125 goes to berserker.
-    Once he reaches max level of Orc then the full amount goes to warrior, which gives half of what it has to berserker.
+    This pool will hold total EXP and levels for each registered pool.
     """
     STARTING_LEVEL = 1
+    SOFT_MAX_LEVEL = 20
 
     def __init__(self):
         super().__init__()
+        self.total_level = 0
+        self.unspent_levels = 0
         self.experience = 0
-        self.child_pools = []
+        self.child_pools = {}
 
+    def copy(self):
+        new_copy = ExperiencePool()
+        new_copy.total_level = self.total_level
+        new_copy.unspent_levels = self.unspent_levels
+        new_copy.experience = self.experience
+        new_copy.child_pools = self.child_pools.copy()
 
-    def add_child_pool(self, child_pool):
-        self.child_pools.append(child_pool)
+        return new_copy
 
-    def remove_child_pool(self, child_pool):
-        self.child_pools.remove(child_pool)
+    def on_register(self, host):
+        super().on_register(host)
+        self.host.register_query_responder(self, QueryType.ExperiencePool, self.respond_experience_pool)
+
+    def respond_experience_pool(self, name):
+        if name not in self.child_pools:
+            self.child_pools[name] = 0
+
+        return lambda: self.child_pools[name]
+
+    def assign_level(self, pool_name):
+        if self.unspent_levels > 0:
+            child_pool = self.child_pools.get(pool_name, None)
+            if child_pool:
+                child_pool += 1
+                self.unspent_levels -= 1
 
     def add_experience(self, experience_amount):
-        divided_experience = experience_amount / (len(self.child_pools) + 1) if self.child_pools else experience_amount
-        self.experience += divided_experience
-        for child_pool in self.child_pools:
-            child_pool.add_experience(divided_experience)
+        self.experience += experience_amount
+        next_level = self.total_level + 1
+        if next_level > self.SOFT_MAX_LEVEL:
+            exp_for_next_level = (next_level - self.SOFT_MAX_LEVEL * 50000) + advancement_table[self.SOFT_MAX_LEVEL]
+        else:
+            exp_for_next_level = advancement_table[self.total_level + 1]
+
+        if self.experience > exp_for_next_level:
+            self.total_level += 1
+            self.unspent_levels += 1
 
     def remove_experience(self, experience_amount):
-        divided_experience = experience_amount / (len(self.child_pools) + 1) if self.child_pools else experience_amount
-        self.experience -= divided_experience
-        for child_pool in self.child_pools:
-            child_pool.remove_experience(divided_experience)
+        level_exp_threshold = advancement_table[self.total_level]
+        new_value = self.experience - experience_amount
+        if new_value < level_exp_threshold:
+            new_value = level_exp_threshold
 
-    def get_total_levels(self):
-        levels = self.get_pool_level()
-        for child_pool in self.child_pools:
-            levels += child_pool.get_pool_level()
-        return levels + self.STARTING_LEVEL
-
-    def get_pool_level(self):
-        # TODO The maths concerning pool levels must be adjusted to d20 system
-        return floor(self.experience / 5000) + self.STARTING_LEVEL
+        self.experience = new_value

@@ -1,7 +1,7 @@
 import six
 
 from components.component import Component
-from components.component_messages import QueryStatModifierMessage
+from components.messages import QueryType
 from stats.enums import StatsEnum
 from stats.stat import Stat
 
@@ -47,9 +47,10 @@ class Stats(Component):
             if stat in self._core_stats:
                 stat_value += self._core_stats[stat].current
 
-            responses = self.host.transmit_message(QueryStatModifierMessage(self, stat))
+            responses = self.host.transmit_query(self, QueryType.StatModifier, stat=stat)
             for response in responses:
-                stat_value += response.stat_modifier_value
+                if response:
+                    stat_value += response.stat_modifier_value
 
             return stat_value
 

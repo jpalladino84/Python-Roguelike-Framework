@@ -39,8 +39,7 @@ class ItemFactory(object):
             description=item_template.description,
             display=item_template.display.copy(),
         )
-        for component in item_template.components:
-            new_instance.register_component(component.copy())
+        item_template.copy_to(new_instance)
 
         return new_instance
 

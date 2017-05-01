@@ -1,14 +1,12 @@
 from characters.character import Character
-from characters.classes import CharacterClassInstance
-from characters.race import RaceInstance
 from components.display import Display
 from components.experience_pool import ExperiencePool
 from components.inventory import Inventory
-from components.stats import make_character_stats
-from stats.enums import StatsEnum
+from components.race import Race
 from data.python_templates.characters import character_templates
 from data.python_templates.classes import character_class_templates
 from data.python_templates.races import race_templates
+from stats.enums import StatsEnum
 
 
 class CharacterFactory(object):
@@ -39,29 +37,21 @@ class CharacterFactory(object):
         :return:
         """
         uid = "player"
-        race_experience_pool = ExperiencePool()
-        class_experience_pool = ExperiencePool()
-        race_experience_pool.add_child_pool(class_experience_pool)
         new_instance = Character(
             uid=uid,
             name=name,
-            character_class=CharacterClassInstance(
-                template=self.get_class_template_by_uid(class_uid),
-                experience_pool=class_experience_pool
-            ),
-            character_race=RaceInstance(
-                template=self.get_race_template_by_uid(race_uid),
-                experience_pool=race_experience_pool
-            ),
+            character_class=self.get_class_template_by_uid(class_uid).copy(),
+            character_race=self.get_race_template_by_uid(race_uid).copy(),
             stats=stats,
             display=Display((255, 255, 255), (0, 0, 0), "@"),
             body=self.factory_service.build_body_instance_by_uid(body_uid),
-            main_experience_pool=race_experience_pool,
             inventory=Inventory()
         )
+        health_base = new_instance.character_class.hit_die
         constitution_bonus = new_instance.get_stat_modifier(StatsEnum.Constitution)
-        new_instance.stats.set_core_current_value(StatsEnum.Health, constitution_bonus)
-        new_instance.stats.set_core_maximum_value(StatsEnum.Health, constitution_bonus)
+        total_health = health_base + constitution_bonus
+        new_instance.stats.set_core_current_value(StatsEnum.Health, total_health)
+        new_instance.stats.set_core_maximum_value(StatsEnum.Health, total_health)
 
         return new_instance
 
@@ -74,26 +64,8 @@ class CharacterFactory(object):
             self.template_instance_count[character_template.uid] = 1
 
         instance_uid = character_template.uid + "_" + str(instance_id)
-        race_experience_pool = ExperiencePool()
-        class_experience_pool = ExperiencePool()
-        race_experience_pool.add_child_pool(class_experience_pool)
-        new_instance = Character(
-            uid=instance_uid,
-            name=character_template.name,
-            character_class=CharacterClassInstance(
-                template=self.get_class_template_by_uid(character_template.class_uid),
-                experience_pool=class_experience_pool
-            ),
-            character_race=RaceInstance(
-                template=self.get_race_template_by_uid(character_template.race_uid),
-                experience_pool=race_experience_pool
-            ),
-            stats=make_character_stats(**character_template.base_stats.__dict__),
-            display=character_template.display.copy(),
-            body=self.factory_service.build_body_instance_by_uid(character_template.body_uid),
-            main_experience_pool=race_experience_pool,
-            inventory=Inventory()
-        )
+        new_instance = character_template.copy()
+        new_instance.uid = instance_uid
 
         return new_instance
 
