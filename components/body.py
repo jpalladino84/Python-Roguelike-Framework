@@ -1,7 +1,6 @@
 import logging
 import random
 
-import six
 
 from abilities.physical_abilities import PhysicalAbilities
 from bodies.body_part_tree import BodypartTree
@@ -98,7 +97,7 @@ class Body(Component):
     def get_physical_abilities(self):
         abilities = {}
         for node in self.bodypart_tree.nodes:
-            for ability_name, ability_value in six.iteritems(node.instance.physical_abilities):
+            for ability_name, ability_value in node.instance.physical_abilities.items():
                 if ability_name not in abilities:
                     abilities[ability_name] = ability_value
                 else:

@@ -1,4 +1,3 @@
-import six
 
 from components.component import Component
 from components.messages import QueryType
@@ -14,7 +13,7 @@ class Stats(Component):
     def __init__(self, **kwargs):
         super().__init__()
         self._core_stats = {}
-        for key, value in six.iteritems(kwargs):
+        for key, value in kwargs.items():
             self.add_core_stat(StatsEnum[key.capitalize()], value, value)
 
     def add_core_stat(self, stat, current_value, maximum_value):
@@ -49,10 +48,15 @@ class Stats(Component):
 
             responses = self.host.transmit_query(self, QueryType.StatModifier, stat=stat)
             for response in responses:
-                if response:
-                    stat_value += response.stat_modifier_value
+                if response is not None:
+                    stat_value += response
 
             return stat_value
+
+    def get_maximum_value(self, stat):
+        if stat in self._core_stats:
+            return self._core_stats[stat].maximum
+        return 0
 
     def copy(self):
         copy_instance = Stats()

@@ -50,27 +50,15 @@ class Item(GameObject):
         return super().copy_to(new_item)
 
     def __eq__(self, other):
-        return (
-            self.uid == other.uid,
-            self.name == other.name,
-            self.description == other.description,
-            self.material == other.material,
-            self.stats == other.stats
-        )
+        if not isinstance(other, Item):
+            return False
+        return self.uid == other.uid
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(
-            (
-                self.uid,
-                self.name,
-                self.description,
-                self.material,
-                self.stats
-            )
-        )
+        return hash(self.uid)
 
 
 class ItemStack(object):

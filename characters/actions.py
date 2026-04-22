@@ -6,6 +6,7 @@ This is where the main business logic lives.
 Any action that can be taken by the player or a npc (e.g. monster) is defined here.
 """
 import math
+import random
 
 from managers import combat_manager, echo
 
@@ -105,6 +106,10 @@ def monster_take_turn(monster, player, console):
             # close enough, attack! (if the player is still alive.)
             elif not player.is_dead():
                 attack(monster, player, console)
+        else:
+            # wander randomly when out of player's sight
+            dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)])
+            move(monster, dx, dy)
 
 
 def get_item(character, item, tile_x, tile_y):
