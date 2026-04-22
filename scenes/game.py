@@ -12,7 +12,7 @@ from managers.action_manager import ActionManager
 from generators.dungeon_generator import DungeonGenerator
 from managers.echo import EchoService
 from settings import DUNGEON_COLORS as COLORS
-from data.python_templates.items import build_health_potion
+from data.python_templates.items import build_health_potion, build_floor_key
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -133,13 +133,32 @@ class GameScene(BaseScene):
 
                     if key_event.keychar.upper() in self.movement_keys:
                         key_x, key_y = self.movement_keys[key_event.keychar.upper()]
-                        self.action_manager.move_or_attack(player, key_x, key_y)
-                        moved = True
-                        tile = player.location.level.maze[player.location.local_x][player.location.local_y]
-                        if tile.stair_down:
-                            self.descend(player)
-                        elif tile.stair_up:
-                            self.ascend(player)
+                        tx = player.location.local_x + key_x
+                        ty = player.location.local_y + key_y
+                        target_tile = player.location.level.maze[tx][ty]
+                        if target_tile.is_locked_door:
+                            key_stack = next(
+                                (s for s in player.inventory.get_all_items()
+                                 if s.item.uid == 'floor_key'), None
+                            )
+                            if key_stack:
+                                target_tile.is_locked_door = False
+                                target_tile.is_blocked = False
+                                player.inventory.pop_item(key_stack.item)
+                                self.echo_service.console.printStr(
+                                    "You use the key to unlock the door!\n")
+                                moved = True
+                            else:
+                                self.echo_service.console.printStr(
+                                    "The door is locked. Find the floor key (k) first.\n")
+                        else:
+                            self.action_manager.move_or_attack(player, key_x, key_y)
+                            moved = True
+                            tile = player.location.level.maze[player.location.local_x][player.location.local_y]
+                            if tile.stair_down:
+                                self.descend(player)
+                            elif tile.stair_up:
+                                self.ascend(player)
 
                     if key_event.keychar == "g":
                         px, py = player.location.local_x, player.location.local_y
@@ -212,7 +231,9 @@ class GameScene(BaseScene):
     def place_dungeon_objects(self, level, player):
         character_factory = self.game_context.character_factory
         level.monster_spawn_list = self._build_monster_list(character_factory, level.depth)
-        level.item_spawn_list = [build_health_potion() for _ in range(4)]
+        potion_count = 1 if level.depth <= 2 else 2 if level.depth <= 4 else 3
+        level.item_spawn_list = [build_health_potion() for _ in range(potion_count)]
+        level.item_spawn_list.append(build_floor_key())
 
         forerunner = Forerunner(level, player)
         forerunner.run()
@@ -221,13 +242,13 @@ class GameScene(BaseScene):
     def _build_monster_list(character_factory, depth):
         if depth <= 2:
             pool = ["weak_orc", "goblin_thief"]
-            count = 2
+            count = 4
         elif depth <= 4:
             pool = ["weak_orc", "strong_orc", "skeleton_warrior", "goblin_thief"]
-            count = 3
+            count = 5
         else:
             pool = ["weak_orc", "strong_orc", "weak_troll", "skeleton_warrior", "goblin_thief"]
-            count = min(4 + (depth - 5), 6)
+            count = min(6 + (depth - 5), 10)
 
         monsters = [character_factory.build(uid) for uid in random.choices(pool, k=count)]
         for monster in monsters:
@@ -293,6 +314,8 @@ class GameScene(BaseScene):
             "",
             "Stairs",
             " Walk onto > or <",
+            "Locked door (+)",
+            " Find key (k) first",
             "--------------------",
         ]
         for row, text in enumerate(lines):
@@ -306,7 +329,9 @@ class GameScene(BaseScene):
                     self.main_console.drawChar(x, y, '#', fgcolor=COLORS['light_wall'])
                     tile.is_explored = True
                 if tile.is_ground:
-                    if tile.stair_down:
+                    if tile.is_locked_door:
+                        self.main_console.drawChar(x, y, '+', fgcolor=COLORS['locked_door'])
+                    elif tile.stair_down:
                         self.main_console.drawChar(x, y, '>', fgcolor=COLORS['stair'])
                     elif tile.stair_up:
                         self.main_console.drawChar(x, y, '<', fgcolor=COLORS['stair'])
@@ -365,7 +390,9 @@ class GameScene(BaseScene):
                     if wall:
                         self.main_console.drawChar(x, y, '#', fgcolor=COLORS['dark_gray_wall'])
                     elif ground:
-                        if tile.stair_down:
+                        if tile.is_locked_door:
+                            self.main_console.drawChar(x, y, '+', fgcolor=COLORS['dark_locked_door'])
+                        elif tile.stair_down:
                             self.main_console.drawChar(x, y, '>', fgcolor=COLORS['dark_stair'])
                         elif tile.stair_up:
                             self.main_console.drawChar(x, y, '<', fgcolor=COLORS['dark_stair'])
@@ -463,7 +490,13 @@ class Forerunner(object):
         if len(self.level.rooms) < 2:
             return
         for item in self.level.item_spawn_list:
-            random_room = random.choice(self.level.rooms[1:])
+            if item.uid == 'floor_key':
+                # Key must not spawn in the locked room (last room).
+                # Use middle rooms if available; fall back to starting room.
+                eligible = self.level.rooms[1:-1] if len(self.level.rooms) > 2 else self.level.rooms[:1]
+                random_room = random.choice(eligible)
+            else:
+                random_room = random.choice(self.level.rooms[1:])
             tile = self._get_random_room_tile(self.level, random_room)
             self._place_item(self.level, tile, item)
 
@@ -498,11 +531,14 @@ class Forerunner(object):
         level.spawned_items.append(item)
 
     def _place_stairs(self):
-        # Down stairs go in the last room
+        # Down stairs go in the last room, behind a locked door
         last_room = self.level.rooms[-1]
         dx, dy = last_room.center()
         down_tile = self.level.maze[dx][dy]
         down_tile.stair_down = True
+        down_tile.is_locked_door = True
+        down_tile.is_blocked = True
+        down_tile.block_sight = False
         self.level.stair_down_pos = (dx, dy)
 
         # Up stairs go in the first room (only on levels below the surface)

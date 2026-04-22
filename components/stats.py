@@ -60,8 +60,10 @@ class Stats(Component):
 
     def copy(self):
         copy_instance = Stats()
-        copy_instance._core_stats = self._core_stats.copy()
-
+        copy_instance._core_stats = {
+            key: Stat(val.uid, val.current, val.maximum)
+            for key, val in self._core_stats.items()
+        }
         return copy_instance
 
 

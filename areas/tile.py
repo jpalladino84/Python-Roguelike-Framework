@@ -9,3 +9,4 @@ class Tile(object):
         self.block_sight = is_blocked
         self.stair_down = False
         self.stair_up = False
+        self.is_locked_door = False
