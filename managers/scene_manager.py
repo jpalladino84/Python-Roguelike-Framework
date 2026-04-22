@@ -1,5 +1,6 @@
 from scenes import (
     CharacterCreationScene,
+    GameOverScene,
     GameScene,
     InventoryScene,
     MainMenuScene
@@ -15,6 +16,7 @@ class SceneManager(object):
         self.current_scene = None
         self.scenes = {
             "CharacterCreationScene": CharacterCreationScene,
+            "GameOverScene": GameOverScene,
             "GameScene": GameScene,
             "InventoryScene": InventoryScene,
             "MainMenuScene": MainMenuScene

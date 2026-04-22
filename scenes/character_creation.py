@@ -3,10 +3,7 @@ import tdl
 from base.scene import BaseScene
 
 from components.stats import make_character_stats
-from data.python_templates.classes import character_class_templates
-from data.python_templates.races import race_templates
-from data.python_templates.outfits import starter_warrior, starter_thief
-from stats.enums import StatsEnum
+from data.python_templates.outfits import starter_warrior
 from managers.console_manager import Menu
 from ui import controls
 
@@ -14,10 +11,6 @@ from ui import controls
 class CharacterCreationScene(BaseScene):
     ID = "CharacterCreation"
 
-    # TODO We need a sort of cursor to print every control in its place.
-    # TODO For that we need to have a render func passing the cursor
-    # TODO and each control needs a menu to render on.
-    
     def __init__(self, console_manager, scene_manager, game_context):
         super().__init__(console_manager, scene_manager, game_context)
         self.character_factory = self.game_context.character_factory
@@ -25,29 +18,9 @@ class CharacterCreationScene(BaseScene):
         self.options = ["Finish"]
 
         self.control_name = controls.InputControl("Name:")
-        self.control_class = controls.ListChoiceControl(
-            "Class:", root_console=self.main_console,
-            options=sorted(character_class_templates.values(), key=lambda c_class: c_class.name)
-        )
-        self.control_race = controls.ListChoiceControl(
-            question="Race:", root_console=self.main_console,
-            options=sorted(race_templates.values(), key=lambda race: race.name)
-        )
-        self.control_stats = controls.PointDistributionControl(
-            question="Stats:",
-            options=["Strength", "Dexterity", "Constitution", "Intelligence", "Charisma", "Wisdom"],
-            root_console=self.main_console,
-            total_points=27,
-            initial_value=8,
-            max_value=15,
-            cost_calculator=lambda current: 1 if current < 13 else 2
-        )
 
         self.controls = [
             self.control_name,
-            self.control_class,
-            self.control_race,
-            self.control_stats
         ]
         self.menu = Menu('Character Creation',
                          """
@@ -58,7 +31,6 @@ class CharacterCreationScene(BaseScene):
                          self.main_console.height)
         self.active_control = self.control_name
 
-        # TODO THIS should be in the menu itself.
         self.menu_draws = []
         self.create_menu()
 
@@ -104,16 +76,11 @@ class CharacterCreationScene(BaseScene):
                 if key_event.keychar.upper() == 'A':
                     self.game_context.player = self.character_factory.create(
                         name=self.control_name.answer,
-                        class_uid=self.control_class.answer.uid,
-                        race_uid=self.control_race.answer.uid,
-                        stats=make_character_stats(
-                            **{uid.lower(): value for uid, value in self.control_stats.answer.items()}),
+                        class_uid="warrior",
+                        race_uid="human",
+                        stats=make_character_stats(),
                         body_uid="humanoid"
                     )
                     player = self.game_context.player
-                    # TODO We will need a much better way to assign outfits.
-                    if self.control_class.answer.uid.lower() == "thief":
-                        starter_thief.apply(player)
-                    else:
-                        starter_warrior.apply(player)
+                    starter_warrior.apply(player)
                     self.transition_to("GameScene")

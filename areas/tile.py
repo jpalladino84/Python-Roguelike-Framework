@@ -7,3 +7,5 @@ class Tile(object):
         self.is_ground = False
         self.contains_object = None
         self.block_sight = is_blocked
+        self.stair_down = False
+        self.stair_up = False

@@ -11,10 +11,14 @@ class Level(object):
         self.monster_spawn_list = []
         self.item_spawn_list = []
 
+        self.depth = 1
+
         # Generated variables
         self.num_rooms = 0
         self.tiles = []
         self.rooms = []
         self.spawned_monsters = []
         self.spawned_items = []
+        self.stair_down_pos = None
+        self.stair_up_pos = None
 

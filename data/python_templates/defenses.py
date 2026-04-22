@@ -18,7 +18,7 @@ block = BlockTemplate(
 armor_absorb = ArmorAbsorbTemplate(
     name="Armor Absorb",
     description="Standard armor saves your ass.",
-    message="but the hit is absorbed by {defender_bodypart_armor}"
+    message="but the hit is absorbed by {defender_his} armor"
 )
 miss = MissTemplate(
     name="Miss",

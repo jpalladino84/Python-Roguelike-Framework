@@ -13,54 +13,63 @@ weak_orc = Character(
     name="Weak Orc",
     character_class=warrior_class,
     character_race=orc_race,
-    stats=make_character_stats(health=10),
+    stats=make_character_stats(health=4, strength=8),
     display=Display(Colors.ORC_GREEN, Colors.BLACK_COLOR, "O"),
     body=humanoid_body.copy(),
 )
+weak_orc.xp_value = 25
+
 strong_orc = Character(
     uid="strong_orc",
     name="Strong Orc",
     character_class=warrior_class,
     character_race=orc_race,
-    stats=make_character_stats(health=16, strength=12, constitution=12),
+    stats=make_character_stats(health=7, strength=10, constitution=10),
     display=Display(Colors.ORC_GREEN, Colors.BLACK_COLOR, "O"),
     body=humanoid_body.copy(),
 )
+strong_orc.xp_value = 50
+
 weak_troll = Character(
     uid="weak_troll",
     name="Weak Troll",
     character_class=warrior_class,
     character_race=troll_race,
-    stats=make_character_stats(health=24, strength=14, constitution=14),
+    stats=make_character_stats(health=12, strength=12, constitution=10),
     display=Display(Colors.TROLL_GREEN, Colors.BLACK_COLOR, "O"),
     body=humanoid_body.copy(),
 )
-human_warrior = Character(
-    uid="human_warrior",
-    name="Human Warrior",
+weak_troll.xp_value = 100
+
+skeleton_warrior = Character(
+    uid="skeleton_warrior",
+    name="Skeleton Warrior",
     character_class=warrior_class,
     character_race=human_race,
-    stats=make_character_stats(health=10, strength=12, constitution=12, dexterity=10),
-    display=Display(Colors.WHITE_COLOR, Colors.BLACK_COLOR, "O"),
+    stats=make_character_stats(health=6, strength=10, constitution=10, dexterity=10),
+    display=Display(Colors.WHITE_COLOR, Colors.BLACK_COLOR, "s"),
     body=humanoid_body.copy(),
 )
-human_warrior.register_component(Outfitter('starter_warrior'))
-human_thief = Character(
-    uid="human_thief",
-    name="Human Thief",
+skeleton_warrior.register_component(Outfitter('starter_warrior'))
+skeleton_warrior.xp_value = 50
+
+goblin_thief = Character(
+    uid="goblin_thief",
+    name="Goblin Thief",
     character_class=thief_class,
     character_race=human_race,
-    stats=make_character_stats(health=6, constitution=10, dexterity=16),
-    display=Display(Colors.WHITE_COLOR, Colors.BLACK_COLOR, "O"),
+    stats=make_character_stats(health=4, constitution=8, dexterity=12),
+    display=Display(Colors.ORC_GREEN, Colors.BLACK_COLOR, "g"),
     body=humanoid_body.copy(),
 )
-human_thief.register_component(Outfitter('starter_thief'))
+goblin_thief.register_component(Outfitter('starter_thief'))
+goblin_thief.xp_value = 25
 
 
 character_templates = {
     weak_orc.uid: weak_orc,
     strong_orc.uid: strong_orc,
     weak_troll.uid: weak_troll,
-    human_warrior.uid: human_warrior,
-    human_thief.uid: human_thief
+    skeleton_warrior.uid: skeleton_warrior,
+    goblin_thief.uid: goblin_thief
 }

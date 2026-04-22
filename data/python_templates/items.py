@@ -1,10 +1,13 @@
+import random
+
 import data.python_templates.material
 from combat.enums import DamageType
 from components.armor import Armor
+from components.consumable import Consumable
 from components.weapon import Weapon
 from components.display import Display
 from components.stats import Stats
-from stats.enums import Size
+from stats.enums import Size, StatsEnum
 from items.item import Item
 from items import enums as item_enums
 from util.colors import Colors
@@ -240,6 +243,27 @@ def build_boot():
     )
 
     return _boot
+
+
+def _health_potion_effect(user):
+    heal_amount = random.randint(8, 15)
+    max_hp = user.stats.get_maximum_value(StatsEnum.Health)
+    current_hp = user.stats.get_current_value(StatsEnum.Health)
+    actual = min(heal_amount, max_hp - current_hp)
+    if actual > 0:
+        user.stats.modify_core_current_value(StatsEnum.Health, actual)
+    return "You drink the potion and restore {} HP!".format(actual)
+
+
+def build_health_potion():
+    potion = Item(
+        uid="health_potion",
+        name="Health Potion",
+        description="Restores 8-15 HP.",
+        display=Display(Colors.BLOOD_RED, Colors.BLACK_COLOR, "!")
+    )
+    potion.register_component(Consumable(_health_potion_effect))
+    return potion
 
 
 short_sword = build_short_sword()

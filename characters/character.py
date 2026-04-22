@@ -1,4 +1,5 @@
 import math
+import random
 
 from characters.enums import Sex, EncumberanceLevel
 from data.python_templates.attacks import base_attacks
@@ -21,6 +22,7 @@ class Character(GameObject):
             self.register_component(ExperiencePool())
         else:
             self.register_component(main_experience_pool)
+        self.experience_pool.on_level_up = self._on_level_up
 
         if character_class:
             self.register_component(character_class)
@@ -36,6 +38,7 @@ class Character(GameObject):
         else:
             self.register_component(Equipment())
 
+        self.xp_value = 0
         self.display = display
         if not location:
             self.location = Location()
@@ -66,6 +69,7 @@ class Character(GameObject):
             location=None,
             sex=self.sex
         )
+        new_instance.xp_value = self.xp_value
         return super().copy_to(new_instance)
 
     @property
@@ -85,6 +89,14 @@ class Character(GameObject):
         """
         # TODO Make this
         return self.stats.get_current_value(StatsEnum.Health) <= 0
+
+    def _on_level_up(self, new_level):
+        hit_die = self.character_class.hit_die if self.character_class else 6
+        con_modifier = self.get_stat_modifier(StatsEnum.Constitution)
+        hp_increase = max(1, random.randint(1, hit_die) + con_modifier)
+        current_max = self.stats.get_maximum_value(StatsEnum.Health)
+        self.stats.set_core_maximum_value(StatsEnum.Health, current_max + hp_increase)
+        self.stats.modify_core_current_value(StatsEnum.Health, hp_increase)
 
     def get_stat_modifier(self, stat):
         current_total = self.stats.get_current_value(stat)

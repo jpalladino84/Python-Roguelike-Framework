@@ -1,7 +1,3 @@
-singledispatch
 jsonpickle
-cffi==1.9
-libtcod-cffi==0.2.8
-pycparser==2.17
-tdl==1.6.0
+tcod
 pytest
