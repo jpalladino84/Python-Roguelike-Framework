@@ -12,6 +12,8 @@ DUNGEON_COLORS = {
     'light_ground': (160, 144, 40),
     'stair': (255, 255, 100),
     'dark_stair': (150, 150, 60),
+    'locked_door': (220, 160,  20),
+    'dark_locked_door': (110,  80,  10),
 }
 
 

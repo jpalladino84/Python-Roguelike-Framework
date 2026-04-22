@@ -255,6 +255,16 @@ def _health_potion_effect(user):
     return "You drink the potion and restore {} HP!".format(actual)
 
 
+def build_floor_key():
+    key = Item(
+        uid="floor_key",
+        name="Floor Key",
+        description="Unlocks the door to the next floor.",
+        display=Display((220, 200, 0), Colors.BLACK_COLOR, "!")
+    )
+    return key
+
+
 def build_health_potion():
     potion = Item(
         uid="health_potion",
